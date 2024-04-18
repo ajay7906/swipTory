@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 // const authRoute = require("./routes/auth");
 //const storyControllers = require("./controllers/StoryControllers")
 //const Story = require("./model/StoryModel")
+const bodyParser = require('body-parser');
 const userRoute = require("./routes/userRoutes");
 const postRoute = require("./routes/storyRoutes")
 const cors = require('cors')
@@ -11,6 +12,7 @@ const cors = require('cors')
 const app = express();
 app.use(cors())
 app.use(express.json());
+app.use(bodyParser.json());
 
 mongoose
     .connect(process.env.MONGODB_URL)
