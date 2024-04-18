@@ -133,7 +133,7 @@ const updateStoryById = async (req, res, next) => {
 
 const likePost = async (req, res, next) => {
   try {
-    const {postId} = req.params
+    const { postId } = req.params
     console.log(postId);
     const userId = req.userId;
     if (!postId) {
@@ -146,7 +146,7 @@ const likePost = async (req, res, next) => {
         errorMessage: "Bad Request: user ID is missing",
       });
     }
-    const updatedStory = await Story.findByIdAndUpdate(postId, {$addToSet:{ likes: userId }}, { new: true });
+    const updatedStory = await Story.findByIdAndUpdate(postId, { $addToSet: { likes: userId } }, { new: true });
 
     if (!updatedStory) {
       return res.status(404).json({
@@ -196,7 +196,120 @@ const unlikePost = async (req, res, next) => {
   }
 };
 
+
+const bookmarkPost = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.userId;
+
+    if (!postId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: post ID is missing",
+      });
+    }
+    if (!userId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: user ID is missing",
+      });
+    }
+
+    // Find the story by postId
+    const story = await Story.findById(postId);
+    if (!story) {
+      return res.status(404).json({
+        errorMessage: "Story not found",
+      });
+    }
+
+    // Check if the user has already bookmarked the post
+    const isBookmarked = story.bookmarkedBy.includes(userId);
+    if (isBookmarked) {
+      return res.status(400).json({
+        errorMessage: "Post is already bookmarked",
+      });
+    }
+
+    // Add the user's ID to the bookmarkedBy array
+    story.bookmarkedBy.push(userId);
+    await story.save();
+
+    res.status(200).json({ success: true, message: "Post bookmarked successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+const unbookmarkPost = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.userId;
+
+    if (!postId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: post ID is missing",
+      });
+    }
+    if (!userId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: user ID is missing",
+      });
+    }
+
+    // Find the story by postId
+    const story = await Story.findById(postId);
+    if (!story) {
+      return res.status(404).json({
+        errorMessage: "Story not found",
+      });
+    }
+
+    // Check if the user has bookmarked the post
+    const isBookmarked = story.bookmarkedBy.includes(userId);
+    if (!isBookmarked) {
+      return res.status(400).json({
+        errorMessage: "Post is not bookmarked",
+      });
+    }
+
+    // Remove the user's ID from the bookmarkedBy array
+    story.bookmarkedBy = story.bookmarkedBy.filter(id => id.toString() !== userId.toString());
+    await story.save();
+
+    res.status(200).json({ success: true, message: "Post unbookmarked successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//share the post
+const sharePost = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+
+    // Check if the postId is valid
+    if (!postId) {
+      return res.status(400).json({ errorMessage: "Bad Request: Post ID is missing" });
+    }
+
+    // Construct the share link based on the postId
+    const shareLink = `${req.protocol}://${req.get('host')}/api/postDetail/${postId}`;
+
+    // Update the shareLink field in the database
+    const updatedStory = await Story.findByIdAndUpdate(postId, { shareLink }, { new: true });
+
+    if (!updatedStory) {
+      return res.status(404).json({ errorMessage: "Story not found" });
+    }
+
+    res.status(200).json({ success: true, shareLink });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   createStory, getStoriesByCategory, getStoryById
   , getUserStories, updateStoryById, likePost, unlikePost
+  , bookmarkPost, unbookmarkPost, sharePost
 };
