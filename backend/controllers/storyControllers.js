@@ -18,7 +18,7 @@ const createStory = async (req, res, next) => {
       // shareLink
     } = req.body;
 
-  
+
     // console.log(req);
     if (!userId || !stories || stories.length < 3) {
       return res.status(400).json({
@@ -67,7 +67,7 @@ const getStoryById = async (req, res, next) => {
   try {
     const { postId } = req.params;
     console.log(postId);
-   
+
     const story = await Story.findById(postId);
 
     if (!story) {
@@ -101,37 +101,102 @@ const getUserStories = async (req, res, next) => {
 // Update a story by ID
 const updateStoryById = async (req, res, next) => {
   try {
-      const { postId } = req.params;
-      const { stories } = req.body;
-      console.log(req.body);
+    const { postId } = req.params;
+    const { stories } = req.body;
+    console.log(req.body);
 
-      if (!postId) {
-          return res.status(400).json({
-              errorMessage: "Bad Request: Story ID is missing",
-          });
-      }
+    if (!postId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: Story ID is missing",
+      });
+    }
 
-      if (!stories || stories.length < 3) {
-          return res.status(400).json({
-              errorMessage: "Bad Request: Please provide an array of at least 3 stories",
-          });
-      }
+    if (!stories || stories.length < 3) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: Please provide an array of at least 3 stories",
+      });
+    }
 
-      const updatedStory = await Story.findByIdAndUpdate(postId, { stories }, { new: true });
+    const updatedStory = await Story.findByIdAndUpdate(postId, { stories }, { new: true });
 
-      if (!updatedStory) {
-          return res.status(404).json({
-              errorMessage: "Story not found",
-          });
-      }
+    if (!updatedStory) {
+      return res.status(404).json({
+        errorMessage: "Story not found",
+      });
+    }
 
-      res.status(200).json({ success: true, data: updatedStory });
+    res.status(200).json({ success: true, data: updatedStory });
   } catch (error) {
-      next(error);
+    next(error);
+  }
+};
+
+const likePost = async (req, res, next) => {
+  try {
+    const {postId} = req.params
+    console.log(postId);
+    const userId = req.userId;
+    if (!postId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: post ID is missing",
+      });
+    }
+    if (!userId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: user ID is missing",
+      });
+    }
+    const updatedStory = await Story.findByIdAndUpdate(postId, {$addToSet:{ likes: userId }}, { new: true });
+
+    if (!updatedStory) {
+      return res.status(404).json({
+        errorMessage: "Story not found",
+      });
+    }
+    res.status(200).json({ success: true, data: updatedStory });
+
+  } catch (error) {
+    next(error)
+
+  }
+}
+
+
+const unlikePost = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.userId;
+
+    if (!postId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: post ID is missing",
+      });
+    }
+    if (!userId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: user ID is missing",
+      });
+    }
+
+    const updatedStory = await Story.findByIdAndUpdate(
+      postId,
+      { $pull: { likes: userId } }, // Use $pull to remove userId from likes array
+      { new: true }
+    );
+
+    if (!updatedStory) {
+      return res.status(404).json({
+        errorMessage: "Story not found",
+      });
+    }
+
+    res.status(200).json({ success: true, data: updatedStory });
+  } catch (error) {
+    next(error);
   }
 };
 
 module.exports = {
   createStory, getStoriesByCategory, getStoryById
-  , getUserStories, updateStoryById
+  , getUserStories, updateStoryById, likePost, unlikePost
 };
