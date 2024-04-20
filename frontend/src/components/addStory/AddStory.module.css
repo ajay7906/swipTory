@@ -1,7 +1,7 @@
 /* RegisterModal.module.css */
 
 .overlay {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -27,7 +27,7 @@
   /* Adjust the max width as needed */
   display: flex;
   flex-direction: column;
- 
+
   justify-content: flex-start;
   width: 60rem;
   height: 48rem;
@@ -69,7 +69,8 @@
   text-align: center;
   top: 44px;
 }
-.addStoryForm{
+
+.addStoryForm {
   margin-left: 2rem;
   margin-top: 5rem;
 }
@@ -80,46 +81,49 @@
   column-gap: #000000;
   margin-bottom: 4rem;
 }
-.slideButton{
+
+.slideButton {
   display: flex;
   gap: 1.5rem;
 }
-.slideButton button{
+
+.slideButton button {
   align-items: center;
-    color: #000;
-    cursor: pointer;
-    display: flex;
-    font-family: DM Sans;
-    font-size: 15px;
-    font-weight: 700;
-    height: 68.087px;
-    justify-content: center;
-    width: 83.871px;
-    background-color: #ffffff;
-    box-shadow: 0px 4px 15px 0px #0000001A;
-   border: none;
-   border-radius: 10px;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  font-family: DM Sans;
+  font-size: 15px;
+  font-weight: 700;
+  height: 68.087px;
+  justify-content: center;
+  width: 83.871px;
+  background-color: #ffffff;
+  box-shadow: 0px 4px 15px 0px #0000001A;
+  border: none;
+  border-radius: 10px;
 }
 
-.modal form {
- 
-}
-.storyInput{
+.modal form {}
+
+.storyInput {
   margin-top: 3.3rem;
   width: 44rem;
 }
-.input{
- display: flex;
- align-items: center;
- justify-content: space-between;
- margin-bottom: 1rem;
- 
+
+.input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+
 }
+
 .modal .storyInput label {
   font-size: 2.2rem;
   font-weight: 700;
   color: #000000;
- 
+
 }
 
 .modal .storyInput input {
@@ -130,13 +134,13 @@
   font-size: 1.5rem;
   border: 1px solid #000;
   color: #8e8e8e;
-
+  width: 270px;
   font-weight: 700;
   height: 35px;
   padding-left: .8rem;
 }
 
-.modal .storyInput button {
+/* .modal .storyInput button {
   align-items: center;
   background: #73abff;
   border-radius: 20px;
@@ -150,5 +154,75 @@
   margin-top: 5.2rem;
   text-align: center;
   width: 129px;
+} */
+.modal .storyInput select {
+  border: 1px solid #000;
+  color: #474141;
+  font-size: 15px;
+  font-weight: 700;
+  height: 35px;
+  padding-left: .8rem;
+  width: 270px;
 }
 
+.storyInput select option {
+  color: #000;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.postSlideBtn {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding: 0 30px 0 35px;
+}
+
+.previousBtnBox {
+  display: flex;
+  gap: 1rem;
+}
+
+.previousBtnBox button {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  border-radius: 20px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  font-family: DM Sans;
+  font-size: 18px;
+  font-weight: 700;
+  height: 41.299px;
+  justify-content: center;
+  text-align: center;
+  width: 115.874px;
+  border: none;
+}
+
+.previousBtn {
+
+  background: #7eff73;
+
+}
+.nextBtn{
+  background: #73abff;
+}
+
+.postBtnBox button {
+  align-items: center;
+  background: #ff7373;
+  border-radius: 20px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  font-family: DM Sans;
+  font-size: 18px;
+  font-weight: 700;
+  height: 41.299px;
+  justify-content: center;
+  text-align: center;
+  width: 115.874px;
+  border: none;
+}

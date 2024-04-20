@@ -7,6 +7,8 @@ import Image3 from '../../assets/download.jpeg'
 import Image4 from '../../assets/download (2).jpeg'
 import styles from './Home.module.css'
 import FoodCompo from "../../components/food/FoodCompo";
+import Layout from "../../components/layout/Layout";
+import BookMark from "../bookmarks/BookMark";
 function Home() {
   const categories = [
     { name: "all", image:Image },
@@ -19,6 +21,9 @@ function Home() {
   return (
     <div>
       <Navbar />
+      {/* <Layout>
+        <BookMark/>
+      </Layout> */}
       <div className={styles.categoryCard}>
         {categories.map((category, index) => (
           <CategoryCard

@@ -13,7 +13,7 @@ const registerUser = async (req, res) => {
                 success: false
             });
         }
-        console.log(req);
+        // console.log(req);
         const isExistingUser = await User.findOne({ username: username });
         if (isExistingUser) {
             return res

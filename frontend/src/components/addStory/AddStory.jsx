@@ -57,7 +57,7 @@ function AddStory({ closeModal }) {
                         <div className={styles.input}>
                             <label>Category:</label>
                             <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                                <option value="">Select category</option>
+                                <option value="" disabled >Select category</option>
                                 {categories.map((cat) => (
                                     <option key={cat} value={cat}>
                                         {cat}
@@ -68,7 +68,16 @@ function AddStory({ closeModal }) {
 
                         {/* <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required /> */}
 
-                        <button type="submit">Register</button>
+                        
+                    </div>
+                    <div className={styles.postSlideBtn}>
+                        <div className={styles.previousBtnBox}>
+                            <button className={styles.previousBtn}>Previous</button>
+                            <button className={styles.nextBtn}>Next</button>
+                        </div>
+                        <div className={styles.postBtnBox}>
+                            <button>Post</button>
+                        </div>
                     </div>
                 </div>
             </div>
