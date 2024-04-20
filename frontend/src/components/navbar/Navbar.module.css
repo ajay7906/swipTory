@@ -1,5 +1,5 @@
 .main {
-   
+
     height: 7.3rem;
     box-shadow: 0 4px 15px 0 #ffffff;
     margin: 0 auto;
@@ -7,7 +7,7 @@
     align-items: center;
     box-shadow: 0px 4px 15px 0px #00000026;
     background: #FFFFFF;
-    
+
     /* position: relative; */
 }
 
@@ -29,13 +29,15 @@
     font-size: 3rem;
     font-weight: 700;
 }
-.register{
+
+.register {
     display: flex;
-    gap: 15px ;
+    gap: 15px;
     padding-right: 10px;
 
 }
-.register button{
+
+.register button {
     align-items: center;
     background: #ff7373;
     border-radius: 2rem;
@@ -50,11 +52,142 @@
     width: 13.6rem;
     border: none;
 }
-.signin{
+
+.signin {
     background: #73ABFF !important;
-    
+
 
 }
-.registerModel{
-   
+
+.registerModel {}
+
+.bookmarksLink {
+    align-items: center;
+    background: #ff7373;
+    border-radius: 2rem;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: 700;
+    height: 4.5rem;
+    justify-content: center;
+    text-align: center;
+    width: 13.6rem;
+    margin-right: 1rem;
+}
+
+.profileImg {
+    margin-left: 1rem;
+
+
+}
+
+.profileImg img {
+    width: 4.2rem;
+}
+
+.barImgs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 1rem;
+}
+
+.barImgs img {
+    cursor: pointer;
+    /* margin-left: 4rem; */
+    margin-right: 2rem;
+    width: 2.6rem;
+}
+
+/* Navbar.module.css */
+.profileModal {
+    height: 170px;
+    padding: 2rem;
+    top: 6.8rem;
+    width: 251px;
+    align-items: center;
+    background-color: #fff;
+    box-shadow: 0 4px 4px #00000040;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    right: 0;
+    z-index: 1;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.profileContent {
+    text-align: center;
+}
+
+.profileContent h3 {
+    margin-bottom: 10px;
+}
+
+.profileContent button {
+    align-items: center;
+    background: #ff7373;
+    border-radius: 2rem;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    font-size: 1.8rem;
+    font-weight: 700;
+    height: 45px;
+    justify-content: center;
+    width: 136px;
+    border: none;
+}
+
+.mobileResponsiveContainer {
+    position: absolute;
+    top: 18rem;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+
+}
+
+.mobileResponsive {
+    position: absolute;
+    margin-top: 10rem;
+    top: 50%;
+    left: 50%;
+    height: 421px;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    align-items: center;
+    background-color: #fff;
+    box-shadow: 0 4px 4px #00000040;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    right: 0;
+    z-index: 1;
+}
+.mobileResponsive img{
+    position: absolute;
+    right: 9%;
+    top: 6%;
+    cursor: pointer;
+}
+.mobileResponsive .profileImg img{
+    position: absolute;
+    left: 30%;
+    top: 6%;
+}
+.responsiveNavLink{
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
 }

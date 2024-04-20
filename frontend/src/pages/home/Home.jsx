@@ -20,7 +20,7 @@ function Home() {
   ];
   return (
     <div>
-      <Navbar />
+      {/* <Navbar /> */}
       {/* <Layout>
         <BookMark/>
       </Layout> */}

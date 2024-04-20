@@ -5,6 +5,7 @@ import BookMark from "./pages/bookmarks/BookMark"
 import Layout from "./components/layout/Layout"
 import {ToastContainer} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
+import YourStory from "./pages/yourstory/YourStory"
 function App() {
   return (
     <div>
@@ -18,7 +19,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/bookmarks" element={<BookMark />} />
-
+            <Route path="/your_story" element={<YourStory/>}/>
           </Routes>
         </Layout>
       </BrowserRouter>
