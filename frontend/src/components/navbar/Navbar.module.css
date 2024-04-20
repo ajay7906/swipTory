@@ -1,0 +1,60 @@
+.main {
+   
+    height: 7.3rem;
+    box-shadow: 0 4px 15px 0 #ffffff;
+    margin: 0 auto;
+    display: grid;
+    align-items: center;
+    box-shadow: 0px 4px 15px 0px #00000026;
+    background: #FFFFFF;
+    
+    /* position: relative; */
+}
+
+.nav {
+    padding-left: 4.9rem;
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+}
+
+.swiptory {
+    cursor: pointer;
+
+    color: #000000;
+}
+
+.swiptory h2 {
+    font-size: 3rem;
+    font-weight: 700;
+}
+.register{
+    display: flex;
+    gap: 15px ;
+    padding-right: 10px;
+
+}
+.register button{
+    align-items: center;
+    background: #ff7373;
+    border-radius: 2rem;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    font-size: 1.8rem;
+    font-weight: 700;
+    height: 4.5rem;
+    justify-content: center;
+    line-height: 4.5rem;
+    width: 13.6rem;
+    border: none;
+}
+.signin{
+    background: #73ABFF !important;
+    
+
+}
+.registerModel{
+   
+}

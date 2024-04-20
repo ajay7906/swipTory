@@ -1,0 +1,40 @@
+.styleImg{
+   
+    
+    overflow: hidden;
+  
+    width: calc(22vw - 1.6rem);
+  
+}
+.container{
+    cursor: pointer;
+    position: relative;
+   
+}
+.main{
+    background-size: cover;
+    border-radius: .8rem;
+    height: 45rem;
+    width: 100%;
+    
+}
+.storyInfo{
+    text-wrap: wrap;
+    color: #ffffff;
+    font-size: 2rem;
+    text-align: left;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding: 0 2rem;
+    position: absolute;
+    top: 78%;
+   
+}
+.storyInfo p{
+    
+    margin: 0 auto; /* Center the paragraph horizontally */
+    font-size: 1rem;
+    max-width: 100%; /* Set maximum width to prevent overflow */
+   
+   
+}

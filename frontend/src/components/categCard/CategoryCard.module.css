@@ -1,0 +1,40 @@
+/* .main{
+    display: grid;
+    grid-template-rows: repeat(6 1fr);
+    justify-content: space-evenly;
+    gap: 50px;
+}*/
+.imageCard {
+    background-size: cover;
+    border-radius: 1.5rem;
+    display: block;
+   
+    position: relative;
+    cursor: pointer;
+    max-width: 23.5rem;
+    overflow: hidden;
+    width: 25%;
+
+}
+.image{
+    height: 13vw;
+    width: 100%;
+    filter: brightness(60%);
+}
+
+.imageCard h3 {
+
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 39.06px;
+    text-align: center;
+    color: #ffffff;
+   
+    left: 50%;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    white-space: wrap;
+
+}
