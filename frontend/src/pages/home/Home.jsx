@@ -9,15 +9,49 @@ import styles from './Home.module.css'
 import FoodCompo from "../../components/food/FoodCompo";
 import Layout from "../../components/layout/Layout";
 import BookMark from "../bookmarks/BookMark";
+// import { useApi } from "../../api/post";
+import { useEffect, useState } from "react";
+import { getAllPost } from "../../api/post";
 function Home() {
+  const [category, setCategory] = useState("");
+  const [sendData, setSendData] = useState("");
+  // const { postData, loading, fetchPosts } = useApi();
   const categories = [
-    { name: "all", image:Image },
+    { name: "all", image: Image },
     { name: "education", image: Image1 },
-    { name: "sports", image:Image2 },
+    { name: "sports", image: Image2 },
     { name: "food", image: Image },
     { name: "movies", image: Image3 },
     { name: "travel", image: Image4 }
   ];
+  
+  const fetchAllJobs = async () => {
+    try {
+      const result = await getAllPost({ category });
+      
+      console.log("Fetched data for category:", category);
+      setSendData(result.data)
+       
+      console.log("Result:", result.data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+
+  };
+
+  useEffect(() => {
+    fetchAllJobs();
+    
+  }, [category]);
+  const handleCategorySelect = (categoryName) => {
+    setCategory(categoryName === "all" ? "" : categoryName);
+    console.log(categoryName);
+    console.log(category);
+
+
+  };
+ 
+  console.log(sendData);
   return (
     <div>
       {/* <Navbar /> */}
@@ -25,15 +59,18 @@ function Home() {
         <BookMark/>
       </Layout> */}
       <div className={styles.categoryCard}>
-        {categories.map((category, index) => (
-          <CategoryCard
-            key={index}
-            categoryName={category.name}
-            categoryImage={category.image}
-          />
+        {categories.map((categoryItem, index) => (
+          <div className={styles.allCategoryCard} key={index} onClick={() => handleCategorySelect(categoryItem.name)}>
+            <CategoryCard
+
+              categoryName={categoryItem.name}
+              categoryImage={categoryItem.image}
+
+            />
+          </div>
         ))}
       </div>
-      <FoodCompo/>
+      <FoodCompo sendData={sendData} category={category}/>
     </div>
   )
 }

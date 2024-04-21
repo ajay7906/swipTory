@@ -226,3 +226,8 @@
   width: 115.874px;
   border: none;
 }
+
+
+.input .description.input{
+  height:10rem;
+}

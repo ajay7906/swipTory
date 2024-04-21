@@ -7,41 +7,124 @@ const Story = require('../model/storyModel');
 
 //const Story = require('../models/Story');
 
+// const createStory = async (req, res, next) => {
+//   try {
+//     const { userId } = req;
+//     const {
+//       postedBy,
+//       stories,
+//       category,
+//       slide
+//       // likes,
+//       // bookmarkedBy,
+//       // shareLink
+//     } = req.body;
+
+
+//     // console.log(req);
+//     if (!userId ) {
+//       return res.status(400).json({
+//         errorMessage: "Bad request. userId s."
+//       });
+//     }
+//     const filteredSlides = jsonData.slide.filter(slide => slide.stories.length > 3);
+//     console.log(filteredSlides);
+//     if ( filteredSlides) {
+//       return res.status(400).json({
+//         errorMessage: "Bad request. story."
+//       });
+//     }
+    
+//     if (!filteredSlides) {
+//       return res.status(400).json({
+//         errorMessage: "Bad request.length ."
+//       });
+//     }
+//     let newCategory ;
+//     const existingStoryCategory = await Story.findOne({ category });
+//     if (!existingStoryCategory) {
+//        newCategory =  category;
+      
+//     }
+//     const newStory = new Story({
+//       postedBy: userId,
+//       stories,
+     
+     
+//       // likes,
+//       // bookmarkedBy,
+//       // shareLink
+//     });
+
+//     await newStory.save();
+//     res.status(201).json({ message: "Story created successfully", data: newStory });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 const createStory = async (req, res, next) => {
   try {
-    const { userId } = req;
-    const {
-      postedBy,
-      stories,
-      // likes,
-      // bookmarkedBy,
-      // shareLink
-    } = req.body;
+      const { userId } = req;
+      const { slide } = req.body;
 
+      // Validate userId
+      if (!userId) {
+          return res.status(400).json({
+              errorMessage: "Bad request. userId is required."
+          });
+      }
 
-    // console.log(req);
-    if (!userId || !stories || stories.length < 3) {
-      return res.status(400).json({
-        errorMessage: "Bad request. Ensure postedBy is provided and stories is an array with at least 3 elements."
+      // Validate slide structure
+      if (!slide || !Array.isArray(slide) || slide.length === 0) {
+          return res.status(400).json({
+              errorMessage: "Bad request. Slide array is required and should contain at least one object."
+          });
+      }
+
+      // Validate each slide item
+      for (const slideItem of slide) {
+          if (!slideItem.stories || !Array.isArray(slideItem.stories) || slideItem.stories.length < 3) {
+              return res.status(400).json({
+                  errorMessage: "Bad request. Each slide item should have a 'stories' array containing at least one story."
+              });
+          }
+      }
+
+      // Create a new story
+      const newStory = new Story({
+          postedBy: userId,
+          // category,
+          slide
       });
-    }
 
-    const newStory = new Story({
-      postedBy: userId,
-      stories
-      // likes,
-      // bookmarkedBy,
-      // shareLink
-    });
+      // Save the new story to the database
+      await newStory.save();
 
-    await newStory.save();
-    res.status(201).json({ message: "Story created successfully", data: newStory });
+      // Send success response
+      res.status(201).json({ message: "Story created successfully", data: newStory });
   } catch (error) {
-    next(error);
+      // Handle errors
+      next(error);
   }
 };
 
 
+// const getStoriesByCategory = async (req, res, next) => {
+//   try {
+//     const { category } = req.query;
+//     const regexCategory = category || ""; // Ensure category is a string or set to an empty string if not provided
+
+//     const postList = await Story.find(
+//       { category: { $regex: regexCategory, $options: "i" } },
+//       { _id: 1 }
+//     );
+
+//     res.json({ data: postList });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
 
 
 const getStoriesByCategory = async (req, res, next) => {
@@ -50,7 +133,7 @@ const getStoriesByCategory = async (req, res, next) => {
 
     let stories;
     if (category) {
-      stories = await Story.find({ 'stories.category': category });
+      stories = await Story.find({ 'slide.stories.category': category });
     } else {
       stories = await Story.find();
     }

@@ -11,5 +11,8 @@
  
     white-space: nowrap;
     justify-content: space-around;
-    padding: 3.3rem 3.5rem 0 4.3rem;
+    padding: 3.3rem 3.9rem 0 4.3rem;
+}
+.allCategoryCard{
+  width: 15vw;
 }

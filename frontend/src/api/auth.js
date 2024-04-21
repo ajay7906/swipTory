@@ -1,6 +1,7 @@
 
 import axios from 'axios'
 import { showToast } from '../utils/showToast';
+
 export async function registerUser({username, password}) {
     try {
       const response = await axios.post('http://localhost:3000/api/v1/user/register', {

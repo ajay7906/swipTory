@@ -13,11 +13,11 @@
     cursor: pointer;
     max-width: 23.5rem;
     overflow: hidden;
-    width: 25%;
+    width: 100%;
 
 }
 .image{
-    height: 13vw;
+    height: 13.5vw;
     width: 100%;
     filter: brightness(60%);
 }

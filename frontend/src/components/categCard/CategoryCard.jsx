@@ -1,6 +1,7 @@
 import styles from './CategoryCard.module.css'
 
-function CategoryCard({ categoryName, categoryImage }) {
+function CategoryCard({ categoryName, categoryImage , handleCategorySelect}) {
+    // handleCategorySelect(categoryName)
     return (
         // <div className={styles.main}>
             
