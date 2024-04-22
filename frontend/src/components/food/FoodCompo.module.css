@@ -3,6 +3,7 @@
     margin-right: 1rem;
     margin-left: 1rem;
     text-align: center;
+   
 }
 .htag h2{
     font-size: 3rem;
@@ -15,7 +16,7 @@
 .main{
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    place-items: center;
+    /* place-items: center; */
    
   
    

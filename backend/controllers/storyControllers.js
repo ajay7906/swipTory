@@ -34,7 +34,7 @@ const Story = require('../model/storyModel');
 //         errorMessage: "Bad request. story."
 //       });
 //     }
-    
+
 //     if (!filteredSlides) {
 //       return res.status(400).json({
 //         errorMessage: "Bad request.length ."
@@ -44,13 +44,13 @@ const Story = require('../model/storyModel');
 //     const existingStoryCategory = await Story.findOne({ category });
 //     if (!existingStoryCategory) {
 //        newCategory =  category;
-      
+
 //     }
 //     const newStory = new Story({
 //       postedBy: userId,
 //       stories,
-     
-     
+
+
 //       // likes,
 //       // bookmarkedBy,
 //       // shareLink
@@ -65,47 +65,41 @@ const Story = require('../model/storyModel');
 
 const createStory = async (req, res, next) => {
   try {
-      const { userId } = req;
-      const { slide } = req.body;
+    const { userId } = req;
+    const { stories } = req.body;
 
-      // Validate userId
-      if (!userId) {
-          return res.status(400).json({
-              errorMessage: "Bad request. userId is required."
-          });
-      }
-
-      // Validate slide structure
-      if (!slide || !Array.isArray(slide) || slide.length === 0) {
-          return res.status(400).json({
-              errorMessage: "Bad request. Slide array is required and should contain at least one object."
-          });
-      }
-
-      // Validate each slide item
-      for (const slideItem of slide) {
-          if (!slideItem.stories || !Array.isArray(slideItem.stories) || slideItem.stories.length < 3) {
-              return res.status(400).json({
-                  errorMessage: "Bad request. Each slide item should have a 'stories' array containing at least one story."
-              });
-          }
-      }
-
-      // Create a new story
-      const newStory = new Story({
-          postedBy: userId,
-          // category,
-          slide
+    // Validate userId
+    if (!userId) {
+      return res.status(400).json({
+        errorMessage: "Bad request. userId is required."
       });
+    }
+    console.log(stories);
+    // Validate slide structure
+    if (!Array.isArray(stories) || stories.length < 3) {
+      return res.status(400).json({
+        success: false,
+        message: 'At least three stories are required'
+      });
+    }
 
-      // Save the new story to the database
-      await newStory.save();
+    // Validate each slide item
 
-      // Send success response
-      res.status(201).json({ message: "Story created successfully", data: newStory });
+
+    // Create a new story
+    const newStory = new Story({
+      postedBy: userId,
+      stories,
+    });
+
+    // Save the new story to the database
+    await newStory.save();
+
+    // Send success response
+    res.status(201).json({ message: "Story created successfully", data: newStory });
   } catch (error) {
-      // Handle errors
-      next(error);
+    // Handle errors
+    next(error);
   }
 };
 
@@ -132,10 +126,28 @@ const getStoriesByCategory = async (req, res, next) => {
     const { category } = req.query;
 
     let stories;
+    let extractedStories;
     if (category) {
-      stories = await Story.find({ 'slide.stories.category': category });
+      stories = await Story.find({ 'stories.category': category });
     } else {
       stories = await Story.find();
+      let categoryMap = ['education', 'sports', 'food', 'movies', 'travel'];
+      extractedStories = stories.map(entry => entry.stories);
+
+      // Iterate through each category in the category map
+      // categoryMap.forEach(cat => {
+      //   // Filter stories based on the current category
+      //   const filteredStories = stories.filter(story => story.stories.some(storyItem => storyItem.category === cat));
+
+      //   // Add filtered stories to the categorized stories object
+      //   categorizedStories[cat] = filteredStories.map(story => {
+      //     return {
+           
+      //       stories: story.stories.filter(storyItem => storyItem.category === cat)
+      //     };
+      //   });
+      // });
+  
     }
 
     res.status(200).json({ success: true, data: stories });
@@ -143,6 +155,40 @@ const getStoriesByCategory = async (req, res, next) => {
     next(error);
   }
 };
+// const getStoriesByCategory = async (req, res, next) => {
+//   try {
+//     const { category } = req.query;
+
+//     let stories;
+//     let groupedStories = {};
+//     if (category) {
+//       stories = await Story.find({ 'stories.category': category });
+//     } else {
+//       const allStories = await Story.find();
+
+//       // Group stories by category using reduce
+//       // const storiesByCategory = allStories.reduce((acc, item) => {
+//       //   item.stories.forEach(story => {
+//       //     const category = story.category;
+//       //     if (!acc[category]) {
+//       //       acc[category] = [];
+//       //     }
+//       //     if (!acc[category].some(existingStory => existingStory.postId === story.postId)) {
+//       //       acc[category].push(story);
+//       //     }
+//       //   });
+//       //   return acc;
+//       // }, {});
+
+//       // stories = storiesByCategory;
+
+
+//     res.status(200).json({ success: true, data: allStories });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 
 
 // Get story by ID

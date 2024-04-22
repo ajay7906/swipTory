@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { showToast } from '../utils/showToast';
 
 const backendUrl = 'http://localhost:3000/api/v1/post';
 
@@ -14,6 +15,27 @@ export const getAllPost = async (filter) => {
         // toast something went wrong please try after sometime
     }
 };
+
+
+export const createPost = async (storiesData) => {
+    try {
+        const reqUrl = `${backendUrl}/createpost`;
+        const token = localStorage.getItem("token");
+        const postPayload = { stories: storiesData };
+        console.log(postPayload);
+        axios.defaults.headers.common["Authorization"] = token;
+        const response = await axios.post(reqUrl, postPayload);
+        console.log(response.data);
+        return response.data;
+
+
+    } catch (error) {
+        showToast(error.response.data.errorMessage, { type: 'error' });
+
+
+
+    }
+}
 
 
 // import React, { createContext, useContext, useEffect, useState } from 'react';

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styles from './AddStory.module.css'
-
+import { createPost } from "../../api/post";
+import { showToast } from "../../utils/showToast";
 function AddStory({ closeModal }) {
     // State variables
     //const [showModal, setShowModal] = useState(false);
@@ -8,6 +9,7 @@ function AddStory({ closeModal }) {
     // const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [category, setCategory] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
     const categories = ['food', 'health and fitness', 'travel', 'movies', 'education'];
     const [currentSlide, setCurrentSlide] = useState(0);
     const [slideStoryInfo, setSlideStoryInfo] = useState([
@@ -40,7 +42,7 @@ function AddStory({ closeModal }) {
                     heading: "",
                     description: "",
                     image: "",
-                    chooseCategory: ""
+                    chooseCategory: selectedCategory
                 }
             ]);
             setCurrentSlide(slideStoryInfo.length);
@@ -87,22 +89,37 @@ function AddStory({ closeModal }) {
     // const closeModal = () => {
     //   setShowModal(false);
     // };
-
+    // Inside the setSelectedCategory function
+const setSelectedCategoryFunction = (category) => {
+    setSelectedCategory(category);
+    // Update the category for all slides
+    const updatedSlideStoryInfo = slideStoryInfo.map(slide => ({
+        ...slide,
+        chooseCategory: category
+    }));
+    setSlideStoryInfo(updatedSlideStoryInfo);
+};
     // Function to handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // Check if all slide fields are filled
-        const isSlideInfoComplete = slideStoryInfo.every(slide =>
+        const isSlideInfoComplete = slideStoryInfo.every((slide, index) =>
             slide.heading && slide.description && slide.image && slide.chooseCategory
         );
+        // const isSlideInfoCompletes = slideStoryInfo.every(slide =>
+
+        //     console.log(slide.chooseCategory)
+
+        // );
+      
         if (!isSlideInfoComplete) {
             alert("Please fill in all fields for all slides.");
             return;
         }
         // Process form data (e.g., send it to the server)
-        console.log(slideStoryInfo);
-        
-       
+       await createPost(slideStoryInfo)
+       showToast('post register successful', { type: 'success' });
+
         // Close the modal after form submission
         closeModal();
     };
@@ -160,12 +177,19 @@ function AddStory({ closeModal }) {
                         <div className={styles.input}>
                             <label>Category:</label>
                             <select
-                                value={slideStoryInfo[currentSlide].chooseCategory}
+                                // value={slideStoryInfo[currentSlide].chooseCategory}
+                                // onChange={(e) => {
+                                //     const newSlideStoryInfo = [...slideStoryInfo];
+                                //     newSlideStoryInfo[currentSlide].chooseCategory = e.target.value;
+                                //     setSlideStoryInfo(newSlideStoryInfo);
+                                // }}
                                 onChange={(e) => {
-                                    const newSlideStoryInfo = [...slideStoryInfo];
-                                    newSlideStoryInfo[currentSlide].chooseCategory = e.target.value;
-                                    setSlideStoryInfo(newSlideStoryInfo);
+                                    const category = e.target.value;
+                                    setSelectedCategoryFunction(category); // This updates selectedCategory state
+                                    // Note: The setSelectedCategory function will also update chooseCategory for all slides
                                 }}
+                                // value={selectedCategory}
+                                // onChange={(e) => setSelectedCategory(e.target.value)}
                             >
                                 <option value="" disabled >Select category</option>
                                 {categories.map((cat) => (
