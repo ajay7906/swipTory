@@ -128,7 +128,8 @@ const getStoriesByCategory = async (req, res, next) => {
     let stories;
     let extractedStories;
     if (category) {
-      stories = await Story.find({ 'stories.category': category });
+      console.log(category);
+      stories = await Story.find({ 'stories.chooseCategory': category });
     } else {
       stories = await Story.find();
       let categoryMap = ['education', 'sports', 'food', 'movies', 'travel'];
@@ -203,7 +204,7 @@ const getStoryById = async (req, res, next) => {
       return res.status(404).json({ success: false, error: 'Story not found' });
     }
 
-    res.status(200).json({ success: true, data: story });
+    res.status(200).json({ success: true, data: story.stories });
   } catch (error) {
     next(error);
   }

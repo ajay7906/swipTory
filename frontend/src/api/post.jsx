@@ -36,7 +36,19 @@ export const createPost = async (storiesData) => {
 
     }
 }
+export const getPostById = async (postId)=>{
+   
+    try {
+        const reqUrl = `${backendUrl}/post-details/${postId}`;
+        // Construct the request URL without the skills query parameter
+        const response = await axios?.get(reqUrl);
+        return response?.data;
 
+    } catch (error) {
+        console.log(error);
+        // toast something went wrong please try after sometime
+    }
+}
 
 // import React, { createContext, useContext, useEffect, useState } from 'react';
 // import axios from 'axios';

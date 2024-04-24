@@ -100,33 +100,100 @@
 // export default FoodCompo;
 
 
+import { getPostById } from "../../api/post";
 import CommanCard from "../commoncard/CommanCard";
+import StoryStatus from "../status/StoryStatus";
 import styles from './FoodCompo.module.css';
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-function FoodCompo({ sendData, category }) {
+function FoodCompo({ sendData, allData }) {
+    const [showStoryModal, setShowStoryModal] = useState(false)
+    const [filteredData, setFilteredData] = useState([])
+    const [postId, setPostId] = useState();
+    // const [imageData, setImageData] = useState()
+    let displayData = sendData;
+
     if (!Array.isArray(sendData)) {
         return null; // Return null if sendData is not an array
     }
-
+    console.log(allData)
+    console.log(allData === "all");
     let categoryMap = ['education', 'sports', 'food', 'movies', 'travel'];
+    console.log(displayData);
+    const openStoryModal = (postId) => {
+        setPostId(postId)
+        setShowStoryModal(true);
+        
+    };
+    const closeStoryModal  = ()=>{
+        setShowStoryModal(false)
+    }
+    // const fetchJobDetails = async () => {
+    //     if (!postId) return console.log('nothing');
+    //     try {
+    //       const result = await getPostById(postId);
+    //       setImageData(result?.data)
+    //       console.log(result.data);
+    
+    //     } catch (error) {
+    //       console.log(error);
+    
+    //     }
+    
+    //   };
+    //   useEffect(() => {
+    //     fetchJobDetails();
+    //   }, [postId]);
 
+    //   useEffect(() => {
+    //     if (allData === "all") {
+    //         setFilteredData(sendData);
+    //     } else {
+    //         setFilteredData(sendData.filter(categoryData => categoryData.chooseCategory === allData));
+    //     }
+    // }, [allData, sendData]);
     return (
         <div className={styles.data}>
-            {categoryMap.map((categoryName, index) => (
-                <div key={index}>
-                    <div className={styles.htag}><h2>Top Stories About {categoryName}</h2></div>
-                    <div className={styles.main}>
-                        {sendData
-                            .filter(categoryData => categoryData.chooseCategory === categoryName)
-                            .map((filteredData, index) => (
-                                <div key={index}>
-                                    <CommanCard />
-                                </div>
-                            ))}
-                    </div>
-                </div>
-            ))}
+            {
+                allData === "all" ?
+                    <> {categoryMap.map((categoryName, index) => (
+                        <div key={index}>
+                            <div className={styles.htag}><h2>Top Stories About {categoryName}</h2></div>
+                            <div className={styles.main}>
+                                {sendData
+                                    .filter(categoryData => categoryData.chooseCategory === categoryName)
+                                    .map((filteredData, index) => (
+                                       
+                                        <div key={index} onClick={()=>openStoryModal(filteredData._id)}>
+                                         {console.log(filteredData._id)}
+
+                                            <CommanCard filteredData={filteredData} />
+
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+                    ))}</>
+                    :
+                    <>
+                        <div >
+                            <div className={styles.htag}><h2>Top Stories About {allData}</h2></div>
+                            <div className={styles.main}>
+                                {sendData
+
+                                    .map((filteredData, index) => (
+                                        <div key={index} onClick={openStoryModal} >
+                                            {console.log(filteredData._id)}
+                                            <CommanCard filteredData={filteredData} />
+                                        </div>
+                                    ))}
+                            </div>
+                        </div>
+                    </>
+            }
+            <div>
+                {showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}
+            </div>
         </div>
     );
 }
