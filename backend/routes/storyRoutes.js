@@ -11,6 +11,7 @@ router.put("/update-post/:postId", verifyToken, postControllers.updateStoryById)
 router.put("/post-details/:postId/like", verifyToken, postControllers.likePost);
 router.put("/post-details/:postId/unlike", verifyToken, postControllers.unlikePost);
 router.put("/post-details/:postId/bookmark", verifyToken, postControllers.bookmarkPost);
+router.get("/post-details/:postId/bookMarkTrack", verifyToken, postControllers.TrackbookmarkPost);
 router.put("/post-details/:postId/unbookmark", verifyToken, postControllers.unbookmarkPost);
 router.put("/post-details/view-story/:postId", verifyToken, postControllers.sharePost);
 module.exports = router;

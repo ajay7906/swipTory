@@ -50,6 +50,93 @@ export const getPostById = async (postId)=>{
     }
 }
 
+
+
+export const likePost = async (postId) => {
+    try {
+        const reqUrl = `${backendUrl}/post-details/${postId}/like`;
+        const token = localStorage.getItem("token");
+        
+        axios.defaults.headers.common["Authorization"] = token;
+        const response = await axios.post(reqUrl);
+        console.log(response.data);
+        return response.data;
+
+
+    } catch (error) {
+        showToast(error.response.data.errorMessage, { type: 'error' });
+
+
+
+    }
+}
+
+
+
+//api calling for book  the all  stories
+
+export const bookMarkPost = async (postId) => {
+    try {
+        const reqUrl = `${backendUrl}/post-details/${postId}/bookmark`;
+        const token = localStorage.getItem("token");
+        
+        axios.defaults.headers.common["Authorization"] = token;
+        const response = await axios.put(reqUrl);
+        console.log(response.data);
+        return response.data;
+
+
+    } catch (error) {
+        showToast(error.response.data.errorMessage, { type: 'error' });
+
+
+
+    }
+}
+
+
+//api calling for book  the all  stories
+
+export const unbookMarkPost = async (postId) => {
+    try {
+        const reqUrl = `${backendUrl}/post-details/${postId}/unbookmark`;
+        const token = localStorage.getItem("token");
+        
+        axios.defaults.headers.common["Authorization"] = token;
+        const response = await axios.put(reqUrl);
+        console.log(response.data);
+        return response.data;
+
+
+    } catch (error) {
+        showToast(error.response.data.errorMessage, { type: 'error' });
+
+
+
+    }
+}
+
+//track bookmark
+
+export const trackbookMarkPost = async (postId) => {
+    try {
+        const reqUrl = `${backendUrl}/post-details/${postId}/bookMarkTrack`;
+        const token = localStorage.getItem("token");
+        
+        axios.defaults.headers.common["Authorization"] = token;
+        const response = await axios.get(reqUrl);
+        console.log(response.data);
+        return response.data;
+
+
+    } catch (error) {
+        showToast(error.response.data.errorMessage, { type: 'error' });
+
+
+
+    }
+}
+
 // import React, { createContext, useContext, useEffect, useState } from 'react';
 // import axios from 'axios';
 

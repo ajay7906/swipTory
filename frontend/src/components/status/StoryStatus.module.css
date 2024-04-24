@@ -121,6 +121,9 @@
     align-items: center;
     width: 100%;
     z-index: 1;
+    .save-icon {
+        filter: hue-rotate(210deg); /* Adjust the degree to change the hue */
+    }
 }
 .like{
     margin-right: -1rem;

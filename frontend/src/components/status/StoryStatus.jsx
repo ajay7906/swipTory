@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import styles from './StoryStatus.module.css'
-import { createPost, getPostById } from "../../api/post";
+import { bookMarkPost, createPost, getPostById, likePost, trackbookMarkPost, unbookMarkPost } from "../../api/post";
 import { showToast } from "../../utils/showToast";
 import LeftMove from '../../assets/left.png'
 import RighttMove from '../../assets/right.png'
 import Remove from '../../assets/Crosss.png'
 import Share from '../../assets/share.png'
 import Save from '../../assets/save.png'
+import BlueSave from '../../assets/save1.png'
 import Like from '../../assets/like.png'
 
 import { RotatingLines } from 'react-loader-spinner'
@@ -16,7 +17,68 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   const [timerActive, setTimerActive] = useState(true);
   const [imageData, setImageData] = useState()
   const [filled, setFilled] = useState(0);
+  const [likeBtn, setLikeBtn] = useState(false)
+  const [bookBtn, setBookBtn] = useState(false)
+  const [bookStory, setBookStory] = useState()
   const prevImageDataRef = useRef(null);
+
+  const likeStory =  async () =>{
+    if (!postId) return console.log('nothing');
+    
+    try {
+      const like = await likePost(postId)
+      
+     
+      
+      
+    } catch (error) {
+       console.log(error);
+    }
+  }
+  console.log(bookStory);
+  //trackBook 
+  const TrackbookMarkStory =  async () =>{
+    if (!postId) return ;
+    try {
+      const track = await trackbookMarkPost(postId)
+      if (track.success) {
+         setBookBtn(true)
+        
+      }
+      
+    } catch (error) {
+       console.log(error);
+    }
+  }
+
+  //bookmark  story
+  const bookMarkStory =  async () =>{
+    if (!postId) return ;
+    try {
+      const bookMarkPostData = await bookMarkPost(postId)
+      
+      
+    } catch (error) {
+       console.log(error);
+    }
+  }
+
+  //bookmark  story
+  const unbookMarkStory =  async () =>{
+    if (!postId) return ;
+    try {
+      const like = await unbookMarkPost(postId)
+      if (like.success) {
+         setBookBtn(false)
+        
+      }
+      
+    } catch (error) {
+       console.log(error);
+    }
+  }
+
+
   const fetchJobDetails = async () => {
     if (!postId) return console.log('nothing');
     try {
@@ -32,6 +94,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   };
   useEffect(() => {
     fetchJobDetails();
+    TrackbookMarkStory()
   }, []);
 
 
@@ -114,8 +177,10 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
                 <p> {imageData[currentIndex].description}</p>
               </div>
               <div className={styles.save}>
-                <img src={Save} alt="Save" />
-                <img src={Like} className={styles.like} alt="Like" />
+                {
+                  bookBtn === true ? <><img onClick={unbookMarkStory} src={BlueSave} alt="Save" /></> : <> <img onClick={bookMarkStory} src={Save} alt="Save" /></>
+                }
+                <img src={Like}  className={styles.like} alt="Like" />
               </div>
               <div className={styles.likeCount}>5</div>
 

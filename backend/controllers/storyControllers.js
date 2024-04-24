@@ -354,7 +354,9 @@ const bookmarkPost = async (req, res, next) => {
     // Check if the user has already bookmarked the post
     const isBookmarked = story.bookmarkedBy.includes(userId);
     if (isBookmarked) {
-      return res.status(400).json({
+      return res.status(200).json({
+        success:true,
+        data:userId , 
         errorMessage: "Post is already bookmarked",
       });
     }
@@ -364,6 +366,57 @@ const bookmarkPost = async (req, res, next) => {
     await story.save();
 
     res.status(200).json({ success: true, message: "Post bookmarked successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//trackBook Mark 
+
+const TrackbookmarkPost = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.userId;
+
+    if (!postId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: post ID is missing",
+      });
+    }
+    if (!userId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: user ID is missing",
+      });
+    }
+
+    // Find the story by postId
+    const story = await Story.findById(postId);
+    if (!story) {
+      return res.status(404).json({
+        errorMessage: "Story not found",
+      });
+    }
+
+    // Check if the user has already bookmarked the post
+    const isBookmarked = story.bookmarkedBy.includes(userId);
+    if (isBookmarked) {
+      return res.status(200).json({
+        success:true,
+        data:userId , 
+        errorMessage: "Post is already bookmarked",
+      });
+    }
+    else{
+      return res.status(400).json({
+        success:true,
+        data:userId , 
+        errorMessage: "Post is not bookmarked",
+      });
+
+    }
+   
+
+   
   } catch (error) {
     next(error);
   }
@@ -441,5 +494,5 @@ const sharePost = async (req, res, next) => {
 module.exports = {
   createStory, getStoriesByCategory, getStoryById
   , getUserStories, updateStoryById, likePost, unlikePost
-  , bookmarkPost, unbookmarkPost, sharePost
+  , bookmarkPost, unbookmarkPost, sharePost , TrackbookmarkPost
 };
