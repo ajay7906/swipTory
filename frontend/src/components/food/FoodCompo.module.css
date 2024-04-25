@@ -1,26 +1,41 @@
-.data{
-    margin-top: 8rem; 
-    margin-right: 1rem;
-    margin-left: 1rem;
+.data {
+    margin-top: 8rem;
+
     text-align: center;
-   
+
+
+
 }
-.htag h2{
+
+.htag h2 {
     font-size: 3rem;
     font-weight: 700;
-    margin-bottom: 1.5rem;
-   
-   
+    margin-bottom: 3.5rem;
 
-} 
-.main{
+    margin-top: 2rem;
+
+
+}
+
+.main {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    /* place-items: center; */
-   
-  
-   
-  
-  
-} 
- 
+    padding-right: 3rem;
+    padding-left: 3rem;
+    gap: 4rem;
+
+}
+
+.storyNotFound {
+    font-family: DM Sans;
+    margin-top: 8rem;
+    margin-bottom: 9rem;
+    text-align: center;
+
+}
+.storyNotFound h3{
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 39.06px;
+    color: #8E8E8E;
+}

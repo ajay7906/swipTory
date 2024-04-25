@@ -3,7 +3,9 @@
     grid-template-columns: 1fr 1fr 1fr 1fr;
     justify-content: space-between;
     width: 100%;
-    
+    padding-right: 3rem;
+    padding-left: 3rem;
+    gap: 4rem;
   
 }
 
