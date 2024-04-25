@@ -13,6 +13,7 @@ import BookMark from "../bookmarks/BookMark";
 import { useEffect, useState } from "react";
 import { getAllPost } from "../../api/post";
 import Test from "./Test";
+import YourStory from "../../components/yourstory/YourStory";
 // import Test from "./Test";
 function Home() {
   const [category, setCategory] = useState("");
@@ -32,7 +33,7 @@ function Home() {
     { name: "travel", image: Image4 }
   ];
   
-  const fetchAllJobs = async () => {
+  const fetchAllPost = async () => {
     try {
       const result = await getAllPost({ category });
       
@@ -47,7 +48,7 @@ function Home() {
   };
 
   useEffect(() => {
-    fetchAllJobs();
+    fetchAllPost();
     
   }, [category]);
   useEffect(() => {
@@ -72,6 +73,7 @@ function Home() {
         <BookMark/>
       </Layout> */}
       <div className={styles.categoryCard}>
+       
         {categories.map((categoryItem, index) => (
           <div className={styles.allCategoryCard} key={index} onClick={() => handleCategorySelect(categoryItem.name)}>
             <CategoryCard
@@ -83,7 +85,11 @@ function Home() {
           </div>
         ))}
       </div>
+      <div>
+          <YourStory/>
+        </div>
       <FoodCompo sendData={sendData} allData={allData}/>
+      
       {/* <Test stories={stories} sendData={sendData}/> */}
     </div>
   )

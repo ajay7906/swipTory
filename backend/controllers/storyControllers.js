@@ -1,5 +1,6 @@
 // controllers/storyController.js
 const Story = require('../model/storyModel');
+const mongoose = require('mongoose')
 //const { body, validationResult } = require('express-validator');
 
 // Create a new story
@@ -213,16 +214,21 @@ const getStoryById = async (req, res, next) => {
 const getUserStories = async (req, res, next) => {
   try {
     const { userId } = req;
-
+   
     if (!userId) {
       return res.status(400).json({
         errorMessage: "Bad request. User ID is required."
       });
     }
-
+    
+   
     const userStories = await Story.find({ postedBy: userId });
+    if (!userStories || userStories.length === 0) {
+      res.status(400).json({ success: false, error: "stories not found" });
+      
+    }
 
-    res.status(200).json({ success: true, data: userStories });
+    res.status(200).json({ success: true, stories: userStories });
   } catch (error) {
     next(error);
   }

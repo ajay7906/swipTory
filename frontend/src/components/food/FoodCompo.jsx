@@ -165,7 +165,7 @@ function FoodCompo({ sendData, allData }) {
                                     .map((filteredData, index) => (
                                        
                                         <div key={index} onClick={()=>openStoryModal(filteredData._id)}>
-                                         {console.log(filteredData._id)}
+                                        
 
                                             <CommanCard filteredData={filteredData} />
 

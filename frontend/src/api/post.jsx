@@ -137,6 +137,28 @@ export const trackbookMarkPost = async (postId) => {
     }
 }
 
+//get all post of useer
+
+
+export const getAllUserPost = async (postId) => {
+    try {
+        const reqUrl = `${backendUrl}/mypost`;
+        const token = localStorage.getItem("token");
+        
+        axios.defaults.headers.common["Authorization"] = token;
+        const response = await axios.get(reqUrl);
+        console.log(response.data);
+        return response.data;
+
+
+    } catch (error) {
+        showToast(error.response.data.errorMessage, { type: 'error' });
+
+
+
+    }
+}
+
 // import React, { createContext, useContext, useEffect, useState } from 'react';
 // import axios from 'axios';
 

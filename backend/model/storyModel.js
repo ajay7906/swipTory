@@ -69,7 +69,7 @@ const { ObjectId } = mongoose.Schema.Types;
 
 const storySchema = new mongoose.Schema({
     postedBy: {
-        type: ObjectId,
+        type: String,
         ref: "users"
     },
 

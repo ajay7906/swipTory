@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const verifyToken = (req, res, next) => {
     try {
         const headerToken = req.headers["authorization"];
-        console.log(headerToken);
+        
         if (!headerToken) {
             return res.status(401).json({ message: "Unauthorized access" });
         }
