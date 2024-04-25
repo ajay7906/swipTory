@@ -7,7 +7,7 @@
 .categoryCard {
     display: flex;
     gap: 3.5rem;
-   
+    overflow-x: auto;
  
     white-space: nowrap;
     justify-content: space-around;
@@ -15,4 +15,17 @@
 }
 .allCategoryCard{
   width: 15vw;
+}
+
+/* media query */
+@media screen and (max-width: 780px) {
+  .categoryCard{
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+   
+  }
+  .allCategoryCard{
+    width: 180px;
+  }
+  
 }

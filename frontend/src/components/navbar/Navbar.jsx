@@ -5,6 +5,7 @@ import AddStory from '../addStory/AddStory';
 import BarImg from '../../assets/bar.png'
 import { Link } from 'react-router-dom';
 import CrossBtn from '../../assets/cross.png'
+import useMediaQuery from '../../utils/screenSize';
 
 function Navbar() {
   // State variables
@@ -14,6 +15,7 @@ function Navbar() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showAddStoryModal, setShowAddStoryModal] = useState(false);
   const [showResponsiveModal, setShowResponsiveModal] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 780px)');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -71,35 +73,48 @@ function Navbar() {
           <div className={styles.swiptory}>
             <h2>SwipTory</h2>
           </div>
-          <div className={styles.register}>
-            {showProfileModal && (
-              <div className={styles.profileModal}>
-                <div className={styles.profileContent}>
-                  <h3>User Name</h3>
-                  <button onClick={closeProfileModal}>Logout</button>
-                </div>
+          {/* desktop  navigation bar */}
+          {
+            !isMobile ? (
+              <div className={styles.register}>
+                {showProfileModal && (
+                  <div className={styles.profileModal}>
+                    <div className={styles.profileContent}>
+                      <h3>User Name</h3>
+                      <button onClick={closeProfileModal}>Logout</button>
+                    </div>
+                  </div>
+                )}
+                {isLoggedIn ? (
+                  <>
+                    <Link className={styles.bookmarksLink}>Bookmarks</Link>
+                    <button onClick={openshowAddStoryModalModal}>Add Story</button>
+                    <div className={styles.profileImg}>
+                      <img src="https://swiptory001.netlify.app/static/media/user.5eb483b86d841223e1b4.png" alt="" />
+
+                    </div>
+                    <div className={styles.barImgs}>
+                      <img src={BarImg} alt="bar" onClick={toggleProfileModal} />
+
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={openRegisterModal}>Register Now</button>
+                    <button className={styles.signin} onClick={openSignInModal}>Sign In</button>
+                  </>
+                )}
               </div>
-            )}
-            {isLoggedIn ? (
-              <>
-                <Link className={styles.bookmarksLink}>Bookmarks</Link>
-                <button onClick={openshowAddStoryModalModal}>Add Story</button>
-                <div className={styles.profileImg}>
-                  <img src="https://swiptory001.netlify.app/static/media/user.5eb483b86d841223e1b4.png" alt="" />
 
-                </div>
-                <div className={styles.barImgs}>
-                  <img src={BarImg} alt="bar" onClick={toggleProfileModal} />
+            )
 
+
+              : (
+                <div className={styles.barImgs} onClick={toggleResponsiveModal}>
+                  <img src={BarImg} alt="" />
                 </div>
-              </>
-            ) : (
-              <>
-                <button onClick={openRegisterModal}>Register Now</button>
-                <button className={styles.signin} onClick={openSignInModal}>Sign In</button>
-              </>
-            )}
-          </div>
+              )
+          }
           {/* <div className={styles.barImgs} onClick={toggleResponsiveModal}>
             <img src={BarImg} alt="" />
           </div> */}
@@ -108,11 +123,13 @@ function Navbar() {
 
       </div>
       {/* Mobile responsive modal */}
-      {/* {showResponsiveModal && (
+      {
+      
+      showResponsiveModal && isMobile ? (
         <div className={styles.mobileResponsiveContainer}>
           {isLoggedIn ? (
             <div className={styles.mobileResponsive}>
-              <img src={CrossBtn} alt="cross" onClick={toggleResponsiveModal}/>
+              <img src={CrossBtn} alt="cross" onClick={toggleResponsiveModal} />
               <div className={styles.profileImg}>
                 <img src="https://swiptory001.netlify.app/static/media/user.5eb483b86d841223e1b4.png" alt="" />
 
@@ -143,15 +160,17 @@ function Navbar() {
             </div>
           )}
         </div>
-      )}
+      ) :  <> </>
+      
+      }
 
- */}
+
 
       <div className={styles.registerModel}>
         {showRegisterModal && <Register closeModal={closeModal} modalName="Register" />}
         {showSignInModal && <Register closeModal={closeModal} modalName="Login" />}
-        {showAddStoryModal && <AddStory closeModal={closeModal}/>}
-        
+        {showAddStoryModal && <AddStory closeModal={closeModal} />}
+
       </div>
     </>
   )

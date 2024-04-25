@@ -2,15 +2,16 @@ import { useState } from "react";
 import styles from './AddStory.module.css'
 import { createPost } from "../../api/post";
 import { showToast } from "../../utils/showToast";
+import useMediaQuery from "../../utils/screenSize";
+import RemoveSlide from '../../assets/removeslide.png'
+import BigRemove from '../../assets/bigRemove.png'
 function AddStory({ closeModal, myStoryEdit }) {
     // State variables
     //const [showModal, setShowModal] = useState(false);
-    const [username, setUsername] = useState('');
-    // const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [category, setCategory] = useState('');
+
     const [selectedCategory, setSelectedCategory] = useState('');
     const categories = ['food', 'health and fitness', 'travel', 'movies', 'education'];
+    const isMobile = useMediaQuery('(max-width: 780px)');
     const [currentSlide, setCurrentSlide] = useState(0);
     const [slideStoryInfo, setSlideStoryInfo] = useState(() => {
         if (Array.isArray(myStoryEdit)) {
@@ -43,9 +44,20 @@ function AddStory({ closeModal, myStoryEdit }) {
             ];
         }
     });
+
+    //handle remove slide
+    const handleRemoveSlide = (index) => {
+        const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
+        setSlideStoryInfo(updatedSlideStoryInfo);
+        if (index === currentSlide) {
+            setCurrentSlide(0); // Reset currentSlide to 0 if the removed slide was the current slide
+        } else if (index < currentSlide) {
+            setCurrentSlide(currentSlide - 1); // Decrement currentSlide if the removed slide was before the current slide
+        }
+    };
     // Function to handle adding a new slide data object
     const handleAddSlide = () => {
-        if (slideStoryInfo.length < 5) {
+        if (slideStoryInfo.length < 6) {
             setSlideStoryInfo(prevState => [
                 ...prevState,
                 {
@@ -140,10 +152,19 @@ function AddStory({ closeModal, myStoryEdit }) {
                 <p className={styles.addslidemess}>Add upto 6 slides </p>
                 <div className={styles.addStoryForm}>
                     <div className={styles.slideButton}>
-                        {slideStoryInfo.map((_, index) => (
-                            <button key={index} onClick={() => setCurrentSlide(index)}>Slide {index + 1}</button>
+                        {slideStoryInfo.map((_, index) => (<>
+                            <button key={index} onClick={() => setCurrentSlide(index)}>Slide <br /> {index + 1}   {index >= 3 && (
+                                <div className={styles.removeSlide}><img onClick={()=>handleRemoveSlide(index)} src={BigRemove} alt="" /></div>
+                            )}  </button>
+
+                        </>
+
                         ))}
-                        <button onClick={handleAddSlide} disabled={slideStoryInfo.length === 6}>Add+</button>
+                        <button onClick={handleAddSlide} style={{ display: slideStoryInfo.length < 6 ? 'block' : 'none' }} disabled={slideStoryInfo.length === 6}>Add+</button>
+
+
+                        {/* remove slide */}
+
                     </div>
                     <div className={styles.storyInput}>
                         {/* value={username} onChange={(e) => setUsername(e.target.value)} */}
@@ -214,14 +235,19 @@ function AddStory({ closeModal, myStoryEdit }) {
 
 
                     </div>
-                    <div className={styles.postSlideBtn}>
-                        <div className={styles.previousBtnBox}>
-                            <button onClick={handlePreviousSlide} disabled={currentSlide === 0} className={styles.previousBtn}>Previous</button>
-                            <button onClick={handleNextSlide} className={styles.nextBtn}>Next</button>
-                        </div>
-                        <div className={styles.postBtnBox}>
-                            <button onClick={handleSubmit}>Post</button>
-                        </div>
+
+                </div>
+                <div className={styles.postSlideBtn}>
+                    {
+                        !isMobile ?
+                            <> <div className={styles.previousBtnBox}>
+                                <button onClick={handlePreviousSlide} disabled={currentSlide === 0} className={styles.previousBtn}>Previous</button>
+                                <button onClick={handleNextSlide} className={styles.nextBtn}>Next</button>
+                            </div></> :
+                            <> </>
+                    }
+                    <div className={styles.postBtnBox}>
+                        <button onClick={handleSubmit}>Post</button>
                     </div>
                 </div>
             </div>

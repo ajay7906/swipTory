@@ -29,7 +29,7 @@
   flex-direction: column;
 
   justify-content: flex-start;
-  width: 60rem;
+  width: 62rem;
   height: 48rem;
 
 
@@ -38,8 +38,8 @@
 
 .close {
   position: absolute;
-  top: 2rem;
-  right: 1.9rem;
+  top: 1.5rem;
+  right: 1.8rem;
   cursor: pointer;
   font-size: 2rem;
   color: #aaa;
@@ -65,9 +65,9 @@
   font-size: 10px;
   font-weight: 700;
   position: absolute;
-  right: 54px;
+  right: 29px;
   text-align: center;
-  top: 44px;
+  top: 55px;
 }
 
 .addStoryForm {
@@ -85,6 +85,7 @@
 .slideButton {
   display: flex;
   gap: 1.5rem;
+  position: relative;
 }
 
 .slideButton button {
@@ -93,6 +94,7 @@
   cursor: pointer;
   display: flex;
   font-family: DM Sans;
+  position: relative;
   font-size: 15px;
   font-weight: 700;
   height: 68.087px;
@@ -109,6 +111,7 @@
 .storyInput {
   margin-top: 3.3rem;
   width: 44rem;
+  padding-left: 2rem;
 }
 
 .input {
@@ -230,4 +233,85 @@
 
 .input .description.input{
   height:10rem;
+}
+.removeSlide{
+  align-items: center;
+    
+    border-radius: 50%;
+    color: red;
+    cursor: pointer;
+    display: flex;
+    
+    font-weight: 800;
+    
+    justify-content: center;
+    padding-bottom: 2px;
+    position: absolute;
+    right: 2%;
+    top: 1.5rem;
+    transform: translateX(50%);
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.removeSlide img{
+  width: 16px;
+}
+
+
+@media screen and (max-width: 780px) {
+  .removeSlide img{
+    width: 9px;
+  }
+  .addStoryForm{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .slideButton{
+    flex-direction: column;
+    padding-left: 17px;
+  }
+  .input{
+    flex-direction: column;
+    text-align: left;
+    align-items: flex-start;
+    
+  }
+  .storyInput{
+   
+  }
+  .modal .storyInput label {
+    font-size: 15px;
+    
+  }
+  .modal .storyInput input{
+    border: 1px solid #000;
+  
+    font-size: 10px;
+   
+    height: 24px;
+   
+    
+    width: 174px;
+  }
+  .modal .storyInput select{
+    height: 24px;
+   
+    
+    width: 174px;
+
+  }
+  .slideButton button{
+    width: 38px;
+    height: 45px;
+    font-size: 9px;
+   
+  }
+  .modal{
+    width: 25rem;
+    padding: 0 4rem 0 0;
+  }
+
 }

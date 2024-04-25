@@ -47,3 +47,13 @@
     transform: translate(-50%, -50%);
     width: 79px;
 }
+
+
+@media screen and (max-width: 780px) {
+  .yourStory{
+    grid-template-columns: 1fr;
+  }
+  .mainYourStory{
+    margin-top: 3.3rem;
+  }
+}
