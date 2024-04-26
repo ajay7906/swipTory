@@ -5,7 +5,7 @@ import { showToast } from "../../utils/showToast";
 import useMediaQuery from "../../utils/screenSize";
 import RemoveSlide from '../../assets/removeslide.png'
 import BigRemove from '../../assets/bigRemove.png'
-function AddStory({ closeModal, myStoryEdit }) {
+function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, bookPageStoryEdit }) {
     // State variables
     //const [showModal, setShowModal] = useState(false);
 
@@ -18,10 +18,27 @@ function AddStory({ closeModal, myStoryEdit }) {
             return myStoryEdit.map((story) => ({
                 heading: story.heading || "",
                 description: story.description || "",
-                image: story.imageUrl || "",
+                image: story.image || "",
                 chooseCategory: story.category || "",
             }));
-        } else {
+
+        }
+
+
+
+        else if (myStoryHomeEdits && Array.isArray(myStoryHomeEdits)) {
+            return myStoryHomeEdits.map((story) => ({
+                heading: story.heading || "",
+                description: story.description || "",
+                image: story.image || "",
+                chooseCategory: story.category || "",
+            }));
+        }
+
+
+
+
+        else {
             return [
                 {
                     heading: "",
@@ -154,7 +171,7 @@ function AddStory({ closeModal, myStoryEdit }) {
                     <div className={styles.slideButton}>
                         {slideStoryInfo.map((_, index) => (<>
                             <button key={index} onClick={() => setCurrentSlide(index)}>Slide <br /> {index + 1}   {index >= 3 && (
-                                <div className={styles.removeSlide}><img onClick={()=>handleRemoveSlide(index)} src={BigRemove} alt="" /></div>
+                                <div className={styles.removeSlide}><img onClick={() => handleRemoveSlide(index)} src={BigRemove} alt="" /></div>
                             )}  </button>
 
                         </>

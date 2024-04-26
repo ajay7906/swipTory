@@ -50,6 +50,7 @@ export const getPostById = async (postId)=>{
     }
 }
 
+//like post api
 
 
 export const likePost = async (postId) => {
@@ -58,7 +59,48 @@ export const likePost = async (postId) => {
         const token = localStorage.getItem("token");
         
         axios.defaults.headers.common["Authorization"] = token;
-        const response = await axios.post(reqUrl);
+        const response = await axios.put(reqUrl);
+        console.log(response.data);
+        return response.data;
+
+
+    } catch (error) {
+        showToast(error.response.data.errorMessage, { type: 'error' });
+
+
+
+    }
+}
+//unlike post api
+
+export const unlikePost = async (postId) => {
+    try {
+        const reqUrl = `${backendUrl}/post-details/${postId}/unlike`;
+        const token = localStorage.getItem("token");
+        
+        axios.defaults.headers.common["Authorization"] = token;
+        const response = await axios.put(reqUrl);
+        console.log(response.data);
+        return response.data;
+
+
+    } catch (error) {
+        showToast(error.response.data.errorMessage, { type: 'error' });
+
+
+
+    }
+}
+
+//track like count
+
+export const tracklikeCountkPost = async (postId) => {
+    try {
+        const reqUrl = `${backendUrl}/post-details/${postId}/getlikecount`;
+        const token = localStorage.getItem("token");
+        
+        axios.defaults.headers.common["Authorization"] = token;
+        const response = await axios.get(reqUrl);
         console.log(response.data);
         return response.data;
 
@@ -140,9 +182,30 @@ export const trackbookMarkPost = async (postId) => {
 //get all post of useer
 
 
-export const getAllUserPost = async (postId) => {
+export const getAllUserPost = async () => {
     try {
         const reqUrl = `${backendUrl}/mypost`;
+        const token = localStorage.getItem("token");
+        
+        axios.defaults.headers.common["Authorization"] = token;
+        const response = await axios.get(reqUrl);
+        console.log(response.data);
+        return response.data;
+
+
+    } catch (error) {
+        showToast(error.response.data.errorMessage, { type: 'error' });
+
+
+
+    }
+}
+
+
+//get bookmarked post
+export const getBookmarkedPosts = async () => {
+    try {
+        const reqUrl = `${backendUrl}/bookmarkspost`;
         const token = localStorage.getItem("token");
         
         axios.defaults.headers.common["Authorization"] = token;

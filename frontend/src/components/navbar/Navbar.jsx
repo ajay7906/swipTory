@@ -87,7 +87,7 @@ function Navbar() {
                 )}
                 {isLoggedIn ? (
                   <>
-                    <Link className={styles.bookmarksLink}>Bookmarks</Link>
+                    <Link to='/bookmarks' className={styles.bookmarksLink}>Bookmarks</Link>
                     <button onClick={openshowAddStoryModalModal}>Add Story</button>
                     <div className={styles.profileImg}>
                       <img src="https://swiptory001.netlify.app/static/media/user.5eb483b86d841223e1b4.png" alt="" />

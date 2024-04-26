@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from './StoryStatus.module.css'
-import { bookMarkPost, createPost, getPostById, likePost, trackbookMarkPost, unbookMarkPost } from "../../api/post";
+import { bookMarkPost, createPost, getPostById, likePost, trackbookMarkPost,
+   tracklikeCountkPost, unbookMarkPost, unlikePost } from "../../api/post";
 import { showToast } from "../../utils/showToast";
 import LeftMove from '../../assets/left.png'
 import RighttMove from '../../assets/right.png'
@@ -8,7 +9,8 @@ import Remove from '../../assets/Crosss.png'
 import Share from '../../assets/share.png'
 import Save from '../../assets/save.png'
 import BlueSave from '../../assets/save1.png'
-import Like from '../../assets/like.png'
+import Unlike from '../../assets/like.png'
+import Like from '../../assets/redlike.png'
 
 import { RotatingLines } from 'react-loader-spinner'
 
@@ -18,63 +20,103 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   const [imageData, setImageData] = useState()
   const [filled, setFilled] = useState(0);
   const [likeBtn, setLikeBtn] = useState(false)
+  const [likeCountNumber, setLikeCountNumber] = useState(0)
   const [bookBtn, setBookBtn] = useState(false)
+  
+
   const [bookStory, setBookStory] = useState()
   const prevImageDataRef = useRef(null);
 
-  const likeStory =  async () =>{
-    if (!postId) return console.log('nothing');
-    
+  const likeStory = async () => {
+
     try {
       const like = await likePost(postId)
-      
-     
-      
-      
+      if (like.success) {
+        setLikeBtn(true)
+      }
+
+
+
     } catch (error) {
-       console.log(error);
+      console.log(error);
+    }
+  }
+
+  //track like count
+  
+  const tracklikeCount = async () => {
+
+    try {
+      const like = await tracklikeCountkPost(postId)
+      if (like.success) {
+        setLikeCountNumber(like.likeCount)
+      }
+
+
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  //unlike 
+  const unlikeStory = async () => {
+
+    try {
+      const like = await unlikePost(postId)
+      if (like.success) {
+        setLikeBtn(false)
+      }
+
+
+
+    } catch (error) {
+      console.log(error);
     }
   }
   console.log(bookStory);
   //trackBook 
-  const TrackbookMarkStory =  async () =>{
-    if (!postId) return ;
+  const trackbookMarkStory = async () => {
+
     try {
       const track = await trackbookMarkPost(postId)
       if (track.success) {
-         setBookBtn(true)
-        
+        setBookBtn(true)
+
       }
-      
+
     } catch (error) {
-       console.log(error);
+      console.log(error);
     }
   }
 
   //bookmark  story
-  const bookMarkStory =  async () =>{
-    if (!postId) return ;
+  const bookMarkStory = async () => {
+    if (!postId) return;
     try {
       const bookMarkPostData = await bookMarkPost(postId)
-      
-      
+      if (bookMarkPostData.success) {
+        setBookBtn(true)
+
+      }
+
     } catch (error) {
-       console.log(error);
+      console.log(error);
     }
   }
 
   //bookmark  story
-  const unbookMarkStory =  async () =>{
-    if (!postId) return ;
+  const unbookMarkStory = async () => {
+    if (!postId) return;
     try {
       const like = await unbookMarkPost(postId)
       if (like.success) {
-         setBookBtn(false)
-        
+        setBookBtn(false)
+
       }
-      
+
     } catch (error) {
-       console.log(error);
+      console.log(error);
     }
   }
 
@@ -94,7 +136,8 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   };
   useEffect(() => {
     fetchJobDetails();
-    TrackbookMarkStory()
+    trackbookMarkStory();
+    tracklikeCount();
   }, []);
 
 
@@ -126,7 +169,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
   useEffect(() => {
     if (filled < 100) {
-      setTimeout(() => setFilled(prev => prev += 2), 50)
+      setTimeout(() => setFilled(prev => prev += 2), 80)
 
     }
   }, [filled, currentIndex])
@@ -173,16 +216,18 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
               </div>
               <div className={styles.info}>
-                <h2>{imageData[currentIndex].heading}</h2>
-                <p> {imageData[currentIndex].description}</p>
+                <h2>{imageData[currentIndex]?.heading}</h2>
+                <p> {imageData[currentIndex]?.description}</p>
               </div>
               <div className={styles.save}>
                 {
                   bookBtn === true ? <><img onClick={unbookMarkStory} src={BlueSave} alt="Save" /></> : <> <img onClick={bookMarkStory} src={Save} alt="Save" /></>
                 }
-                <img src={Like}  className={styles.like} alt="Like" />
+                {
+                  likeBtn === true ? <><img onClick={unlikeStory} src={Like} alt="Save" /></> : <> <img onClick={likeStory} src={Unlike} alt="Save" /></>
+                }
               </div>
-              <div className={styles.likeCount}>5</div>
+              <div className={styles.likeCount}>{likeCountNumber}</div>
 
             </div>
 

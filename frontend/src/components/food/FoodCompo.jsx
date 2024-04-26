@@ -105,21 +105,50 @@ import CommanCard from "../commoncard/CommanCard";
 import StoryStatus from "../status/StoryStatus";
 import styles from './FoodCompo.module.css';
 import React, { useEffect, useState } from "react";
+// import jwt_decode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+import AddStory from "../addStory/AddStory";
 
 function FoodCompo({ sendData, allData }) {
     const [showStoryModal, setShowStoryModal] = useState(false)
     const [filteredData, setFilteredData] = useState([])
+    const [myStoryHomeEdits, setMyStoryHomeEdits] = useState();
+    const [currentUser, setCurrentUser] = useState(null);
+    const [showAddStoryModals, setShowAddStoryModals] = useState(false);
     const [postId, setPostId] = useState();
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            const decodedToken = jwtDecode(token);
+            setCurrentUser(decodedToken.userId);
+        }
+
+    }, []);
+
+    const closeModal = () => {
+
+        setShowAddStoryModals(false)
+    };
+
+    const openshowAddStoryModalModal = () => {
+        // setMyStoryId(myStorId)
+        setShowAddStoryModals(true);
+
+    };
+
+
     // const [imageData, setImageData] = useState()
     let displayData = sendData;
 
     if (!Array.isArray(sendData)) {
         return null; // Return null if sendData is not an array
     }
-    console.log(allData)
-    console.log(allData === "all");
+
+    // console.log(allData === "all");
     let categoryMap = ['education', 'sports', 'food', 'movies', 'travel'];
-    console.log(displayData);
+    // console.log(displayData);
     const openStoryModal = (postId) => {
         setPostId(postId)
         setShowStoryModal(true);
@@ -128,6 +157,8 @@ function FoodCompo({ sendData, allData }) {
     const closeStoryModal = () => {
         setShowStoryModal(false)
     }
+
+
     // const fetchJobDetails = async () => {
     //     if (!postId) return console.log('nothing');
     //     try {
@@ -152,6 +183,8 @@ function FoodCompo({ sendData, allData }) {
     //         setFilteredData(sendData.filter(categoryData => categoryData.chooseCategory === allData));
     //     }
     // }, [allData, sendData]);
+
+
     return (
         <div className={styles.data}>
             {
@@ -180,8 +213,21 @@ function FoodCompo({ sendData, allData }) {
                                     {sendData
                                         .filter((categoryData) => categoryData.chooseCategory === categoryName)
                                         .map((filteredData, index) => (
-                                            <div key={index} onClick={() => openStoryModal(filteredData._id)}>
+
+                                            <div className={styles.CommanCardMain} key={index} onClick={() => openStoryModal(filteredData._id)}>
+                                                {console.log(filteredData.stories)}
                                                 <CommanCard filteredData={filteredData} />
+                                                {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
+                                                    <div className={styles.editBtn} onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        openshowAddStoryModalModal()
+                                                        setMyStoryHomeEdits(filteredData.stories)
+
+                                                    }}>
+                                                        <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
+                                                        <p>edit</p>
+                                                    </div>
+                                                )}
                                             </div>
                                         ))}
                                 </div>
@@ -234,6 +280,7 @@ function FoodCompo({ sendData, allData }) {
                     </>
             }
             <div>
+                {showAddStoryModals && myStoryHomeEdits && <AddStory closeModal={closeModal} myStoryHomeEdits={myStoryHomeEdits} />}
                 {showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}
             </div>
         </div>

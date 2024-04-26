@@ -1,25 +1,72 @@
-.data{
-    margin-top: 3rem; 
+.data {
+    margin-top: 3rem;
     margin-right: 1rem;
     margin-left: 1rem;
     text-align: center;
 }
-.htag h2{
+
+.htag h2 {
     font-size: 3rem;
     font-weight: 700;
     margin-bottom: 2rem;
-   
-   
+}
 
-} 
-.main{
+.bookMarkMain {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    place-items: center;
-   
-  
-   
-  
-  
-} 
- 
+    grid-gap: 2rem;
+    padding: 0 2rem 0 2rem;
+
+
+}
+
+.NoBookMark {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 4rem;
+}
+
+.NoBookMark p {
+    color: #ff7373;
+    font-size: 2rem;
+    font-weight: 700;
+
+
+    text-align: center;
+}
+
+.NoBookMark img {
+    width: 55rem;
+}
+
+.backHome {
+    align-items: center;
+    background: #ff7373;
+    border-radius: 2rem;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    font-family: DM Sans;
+    font-size: 1.5rem;
+    font-weight: 700;
+    height: 4.5rem;
+    justify-content: center;
+    margin-right: 3.7rem;
+    text-align: center;
+    width: 13.6rem;
+    text-decoration: none;
+}
+
+
+@media screen and (max-width: 780px) {
+    .bookMarkMain {
+        grid-template-columns: 1fr;
+    }
+
+    .NoBookMark img {
+        width: 35rem;
+    }
+
+}
