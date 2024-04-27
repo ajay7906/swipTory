@@ -14,16 +14,21 @@
     padding: 3.3rem 3.9rem 0 4.3rem;
 }
 .allCategoryCard{
-  width: 15vw;
+  width: 235px;
+  
+}
+.categoryCard{
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+ 
+}
+.categoryCard::-webkit-scrollbar {
+  display: none;
 }
 
 /* media query */
 @media screen and (max-width: 780px) {
-  .categoryCard{
-    scrollbar-width: none; /* Hide scrollbar for Firefox */
-    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-   
-  }
+ 
   .allCategoryCard{
     width: 180px;
   }

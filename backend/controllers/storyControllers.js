@@ -144,12 +144,12 @@ const getStoriesByCategory = async (req, res, next) => {
       //   // Add filtered stories to the categorized stories object
       //   categorizedStories[cat] = filteredStories.map(story => {
       //     return {
-           
+
       //       stories: story.stories.filter(storyItem => storyItem.category === cat)
       //     };
       //   });
       // });
-  
+
     }
 
     res.status(200).json({ success: true, data: stories });
@@ -214,18 +214,18 @@ const getStoryById = async (req, res, next) => {
 const getUserStories = async (req, res, next) => {
   try {
     const { userId } = req;
-   
+
     if (!userId) {
       return res.status(400).json({
         errorMessage: "Bad request. User ID is required."
       });
     }
-    
-   
+
+
     const userStories = await Story.find({ postedBy: userId });
     if (!userStories || userStories.length === 0) {
       res.status(400).json({ success: false, error: "stories not found" });
-      
+
     }
 
     res.status(200).json({ success: true, stories: userStories });
@@ -296,7 +296,28 @@ const likePost = async (req, res, next) => {
 
   }
 }
+//get like data
+const getLikeCount = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
 
+    if (!postId) {
+      return res.status(400).json({ errorMessage: "Bad Request: post ID is missing" });
+    }
+
+    const story = await Story.findById(postId);
+
+    if (!story) {
+      return res.status(404).json({ errorMessage: "Story not found" });
+    }
+
+    const likeCount = story.likes.length;
+
+    res.status(200).json({ success: true, likeCount });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const unlikePost = async (req, res, next) => {
   try {
@@ -361,8 +382,8 @@ const bookmarkPost = async (req, res, next) => {
     const isBookmarked = story.bookmarkedBy.includes(userId);
     if (isBookmarked) {
       return res.status(200).json({
-        success:true,
-        data:userId , 
+        success: true,
+        data: userId,
         errorMessage: "Post is already bookmarked",
       });
     }
@@ -376,6 +397,27 @@ const bookmarkPost = async (req, res, next) => {
     next(error);
   }
 };
+
+//get  data of bookmark
+const getBookmarkedPosts = async (req, res, next) => {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: user ID is missing",
+      });
+    }
+
+    // Find all posts that have been bookmarked by the user
+    const bookmarkedPosts = await Story.find({ bookmarkedBy: userId });
+
+    res.status(200).json({ success: true, data: bookmarkedPosts });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 //trackBook Mark 
 
@@ -407,22 +449,22 @@ const TrackbookmarkPost = async (req, res, next) => {
     const isBookmarked = story.bookmarkedBy.includes(userId);
     if (isBookmarked) {
       return res.status(200).json({
-        success:true,
-        data:userId , 
+        success: true,
+        data: userId,
         errorMessage: "Post is already bookmarked",
       });
     }
-    else{
+    else {
       return res.status(400).json({
-        success:true,
-        data:userId , 
+        success: true,
+        data: userId,
         errorMessage: "Post is not bookmarked",
       });
 
     }
-   
 
-   
+
+
   } catch (error) {
     next(error);
   }
@@ -500,5 +542,6 @@ const sharePost = async (req, res, next) => {
 module.exports = {
   createStory, getStoriesByCategory, getStoryById
   , getUserStories, updateStoryById, likePost, unlikePost
-  , bookmarkPost, unbookmarkPost, sharePost , TrackbookmarkPost
+  , bookmarkPost, unbookmarkPost, sharePost, TrackbookmarkPost, 
+  getBookmarkedPosts , getLikeCount
 };

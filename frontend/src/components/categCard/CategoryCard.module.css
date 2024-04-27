@@ -38,6 +38,10 @@
     white-space: wrap;
 
 }
+.imageCard img{
+  width: 200px;
+  height: 200px;
+}
 
 
 @media screen and (max-width: 780px) {

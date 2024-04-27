@@ -53,6 +53,7 @@
     border: none;
 }
 
+
 .signin {
     background: #73ABFF !important;
 
@@ -175,19 +176,76 @@
     right: 0;
     z-index: 1;
 }
-.mobileResponsive img{
+.mobileResponsiveCrossBtn{
     position: absolute;
-    right: 9%;
-    top: 6%;
+    right: 0;
+    top: 3rem;
+    right: 9rem;
     cursor: pointer;
 }
-.mobileResponsive .profileImg img{
+.withOutLoginBtn{
+    display: flex;
+    flex-direction: column;
+    gap: 7rem;
+}
+.withOutLoginBtn button{
+    align-items: center;
+    background: #ff7373;
+    border-radius: 2rem;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    font-size: 1.8rem;
+    font-weight: 700;
+    height: 4.5rem;
+    justify-content: center;
+    width: 13.6rem;
+    border: none;
+  
+}
+.bookMarkLink {
+    text-decoration: none;
+    color: #ffffff;
+    padding-left: .5rem;
+}
+
+.mobileResponsive .crossResponsive {
+    position: absolute;
+    right: 3%;
+    top: 6%;
+    cursor: pointer;
+    /* position: relative;
+    right: -40%;
+    top: -6%; */
+}
+.bookMarkIcon{
+    display: flex;
+    text-align: center;
+}
+.profileContent .bookMarkIcon img{
+    position: absolute;
+   left: 0;
+    top: 21%;
+    cursor: pointer;
+}
+.profileContent .bookMarkIcon:nth-child(2){
+   margin-right: -1rem;
+}
+
+
+.mobileResponsive .profileImg img {
     position: absolute;
     left: 30%;
     top: 6%;
 }
-.responsiveNavLink{
+
+.responsiveNavLink {
     display: flex;
     flex-direction: column;
     gap: 4rem;
+}
+
+
+.bookMarkIcon{
+    position: relative;
 }

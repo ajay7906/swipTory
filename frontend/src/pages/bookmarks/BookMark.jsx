@@ -20,7 +20,7 @@ function BookMark() {
 
     try {
       const bookmark = await getBookmarkedPosts()
-      setGetBookData(bookmark.data)
+      setGetBookData(bookmark?.data)
       console.log(bookmark)
       console.log(getBookData);
 
@@ -37,7 +37,7 @@ function BookMark() {
 
       <div className={styles.htag}><h2>Your Bookmarks</h2></div>
       {
-        getBookData.length === 0 ? (
+        getBookData?.length === 0 ? (
           <div className={styles.NoBookMark}>
             <p>BookMark not found</p>
             <img src={NoBookMark} alt="" />
@@ -45,7 +45,7 @@ function BookMark() {
           </div>
 
         ) : (
-          getBookData.map((data, index) => <CommanCard key={index} data={data} />)
+          getBookData?.map((data, index) => <CommanCard key={index} data={data} />)
 
         )
       }

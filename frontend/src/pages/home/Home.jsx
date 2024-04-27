@@ -9,17 +9,19 @@ import styles from './Home.module.css'
 import FoodCompo from "../../components/food/FoodCompo";
 import Layout from "../../components/layout/Layout";
 import BookMark from "../bookmarks/BookMark";
+
 // import { useApi } from "../../api/post";
 import { useEffect, useState } from "react";
 import { getAllPost } from "../../api/post";
 import Test from "./Test";
-import YourStory from "../../components/yourstory/YourStory";
+import YourStoryCompo from "../../components/yourstory/YourStoryCompo";
+import useMediaQuery from "../../utils/screenSize";
 // import Test from "./Test";
 function Home() {
   const [category, setCategory] = useState("");
   const [sendData, setSendData] = useState("");
   const [allData, setAllData] = useState("");
-  
+  const isMobile = useMediaQuery('(max-width: 780px)');
   // const { postData, loading, fetchPosts } = useApi();
 
 
@@ -32,14 +34,14 @@ function Home() {
     { name: "movies", image: Image3 },
     { name: "travel", image: Image4 }
   ];
-  
+
   const fetchAllPost = async () => {
     try {
       const result = await getAllPost({ category });
-      
+
       console.log("Fetched data for category:", category);
       setSendData(result.data)
-       
+
       console.log("Result:", result.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -49,14 +51,15 @@ function Home() {
 
   useEffect(() => {
     fetchAllPost();
-    
+
   }, [category]);
   useEffect(() => {
-   
+
     setAllData('all');
   }, []);
-  
+
   const handleCategorySelect = (categoryName) => {
+    
     setAllData(categoryName)
     setCategory(categoryName === "all" ? "" : categoryName);
     console.log(categoryName);
@@ -64,7 +67,36 @@ function Home() {
 
 
   };
- 
+  
+  if (isMobile) {
+    if (!category) {
+      setCategory('education')
+      
+    }
+    
+  }
+
+  // const handleCategorySelect = (categoryName) => {
+  //   if (!isMobile) {
+  //     if (!categoryName) {
+  //       setAllData("education");
+  //       setCategory("education");
+  //     } else {
+  //       setAllData(categoryName);
+  //       setCategory(categoryName);
+  //     }
+  //   } else {
+  //     setAllData(categoryName === "all" ? "all" : categoryName);
+  //     setCategory(categoryName === "all" ? "" : categoryName);
+  //   }
+  //   console.log(categoryName);
+  //   console.log(category);
+  // };
+
+
+
+
+
   console.log(sendData);
   return (
     <div>
@@ -73,8 +105,9 @@ function Home() {
         <BookMark/>
       </Layout> */}
       <div className={styles.categoryCard}>
-       
-        {categories.map((categoryItem, index) => (
+
+        {/* {categories.map((categoryItem, index) => (
+         
           <div className={styles.allCategoryCard} key={index} onClick={() => handleCategorySelect(categoryItem.name)}>
             <CategoryCard
 
@@ -83,13 +116,29 @@ function Home() {
 
             />
           </div>
-        ))}
+        ))} */}
+        {categories.map((categoryItem, index) => {
+          if (isMobile && categoryItem.name === "all") {
+            return null; // Don't render the "All" category button on mobile
+          }
+          return (
+            <div className={styles.allCategoryCard} key={index} onClick={() => handleCategorySelect(categoryItem.name)}>
+              <CategoryCard
+                categoryName={categoryItem.name}
+                categoryImage={categoryItem.image}
+              />
+            </div>
+          );
+        })}
       </div>
-      <div>
+      {/* <div>
           <YourStory/>
-        </div>
-      <FoodCompo sendData={sendData} allData={allData}/>
-      
+        </div> */}
+      {!isMobile && <div>
+        <YourStoryCompo />
+      </div>}
+      <FoodCompo sendData={sendData} allData={allData} />
+
       {/* <Test stories={stories} sendData={sendData}/> */}
     </div>
   )

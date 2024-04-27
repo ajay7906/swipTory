@@ -108,6 +108,7 @@ import React, { useEffect, useState } from "react";
 // import jwt_decode from 'jwt-decode';
 import { jwtDecode } from 'jwt-decode';
 import AddStory from "../addStory/AddStory";
+import useMediaQuery from "../../utils/screenSize";
 
 function FoodCompo({ sendData, allData }) {
     const [showStoryModal, setShowStoryModal] = useState(false)
@@ -116,10 +117,10 @@ function FoodCompo({ sendData, allData }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [showAddStoryModals, setShowAddStoryModals] = useState(false);
     const [postId, setPostId] = useState();
-
+    const isMobile = useMediaQuery('(max-width: 780px)');
     useEffect(() => {
         const token = localStorage.getItem('token');
-
+        
         if (token) {
             const decodedToken = jwtDecode(token);
             setCurrentUser(decodedToken.userId);
@@ -141,7 +142,7 @@ function FoodCompo({ sendData, allData }) {
 
     // const [imageData, setImageData] = useState()
     let displayData = sendData;
-
+    console.log(sendData);
     if (!Array.isArray(sendData)) {
         return null; // Return null if sendData is not an array
     }
@@ -187,9 +188,9 @@ function FoodCompo({ sendData, allData }) {
 
     return (
         <div className={styles.data}>
-            {
+            { 
                 allData === "all" ?
-                    <> {categoryMap.map((categoryName, index) => (
+                    <> {!isMobile && categoryMap.map((categoryName, index) => (
                         <div key={index}>
                             <div className={styles.htag}><h2>Top Stories About {categoryName}</h2></div>
                             {/* <div className={styles.main}>
@@ -269,6 +270,7 @@ function FoodCompo({ sendData, allData }) {
                                 <div className={styles.main}>
                                     {sendData.map((filteredData, index) => (
                                         <div key={index} onClick={() => openStoryModal(filteredData._id)}>
+                                            {console.log(filteredData)}
                                             <CommanCard filteredData={filteredData} />
                                         </div>
                                     ))}
