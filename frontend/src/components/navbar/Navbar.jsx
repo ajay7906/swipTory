@@ -210,7 +210,7 @@
 
 
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import styles from './Navbar.module.css'
 import Register from '../register/Register';
 import AddStory from '../addStory/AddStory';
@@ -220,6 +220,7 @@ import CrossBtn from '../../assets/cross.png'
 import useMediaQuery from '../../utils/screenSize';
 import Save from '../../assets/save.png'
 import useUserAuth from '../../utils/useUserAuth';
+import { AuthContext } from '../../context/authContext';
 
 function Navbar() {
   // State variables
@@ -230,13 +231,13 @@ function Navbar() {
   const [showAddStoryModal, setShowAddStoryModal] = useState(false);
   const [showResponsiveModal, setShowResponsiveModal] = useState(false);
   const isMobile = useMediaQuery('(max-width: 780px)');
-  const { isLoggedIns, user, login, logout } = useUserAuth();
-
+  // const { isLoggedIns, user, login, logout } = useUserAuth();
+  const {isLoggedIns, showLoginModal, closeLoginModal } = useContext(AuthContext);
   const loggedInUser = localStorage.getItem('token');
-
+  console.log(isLoggedIns);
   useEffect(() => {
    
-    console.log(loggedInUser);
+    
     if (loggedInUser) {
       setIsLoggedIn(true);
     }
@@ -244,7 +245,7 @@ function Navbar() {
       setIsLoggedIn(false)
     }
      // Update isLoggedIn based on whether token exists
-  }, [isLoggedIn,  loggedInUser]);
+  }, [isLoggedIn, isLoggedIns,  loggedInUser]);
 
   // Function to handle opening the register modal
   console.log(isLoggedIn);
@@ -262,7 +263,7 @@ function Navbar() {
   const handleLogout = () => {
     // Remove token from local storage
     // localStorage.removeItem('token');
-    logout();
+    // logout();
     // Remove user data from localStorage
     localStorage.removeItem('token');
     setShowProfileModal(false);
@@ -287,6 +288,7 @@ function Navbar() {
     setShowRegisterModal(false);
     setShowSignInModal(false);
     setShowAddStoryModal(false)
+    closeLoginModal()
   };
   // Function to handle opening the profile modal
   const openProfileModal = () => {
@@ -422,7 +424,8 @@ function Navbar() {
 
       <div className={styles.registerModel}>
         {showRegisterModal && <Register closeModal={closeModal} modalName="Register" />}
-        {showSignInModal && <Register closeModal={closeModal} modalName="Login" />}
+        {showSignInModal  && <Register closeModal={closeModal} modalName="Login" />}
+        {showLoginModal  && <Register closeModal={closeModal} modalName="Login" />}
         {showAddStoryModal && <AddStory closeModal={closeModal} />}
 
       </div>

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import styles from './StoryStatus.module.css'
+import styles from './ShareStory.module.css'
 import {
   bookMarkPost, createPost, getPostById, likePost, trackbookMarkPost,
   tracklikeCountkPost, unbookMarkPost, unlikePost
@@ -13,12 +13,14 @@ import Save from '../../assets/save.png'
 import BlueSave from '../../assets/save1.png'
 import Unlike from '../../assets/like.png'
 import Like from '../../assets/redlike.png'
-
+import { useParams } from 'react-router-dom';
 import { RotatingLines } from 'react-loader-spinner'
-import { usePostId } from "../../utils/postIdcontext";
+import useMediaQuery from "../../utils/screenSize";
+import { toast,  } from 'react-toastify';
 import { AuthContext } from "../../context/authContext";
+// import { usePostId } from "../../utils/postIdcontext";
 
-function StoryStatus({ closeModal, postId, closeStoryModal }) {
+function ShareStoryPage({ closeModal, closeStoryModal }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timerActive, setTimerActive] = useState(true);
   const [imageData, setImageData] = useState()
@@ -26,18 +28,31 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   const [likeBtn, setLikeBtn] = useState(false)
   const [likeCountNumber, setLikeCountNumber] = useState(0)
   const [bookBtn, setBookBtn] = useState(false)
-  // const { setPostId } = usePostId();
-  const { handleLogin, openLoginModal } = useContext(AuthContext);
+  const { postId } = useParams();
+  const isMobile = useMediaQuery('(max-width: 700px)');
+  const { handleLogin } = useContext(AuthContext);
+//   const { setPostId } = usePostId();
+const notify = () => toast("Wow so easy!");
   const [bookStory, setBookStory] = useState()
   const prevImageDataRef = useRef(null);
 
 
-  // useEffect(() => {
-  //   setPostId(postId);
-  // }, [postId, setPostId]);
+//   useEffect(() => {
+//     setPostId(postId);
+//   }, [postId, setPostId]);
 
 
   //copy share images
+  const customToastStyle = {
+    backgroundColor: '#333',
+    color: '#FF0000',
+    fontSize: '20px',
+    padding: '10px 20px',
+    borderRadius: '39px',
+    background:'#ffffff',
+    
+
+  };
 
   const generateShareLink = () => {
     const baseUrl = 'http://localhost:5173'; // Replace with your actual domain
@@ -47,39 +62,50 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     if (navigator.clipboard) {
       const link = navigator.clipboard.writeText(shareLink);
       console.log(link);
-      showToast('Share link copied to clipboard', {
-        position: "top-center"
-      });
+    //   notify()
+    toast('Link copied to clipboard', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        style:customToastStyle
+       
+        });
     } else {
       window.open(shareLink, '_blank');
     }
   };
 
+
   const likeStory = async () => {
     const loggedInUser = localStorage.getItem('token')
     if (loggedInUser) {
-      try {
-        const like = await likePost(postId)
-        if (like.success) {
-          setLikeBtn(true)
+        try {
+            const like = await likePost(postId)
+            if (like.success) {
+              setLikeBtn(true)
+            }
+      
+      
+      
+          } catch (error) {
+            console.log(error);
+          }
         }
-
-
-
-      } catch (error) {
-        console.log(error);
-      }
+        else{
+            handleLogin()
+    
+        }
+      
+        
     }
-    else {
-      closeStoryModals()
-      handleLogin()
-      openLoginModal()
+  
 
-    }
-
-
-  }
-
+  
   //track like count
 
   const tracklikeCount = async () => {
@@ -131,25 +157,16 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   //bookmark  story
   const bookMarkStory = async () => {
     if (!postId) return;
-    const token = localStorage.getItem('token')
-    if (token) {
-      try {
-        const bookMarkPostData = await bookMarkPost(postId)
-        if (bookMarkPostData.success) {
-          setBookBtn(true)
+    try {
+      const bookMarkPostData = await bookMarkPost(postId)
+      if (bookMarkPostData.success) {
+        setBookBtn(true)
 
-        }
-
-      } catch (error) {
-        console.log(error);
       }
-    }
-    else {
-      closeStoryModals()
-      handleLogin()
-      openLoginModal()
-    }
 
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   //bookmark  story
@@ -240,7 +257,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
   return (
     <div className={styles.overlay} onClick={closeModal}>
-      <div ><img onClick={prevImage} src={LeftMove} alt="" className={styles.move} /></div>
+     {!isMobile &&  <div ><img onClick={prevImage} src={LeftMove} alt="" className={styles.move} /></div>}
       {
         imageData && imageData.length > 0 ?
           <>
@@ -271,13 +288,13 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
                   bookBtn === true ? <><img onClick={unbookMarkStory} src={BlueSave} alt="Save" /></> : <> <img onClick={bookMarkStory} src={Save} alt="Save" /></>
                 }
                 <div className={styles.likeAndCount}>
-                  {
-                    likeBtn === true ? <><img onClick={unlikeStory} src={Like} alt="Save" /></> : <> <img onClick={likeStory} src={Unlike} alt="Save" /></>
-                  }
-                  <div className={styles.likeCount}>{likeCountNumber}</div>
+                {
+                  likeBtn === true ? <><img onClick={unlikeStory} src={Like} alt="Save" /></> : <> <img onClick={likeStory} src={Unlike} alt="Save" /></>
+                }
+                 <div className={styles.likeCount}>{likeCountNumber}</div>
                 </div>
               </div>
-
+             
 
             </div>
 
@@ -302,14 +319,14 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
           </>
       }
-      <div>
+      {!isMobile && <div>
         <img onClick={nextImage} src={RighttMove} alt="" className={styles.move} />
-      </div>
+      </div>}
     </div>
   )
 }
 
-export default StoryStatus;
+export default ShareStoryPage;
 
 
 

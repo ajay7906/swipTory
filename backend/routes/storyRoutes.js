@@ -16,5 +16,5 @@ router.get("/bookmarkspost", verifyToken, postControllers.getBookmarkedPosts);
 router.get("/post-details/:postId/getlikecount",  postControllers.getLikeCount);
 
 router.put("/post-details/:postId/unbookmark", verifyToken, postControllers.unbookmarkPost);
-router.put("/post-details/view-story/:postId", verifyToken, postControllers.sharePost);
+router.put("/share-story/:postId", postControllers.sharePost);
 module.exports = router;

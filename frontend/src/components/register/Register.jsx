@@ -1,16 +1,22 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from './Register.module.css'
 import { loginUser, registerUser } from "../../api/auth";
 import { showToast } from "../../utils/showToast";
 import useAuth from '../../utils/useUserAuth';
 import useUserAuth from "../../utils/useUserAuth";
+import { AuthContext } from "../../context/authContext";
 function Register({ closeModal, modalName, setIsLoggedIn }) {
 
   const [username, setUsername] = useState('');
   const [showError, setShowError] = useState(' ')
   const [password, setPassword] = useState('');
-  const { isLoggedIns, user, login, logout } = useUserAuth();
+  const {isLoggedIns } = useContext(AuthContext);
+  console.log(isLoggedIns);
   console.log(username, password);
+  useEffect(() => {
+    // Scroll to the top of the page when the modal is opened
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
 
   // useEffect(() => {
