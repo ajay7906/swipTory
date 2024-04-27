@@ -219,6 +219,7 @@ import { Link } from 'react-router-dom';
 import CrossBtn from '../../assets/cross.png'
 import useMediaQuery from '../../utils/screenSize';
 import Save from '../../assets/save.png'
+import useUserAuth from '../../utils/useUserAuth';
 
 function Navbar() {
   // State variables
@@ -229,13 +230,24 @@ function Navbar() {
   const [showAddStoryModal, setShowAddStoryModal] = useState(false);
   const [showResponsiveModal, setShowResponsiveModal] = useState(false);
   const isMobile = useMediaQuery('(max-width: 780px)');
+  const { isLoggedIns, user, login, logout } = useUserAuth();
+
+  const loggedInUser = localStorage.getItem('token');
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsLoggedIn(!!token); // Update isLoggedIn based on whether token exists
-  }, []);
+   
+    console.log(loggedInUser);
+    if (loggedInUser) {
+      setIsLoggedIn(true);
+    }
+    else{
+      setIsLoggedIn(false)
+    }
+     // Update isLoggedIn based on whether token exists
+  }, [isLoggedIn,  loggedInUser]);
 
   // Function to handle opening the register modal
+  console.log(isLoggedIn);
   const openshowAddStoryModalModal = () => {
     setShowAddStoryModal(true);
 
@@ -244,8 +256,14 @@ function Navbar() {
     setShowRegisterModal(true);
 
   };
+  // useEffect(()=>{
+   
+  // })
   const handleLogout = () => {
     // Remove token from local storage
+    // localStorage.removeItem('token');
+    logout();
+    // Remove user data from localStorage
     localStorage.removeItem('token');
     setShowProfileModal(false);
     setShowResponsiveModal(!showResponsiveModal);

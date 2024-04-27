@@ -2,14 +2,29 @@ import { useEffect, useState } from "react";
 import styles from './Register.module.css'
 import { loginUser, registerUser } from "../../api/auth";
 import { showToast } from "../../utils/showToast";
-import useAuth from '../../utils/useAuth';
+import useAuth from '../../utils/useUserAuth';
+import useUserAuth from "../../utils/useUserAuth";
 function Register({ closeModal, modalName, setIsLoggedIn }) {
 
   const [username, setUsername] = useState('');
   const [showError, setShowError] = useState(' ')
   const [password, setPassword] = useState('');
-  const { login } = useAuth();
+  const { isLoggedIns, user, login, logout } = useUserAuth();
   console.log(username, password);
+
+
+  // useEffect(() => {
+  //   // Simulate user login status check (e.g., from localStorage or an API call)
+  //   const loggedInUser = JSON.parse(localStorage.getItem('token'));
+
+  //   if (loggedInUser) {
+  //     login(loggedInUser);
+  //   }
+
+    
+  // }, [login]);
+
+  
 
   useEffect(() => {
     // Add class to body when modal is open
@@ -35,7 +50,8 @@ function Register({ closeModal, modalName, setIsLoggedIn }) {
     console.log(response);
 
     if (response?.success) {
-     
+      // const userData = { username: username, password:password };
+      // // login(userData);
       showToast(`${modalName} Successful`, { type: 'success' });
       closeModal();
     } else {
