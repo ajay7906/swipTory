@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import styles from './StoryStatus.module.css'
 import {
-  bookMarkPost, createPost, getPostById, likePost, trackbookMarkPost,
+  bookMarkPost, createPost, getPostById, likePost, trackIsLikePost, trackbookMarkPost,
   tracklikeCountkPost, unbookMarkPost, unlikePost
 } from "../../api/post";
 import { showToast } from "../../utils/showToast";
@@ -17,6 +17,7 @@ import Like from '../../assets/redlike.png'
 import { RotatingLines } from 'react-loader-spinner'
 import { usePostId } from "../../utils/postIdcontext";
 import { AuthContext } from "../../context/authContext";
+import useMediaQuery from "../../utils/screenSize";
 
 function StoryStatus({ closeModal, postId, closeStoryModal }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -28,6 +29,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   const [bookBtn, setBookBtn] = useState(false)
   // const { setPostId } = usePostId();
   const { handleLogin, openLoginModal } = useContext(AuthContext);
+  const isMobile = useMediaQuery('(max-width: 700px)');
   const [bookStory, setBookStory] = useState()
   const prevImageDataRef = useRef(null);
 
@@ -62,6 +64,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
         const like = await likePost(postId)
         if (like.success) {
           setLikeBtn(true)
+          tracklikeCount();
         }
 
 
@@ -97,6 +100,23 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     }
   }
 
+   //track like count
+
+   const trackislike = async () => {
+
+    try {
+      const like = await trackIsLikePost(postId)
+      if (like.success) {
+        setLikeBtn(true)
+      }
+
+
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   //unlike 
   const unlikeStory = async () => {
 
@@ -104,6 +124,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
       const like = await unlikePost(postId)
       if (like.success) {
         setLikeBtn(false)
+        tracklikeCount();
       }
 
 
@@ -135,9 +156,10 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     if (token) {
       try {
         const bookMarkPostData = await bookMarkPost(postId)
+        console.log(bookMarkPostData);
         if (bookMarkPostData.success) {
           setBookBtn(true)
-
+         
         }
 
       } catch (error) {
@@ -185,6 +207,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     fetchJobDetails();
     trackbookMarkStory();
     tracklikeCount();
+    trackislike();
   }, []);
 
 
@@ -240,7 +263,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
   return (
     <div className={styles.overlay} onClick={closeModal}>
-      <div ><img onClick={prevImage} src={LeftMove} alt="" className={styles.move} /></div>
+      {!isMobile && <div ><img onClick={prevImage} src={LeftMove} alt="" className={styles.move} /></div>}
       {
         imageData && imageData.length > 0 ?
           <>
@@ -302,9 +325,9 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
           </>
       }
-      <div>
+      {!isMobile && <div>
         <img onClick={nextImage} src={RighttMove} alt="" className={styles.move} />
-      </div>
+      </div>}
     </div>
   )
 }

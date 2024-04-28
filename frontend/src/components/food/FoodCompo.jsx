@@ -127,6 +127,10 @@ function FoodCompo({ sendData, allData }) {
         }
 
     }, []);
+    useEffect(()=>{
+
+    },[isMobile])
+  
 
     const closeModal = () => {
 
@@ -184,13 +188,12 @@ function FoodCompo({ sendData, allData }) {
     //         setFilteredData(sendData.filter(categoryData => categoryData.chooseCategory === allData));
     //     }
     // }, [allData, sendData]);
-
-
+  
     return (
         <div className={styles.data}>
-            { 
+            { !isMobile &&
                 allData === "all" ?
-                    <> {!isMobile && categoryMap.map((categoryName, index) => (
+                    <> { categoryMap.map((categoryName, index) => (
                         <div key={index}>
                             <div className={styles.htag}><h2>Top Stories About {categoryName}</h2></div>
                             {/* <div className={styles.main}>
@@ -255,7 +258,8 @@ function FoodCompo({ sendData, allData }) {
                     :
                     <>
                         <div >
-                            <div className={styles.htag}><h2>Top Stories About {allData}</h2></div>
+                            {isMobile ?  <> </> :   
+                            <> <div className={styles.htag}><h2>Top Stories About {allData}</h2></div></>}
                             {/* <div className={styles.main}>
                                 {sendData
 

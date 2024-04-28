@@ -8,7 +8,7 @@ export const getAllPost = async (filter) => {
         const reqUrl = `${backendUrl}/allpost?category=${filter?.category || ""}`;
         // Construct the request URL without the skills query parameter
         const response = await axios.get(reqUrl);
-        return response.data;
+        return response?.data;
 
     } catch (error) {
         console.log(error);
@@ -124,12 +124,12 @@ export const bookMarkPost = async (postId) => {
         
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.put(reqUrl);
-        console.log(response.data);
-        return response.data;
+        
+        return response?.data;
 
 
     } catch (error) {
-        showToast(error.response.data.errorMessage, { type: 'error' });
+        return error
 
 
 
@@ -151,7 +151,7 @@ export const unbookMarkPost = async (postId) => {
 
 
     } catch (error) {
-        showToast(error.response.data.errorMessage, { type: 'error' });
+        return error
 
 
 
@@ -172,8 +172,27 @@ export const trackbookMarkPost = async (postId) => {
 
 
     } catch (error) {
-        showToast(error.response.data.errorMessage, { type: 'error' });
+        return error
 
+
+    }
+}
+
+//track  user isLike
+
+export const trackIsLikePost = async (postId) => {
+    try {
+        const reqUrl = `${backendUrl}/post-details/${postId}/islikepost`;
+        const token = localStorage.getItem("token");
+        
+        axios.defaults.headers.common["Authorization"] = token;
+        const response = await axios.get(reqUrl);
+        console.log(response.data);
+        return response.data;
+
+
+    } catch (error) {
+        return error
 
 
     }

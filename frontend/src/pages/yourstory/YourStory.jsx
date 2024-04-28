@@ -167,12 +167,12 @@ function YourStory() {
       {!allUserStory || allUserStory.length === 0 ? (
         // <div>Story not found</div>
         <div className={styles.NoBookMark}>
-          <p>BookMark not found</p>
+          <p>Your Story not found</p>
           <img src={NoStory} alt="" />
           <Link to='/' className={styles.backHome}>Back to Home</Link>
         </div>
       ) : (
-        <div className={styles.yourStory}>
+        <div className={styles.main}>
           {allUserStory.map((data, index) => (
             <div key={index} className={styles.commanCard} onClick={() => openStoryModal(data._id)}>
               <BookMarkCompo allUserStory={allUserStory} />

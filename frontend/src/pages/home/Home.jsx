@@ -25,22 +25,27 @@ function Home() {
   // const { postData, loading, fetchPosts } = useApi();
 
 
-
-  const categories = [
+  
+  let categories = [
     { name: "all", image: Image },
     { name: "education", image: Image1 },
     { name: "sports", image: Image2 },
     { name: "food", image: Image },
     { name: "movies", image: Image3 },
     { name: "travel", image: Image4 }
-  ];
+  ]; 
+  if (isMobile) {
+    categories = categories.filter(category => category.name !== "all");
+  }
+  
+  
 
   const fetchAllPost = async () => {
     try {
       const result = await getAllPost({ category });
 
       console.log("Fetched data for category:", category);
-      setSendData(result.data)
+      setSendData(result?.data)
 
       console.log("Result:", result.data);
     } catch (error) {
@@ -69,7 +74,7 @@ function Home() {
   };
   
   if (isMobile) {
-    if (!category) {
+    if (!category || category==="all") {
       setCategory('education')
       
     }
@@ -119,7 +124,7 @@ function Home() {
         ))} */}
         {categories.map((categoryItem, index) => {
           if (isMobile && categoryItem.name === "all") {
-            return null; // Don't render the "All" category button on mobile
+             return ;
           }
           return (
             <div className={styles.allCategoryCard} key={index} onClick={() => handleCategorySelect(categoryItem.name)}>

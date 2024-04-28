@@ -370,27 +370,28 @@ const bookmarkPost = async (req, res, next) => {
       });
     }
 
-    // Find the story by postId
-    const story = await Story.findById(postId);
+
+    // Check if the user has already bookmarked the post
+    
+
+    // Find the story by postId   postId, { $addToSet: { likes: userId } }, { new: true }
+    const story = await Story.findByIdAndUpdate(postId, { $addToSet: { bookmarkedBy: userId } }, { new: true });
+
+
+
     if (!story) {
       return res.status(404).json({
         errorMessage: "Story not found",
       });
     }
 
-    // Check if the user has already bookmarked the post
-    const isBookmarked = story.bookmarkedBy.includes(userId);
-    if (isBookmarked) {
-      return res.status(200).json({
-        success: true,
-        data: userId,
-        errorMessage: "Post is already bookmarked",
-      });
-    }
+    
+
 
     // Add the user's ID to the bookmarkedBy array
-    story.bookmarkedBy.push(userId);
-    await story.save();
+
+    // story.bookmarkedBy.push(userId);
+    // await story.save();
 
     res.status(200).json({ success: true, message: "Post bookmarked successfully" });
   } catch (error) {
@@ -470,8 +471,9 @@ const TrackbookmarkPost = async (req, res, next) => {
   }
 };
 
+//track like post
 
-const unbookmarkPost = async (req, res, next) => {
+const TrackIsLikePost = async (req, res, next) => {
   try {
     const { postId } = req.params;
     const userId = req.userId;
@@ -495,17 +497,69 @@ const unbookmarkPost = async (req, res, next) => {
       });
     }
 
-    // Check if the user has bookmarked the post
-    const isBookmarked = story.bookmarkedBy.includes(userId);
-    if (!isBookmarked) {
+    const isPostLiked = await Story.exists({ _id: postId, likes: { $in: [userId] } });
+    // const islikemarked = story.likes.includes(userId);
+    if (isPostLiked) {
+      return res.status(200).json({
+        success: true,
+        data: userId,
+        errorMessage: "Post is already Liked",
+      });
+    }
+    else {
       return res.status(400).json({
-        errorMessage: "Post is not bookmarked",
+        success: false,
+        data: userId,
+        errorMessage: "Post is not like",
+      });
+
+    }
+
+
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+const unbookmarkPost = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const userId = req.userId;
+
+    if (!postId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: post ID is missing",
+      });
+    }
+    if (!userId) {
+      return res.status(400).json({
+        errorMessage: "Bad Request: user ID is missing",
       });
     }
 
+    // Find the story by postId
+    const story = await Story.findByIdAndUpdate( postId,
+      { $pull: { bookmarkedBy: userId } }, // Use $pull to remove userId from book array
+      { new: true });
+    if (!story) {
+      return res.status(404).json({
+        errorMessage: "Story not found",
+      });
+    }
+
+    // // Check if the user has bookmarked the post
+    // const isBookmarked = story.bookmarkedBy.includes(userId);
+    // if (!isBookmarked) {
+    //   return res.status(400).json({
+    //     errorMessage: "Post is not bookmarked",
+    //   });
+    // }
+
     // Remove the user's ID from the bookmarkedBy array
-    story.bookmarkedBy = story.bookmarkedBy.filter(id => id.toString() !== userId.toString());
-    await story.save();
+    // story.bookmarkedBy = story.bookmarkedBy.filter(id => id.toString() !== userId.toString());
+    // await story.save();
 
     res.status(200).json({ success: true, message: "Post unbookmarked successfully" });
   } catch (error) {
@@ -542,6 +596,6 @@ const sharePost = async (req, res, next) => {
 module.exports = {
   createStory, getStoriesByCategory, getStoryById
   , getUserStories, updateStoryById, likePost, unlikePost
-  , bookmarkPost, unbookmarkPost, sharePost, TrackbookmarkPost, 
-  getBookmarkedPosts , getLikeCount
+  , bookmarkPost, unbookmarkPost, sharePost, TrackbookmarkPost,
+  getBookmarkedPosts, getLikeCount, TrackIsLikePost
 };

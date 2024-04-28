@@ -53,5 +53,8 @@
     width: 143px;
     height: 95px;
   }
+  .imageCard h3{
+    font-size: 17px;
+  }
   
 }

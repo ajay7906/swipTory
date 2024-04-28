@@ -131,6 +131,8 @@ const storySchema = new mongoose.Schema({
 //     }
 //     next();
 // });
+
+
 storySchema.pre('save', function (next) {
     if (this.isModified('stories')) {
         // Extract the chooseCategory value from the first story

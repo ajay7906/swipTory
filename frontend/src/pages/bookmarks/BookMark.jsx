@@ -4,14 +4,31 @@ import CommanCard from '../../components/commoncard/CommanCard'
 import { getBookmarkedPosts } from '../../api/post';
 import NoBookMark from '../../assets/noBookMark.jpg'
 import { Link } from 'react-router-dom';
+import BookMarkCompo from '../../components/bookmarkcompo/BookMarkCompo';
+import AddStory from '../../components/addStory/AddStory';
+import StoryStatus from '../../components/status/StoryStatus';
 function BookMark() {
   const [getBookData, setGetBookData] = useState()
   const [showStoryModal, setShowStoryModal] = useState(false)
   const [postId, setPostId] = useState();
-  const openStoryModal = (postId) => {
-      setPostId(postId)
-      setShowStoryModal(true);
+  const [showAddStoryModal, setShowAddStoryModal] = useState(false);
+  const [myStoryEdit, setMyStoryEdit] = useState();
 
+  const openStoryModal = (postId) => {
+    setPostId(postId);
+    setShowStoryModal(true);
+  };
+
+  const closeStoryModal = () => {
+    setShowStoryModal(false);
+  };
+
+  const closeModal = () => {
+    setShowAddStoryModal(false);
+  };
+
+  const openshowAddStoryModalModal = () => {
+    setShowAddStoryModal(true);
   };
 
   //get bookmark post
@@ -44,23 +61,38 @@ function BookMark() {
             <Link to='/' className={styles.backHome}>Back to Home</Link>
           </div>
 
-        ) : (
-          getBookData?.map((data, index) => <CommanCard key={index} data={data} />)
+        ) : <div className={styles.mainCompo}>
+          {
+           
+            getBookData?.map((data, index) => (
+            <div key={index}>
+              {console.log(data)}
+              <div className={styles.mainEditBtn}  onClick={() => { openStoryModal(data._id) }} key={index}><BookMarkCompo data={data} />
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openshowAddStoryModalModal();
+                    setMyStoryEdit(data?.stories);
+                  }}
+                  className={styles.editBtn}
+                >
 
-        )
+                  <img
+                    src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg"
+                    alt="edit"
+                  />
+                  <p>edit</p>
+                </div>
+              </div>
+            </div>
+            ) )  } </div>
+          
+
+       
       }
 
-      {/* <div className={styles.bookMarkMain}>
-        {getBookData.length === 0 ? (
-          <div className={styles.NoBookMark}>
-            <p>BookMark not found</p>
-            <img src={NoBookMark} alt="" />
-          </div>
-        ) : (
-          getBookData.map((data, index) => <CommanCard key={index} data={data} />)
-        )}
-      </div> */}
-
+      {showAddStoryModal && getBookData && <AddStory closeModal={closeModal} myStoryEdit={myStoryEdit} />}
+      <div>{showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}</div>
     </div>
 
   )
