@@ -13,11 +13,7 @@ import { AuthProvider } from "./context/authContext"
 
 // import { ApiProvider } from './api/post';
 function App() {
-  const isMobile = useMediaQuery('(max-width: 780px)');
-  // const navigate = useNavigate();
-  // if (!isMobile) {
-  //   navigate('/');
-  // }
+ 
   return (
 
     <div>
@@ -31,18 +27,7 @@ function App() {
 
           />
           
-          {/* <Layout>
-          <Routes>
-         
-            <Route path="/" element={<Home />} />
-           
-            <Route path="/bookmarks" element={<BookMark />} />
-            <Route path="/your_story" element={<YourStory />} />
-           
-           
-            <Route path="/share/:postId" element={<ShareStoryPage />} />
-          </Routes>
-          </Layout> */}
+        
           <Routes>
          
          <Route path="/" element={<Layout><Home /></Layout>} />

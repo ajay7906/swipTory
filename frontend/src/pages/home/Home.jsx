@@ -15,17 +15,40 @@ import { useEffect, useState } from "react";
 import { getAllPost } from "../../api/post";
 import Test from "./Test";
 import YourStoryCompo from "../../components/yourstory/YourStoryCompo";
-import useMediaQuery from "../../utils/screenSize";
-// import Test from "./Test";
+//import useMediaQuery from "../../utils/screenSize";
+import { useMediaQuery } from 'react-responsive';
+
 function Home() {
-  const [category, setCategory] = useState("");
-  const [sendData, setSendData] = useState("");
-  const [allData, setAllData] = useState("");
-  const isMobile = useMediaQuery('(max-width: 780px)');
-  // const { postData, loading, fetchPosts } = useApi();
-
-
+  const isMobiles = useMediaQuery({ maxWidth: 780 });
   
+  //const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(isMobiles ? 'education' : '');
+  const [sendData, setSendData] = useState("");
+  const [sendIsMobile, setSendIsMobile] = useState("");
+  const [allData, setAllData] = useState("");
+  //const [isInitialRender, setIsInitialRender] = useState(true);
+  const [newIsMobile, setNewIsMobile] = useState(isMobiles)
+  // const { postData, loading, fetchPosts } = useApi();
+  // useEffect(() => {
+  //   if (isMobiles && (!category || category === "all")) {
+  //     setCategory('education');
+    
+  //   }
+  //   else if (!category) {
+  //     setCategory('');
+  //   }
+  
+  // }, [category, isMobiles]);
+  // useEffect(() => {
+  //   if (isInitialRender) {
+  //     setCategory(isMobiles ? 'education' : '');
+  //     setIsInitialRender(false);
+  //   }
+  // }, [isInitialRender, isMobiles]);
+
+ 
+   console.log(isMobiles);
+
   let categories = [
     { name: "all", image: Image },
     { name: "education", image: Image1 },
@@ -33,38 +56,107 @@ function Home() {
     { name: "food", image: Image },
     { name: "movies", image: Image3 },
     { name: "travel", image: Image4 }
-  ]; 
-  if (isMobile) {
-    categories = categories.filter(category => category.name !== "all");
-  }
+  ];
+ 
   
-  
+  console.log(isMobiles && (!category || category === 'all'));
+  console.log(isMobiles && !category);
+  console.log(isMobiles ? 'education' :'');
 
+
+  console.log(isMobiles );
+  
+ // console.log(handleDisplayData);
   const fetchAllPost = async () => {
     try {
-      const result = await getAllPost({ category });
+      
+     if (isMobiles && (!category || category === 'all')   ) {
+        setCategory('education')
+      const result = await getAllPost( { category: 'education' });
+      setSendData(result?.data)
+      
+     } else {
+      const result = await getAllPost( { category });
 
       console.log("Fetched data for category:", category);
       setSendData(result?.data)
-
+      console.log('categor', category);
       console.log("Result:", result.data);
+      
+     }
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
 
   };
 
-  useEffect(() => {
-    fetchAllPost();
 
-  }, [category]);
+
+  // const fetchAllPost = async () => {
+  //   try {
+  //     if (isInitialRender) {
+  //       const result = await getAllPost({ category: isMobiles ? 'education' : '' });
+  //       setSendData(result?.data);
+  //     } else {
+  //       if (isMobiles && (!category || category === 'all')) {
+  //         setCategory('education');
+  //         const result = await getAllPost({ category: 'education' });
+  //         setSendData(result?.data);
+  //       } else {
+  //         const result = await getAllPost({ category });
+  //         console.log("Fetched data for category:", category);
+  //         setSendData(result?.data);
+  //         console.log('category', category);
+  //         console.log("Result:", result.data);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching posts:", error);
+  //   }
+  // };
+
+
+
+  
+  // const fetchAllPost = async () => {
+  //   try {
+      
+  //     const result = await getAllPost( { category });
+
+  //     console.log("Fetched data for category:", category);
+  //     setSendData(result?.data)
+  //     console.log('categor', category);
+  //     console.log("Result:", result.data);
+      
+      
+     
+  //   } catch (error) {
+  //     console.error("Error fetching posts:", error);
+  //   }
+
+  // };
+
+
+  console.log(isMobiles);
+
+  useEffect(() => {
+    
+
+    fetchAllPost();
+    //  fetchAllPost()
+
+  }, [category, isMobiles ]);
+
+
   useEffect(() => {
 
     setAllData('all');
   }, []);
 
+
+
   const handleCategorySelect = (categoryName) => {
-    
+
     setAllData(categoryName)
     setCategory(categoryName === "all" ? "" : categoryName);
     console.log(categoryName);
@@ -72,32 +164,8 @@ function Home() {
 
 
   };
+
   
-  if (isMobile) {
-    if (!category || category==="all") {
-      setCategory('education')
-      
-    }
-    
-  }
-
-  // const handleCategorySelect = (categoryName) => {
-  //   if (!isMobile) {
-  //     if (!categoryName) {
-  //       setAllData("education");
-  //       setCategory("education");
-  //     } else {
-  //       setAllData(categoryName);
-  //       setCategory(categoryName);
-  //     }
-  //   } else {
-  //     setAllData(categoryName === "all" ? "all" : categoryName);
-  //     setCategory(categoryName === "all" ? "" : categoryName);
-  //   }
-  //   console.log(categoryName);
-  //   console.log(category);
-  // };
-
 
 
 
@@ -111,19 +179,9 @@ function Home() {
       </Layout> */}
       <div className={styles.categoryCard}>
 
-        {/* {categories.map((categoryItem, index) => (
-         
-          <div className={styles.allCategoryCard} key={index} onClick={() => handleCategorySelect(categoryItem.name)}>
-            <CategoryCard
-
-              categoryName={categoryItem.name}
-              categoryImage={categoryItem.image}
-
-            />
-          </div>
-        ))} */}
+       
         {categories.map((categoryItem, index) => {
-          if (isMobile && categoryItem.name === "all") {
+          if (isMobiles && categoryItem.name === "all") {
              return ;
           }
           return (
@@ -139,10 +197,10 @@ function Home() {
       {/* <div>
           <YourStory/>
         </div> */}
-      {!isMobile && <div>
+      {!isMobiles && <div>
         <YourStoryCompo />
       </div>}
-      <FoodCompo sendData={sendData} allData={allData} />
+      <FoodCompo sendData={sendData} allData={allData}  />
 
       {/* <Test stories={stories} sendData={sendData}/> */}
     </div>

@@ -110,7 +110,7 @@ import { jwtDecode } from 'jwt-decode';
 import AddStory from "../addStory/AddStory";
 import useMediaQuery from "../../utils/screenSize";
 
-function FoodCompo({ sendData, allData }) {
+function FoodCompo({ sendData, allData, handleDisplayData }) {
     const [showStoryModal, setShowStoryModal] = useState(false)
     const [filteredData, setFilteredData] = useState([])
     const [myStoryHomeEdits, setMyStoryHomeEdits] = useState();
@@ -118,19 +118,20 @@ function FoodCompo({ sendData, allData }) {
     const [showAddStoryModals, setShowAddStoryModals] = useState(false);
     const [postId, setPostId] = useState();
     const isMobile = useMediaQuery('(max-width: 780px)');
+    console.log(allData);
     useEffect(() => {
         const token = localStorage.getItem('token');
-        
+
         if (token) {
             const decodedToken = jwtDecode(token);
             setCurrentUser(decodedToken.userId);
         }
 
     }, []);
-    useEffect(()=>{
+    useEffect(() => {
 
-    },[isMobile])
-  
+    }, [isMobile])
+
 
     const closeModal = () => {
 
@@ -188,15 +189,15 @@ function FoodCompo({ sendData, allData }) {
     //         setFilteredData(sendData.filter(categoryData => categoryData.chooseCategory === allData));
     //     }
     // }, [allData, sendData]);
-  
+
     return (
         <div className={styles.data}>
-            { !isMobile &&
+            {!isMobile &&
                 allData === "all" ?
-                    <> { categoryMap.map((categoryName, index) => (
-                        <div key={index}>
-                            <div className={styles.htag}><h2>Top Stories About {categoryName}</h2></div>
-                            {/* <div className={styles.main}>
+                <> {categoryMap.map((categoryName, index) => (
+                    <div key={index}>
+                        <div className={styles.htag}><h2>Top Stories About {categoryName}</h2></div>
+                        {/* <div className={styles.main}>
                                
                                 {sendData.filter((categoryData) => categoryData.chooseCategory === categoryName).length > 0 ? (
                                     sendData
@@ -210,35 +211,35 @@ function FoodCompo({ sendData, allData }) {
                                     <div className={styles.storyNotFound}><h3>Stories not found</h3></div>
                                 )}
                             </div> */}
-                            {sendData
-                                .filter((categoryData) => categoryData.chooseCategory === categoryName)
-                                .length > 0 ? (
-                                <div className={styles.main}>
-                                    {sendData
-                                        .filter((categoryData) => categoryData.chooseCategory === categoryName)
-                                        .map((filteredData, index) => (
+                        {sendData
+                            .filter((categoryData) => categoryData.chooseCategory === categoryName)
+                            .length > 0 ? (
+                            <div className={styles.main}>
+                                {sendData
+                                    .filter((categoryData) => categoryData.chooseCategory === categoryName)
+                                    .map((filteredData, index) => (
 
-                                            <div className={styles.CommanCardMain} key={index} onClick={() => openStoryModal(filteredData._id)}>
-                                                {console.log(filteredData.stories)}
-                                                <CommanCard filteredData={filteredData} />
-                                                {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
-                                                    <div className={styles.editBtn} onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        openshowAddStoryModalModal()
-                                                        setMyStoryHomeEdits(filteredData.stories)
+                                        <div className={styles.CommanCardMain} key={index} onClick={() => openStoryModal(filteredData._id)}>
+                                            {console.log(filteredData.stories)}
+                                            <CommanCard filteredData={filteredData} />
+                                            {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
+                                                <div className={styles.editBtn} onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    openshowAddStoryModalModal()
+                                                    setMyStoryHomeEdits(filteredData.stories)
 
-                                                    }}>
-                                                        <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
-                                                        <p>edit</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
-                                </div>
-                            ) : (
-                                <div className={styles.storyNotFound}><h3>No stories Available</h3></div>
-                            )}
-                            {/* {sendData
+                                                }}>
+                                                    <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
+                                                    <p>edit</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                            </div>
+                        ) : (
+                            <div className={styles.storyNotFound}><h3>No stories Available</h3></div>
+                        )}
+                        {/* {sendData
                                     .filter(categoryData => categoryData.chooseCategory === categoryName)
                                     .map((filteredData, index) => (
                                        
@@ -253,14 +254,14 @@ function FoodCompo({ sendData, allData }) {
                                     
                                     } */}
 
-                        </div>
-                    ))}</>
-                    :
-                    <>
-                        <div >
-                            {isMobile ?  <> </> :   
+                    </div>
+                ))}</>
+                :
+                <>
+                    <div >
+                        {isMobile ? <> </> :
                             <> <div className={styles.htag}><h2>Top Stories About {allData}</h2></div></>}
-                            {/* <div className={styles.main}>
+                        {/* <div className={styles.main}>
                                 {sendData
 
                                     .map((filteredData, index) => (
@@ -270,7 +271,8 @@ function FoodCompo({ sendData, allData }) {
                                         </div>
                                     ))}
                             </div> */}
-                            {sendData.length > 0 ? (
+                        {
+                            sendData.length > 0 ? (
                                 <div className={styles.main}>
                                     {sendData.map((filteredData, index) => (
                                         <div key={index} onClick={() => openStoryModal(filteredData._id)}>
@@ -281,9 +283,12 @@ function FoodCompo({ sendData, allData }) {
                                 </div>
                             ) : (
                                 <div className={styles.storyNotFound}><h3>No stories Available</h3></div>
-                            )}
-                        </div>
-                    </>
+                            )
+
+
+                        }
+                    </div>
+                </>
             }
             <div>
                 {showAddStoryModals && myStoryHomeEdits && <AddStory closeModal={closeModal} myStoryHomeEdits={myStoryHomeEdits} />}

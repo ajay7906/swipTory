@@ -10,7 +10,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, bookPageStoryEdit
     //const [showModal, setShowModal] = useState(false);
 
     const [selectedCategory, setSelectedCategory] = useState('');
-    const categories = ['food', 'health and fitness', 'travel', 'movies', 'education'];
+    const categories = ['food', 'sports', 'travel', 'movies', 'education'];
     const isMobile = useMediaQuery('(max-width: 780px)');
     const [currentSlide, setCurrentSlide] = useState(0);
     const [slideStoryInfo, setSlideStoryInfo] = useState(() => {
@@ -19,7 +19,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, bookPageStoryEdit
                 heading: story.heading || "",
                 description: story.description || "",
                 image: story.image || "",
-                chooseCategory: story.category || "",
+                chooseCategory: story.chooseCategory || "",
             }));
 
         }
@@ -31,7 +31,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, bookPageStoryEdit
                 heading: story.heading || "",
                 description: story.description || "",
                 image: story.image || "",
-                chooseCategory: story.category || "",
+                chooseCategory: story.chooseCategory || "",
             }));
         }
 
