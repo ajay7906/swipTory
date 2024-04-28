@@ -91,7 +91,7 @@ function BookMark() {
        
       }
 
-      {showAddStoryModal && getBookData && <AddStory closeModal={closeModal} myStoryEdit={myStoryEdit} />}
+      {showAddStoryModal && getBookData && <AddStory postId={postId} closeModal={closeModal} myStoryEdit={myStoryEdit} />}
       <div>{showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}</div>
     </div>
 

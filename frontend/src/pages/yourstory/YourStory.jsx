@@ -195,7 +195,7 @@ function YourStory() {
           ))}
         </div>
       )}
-      {showAddStoryModal && allUserStory && <AddStory closeModal={closeModal} myStoryEdit={myStoryEdit} />}
+      {showAddStoryModal && allUserStory && <AddStory postId={postId} closeModal={closeModal} myStoryEdit={myStoryEdit} />}
       <div>{showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}</div>
     </div>
   );

@@ -1,18 +1,19 @@
 import { useState } from "react";
 import styles from './AddStory.module.css'
-import { createPost } from "../../api/post";
+import { createPost, updatePostById } from "../../api/post";
 import { showToast } from "../../utils/showToast";
 import useMediaQuery from "../../utils/screenSize";
 import RemoveSlide from '../../assets/removeslide.png'
 import BigRemove from '../../assets/bigRemove.png'
-function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, bookPageStoryEdit }) {
+function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
     // State variables
     //const [showModal, setShowModal] = useState(false);
-
+    console.log(postId);
     const [selectedCategory, setSelectedCategory] = useState('');
     const categories = ['food', 'sports', 'travel', 'movies', 'education'];
     const isMobile = useMediaQuery('(max-width: 780px)');
     const [currentSlide, setCurrentSlide] = useState(0);
+    {console.log(myStoryEdit)}
     const [slideStoryInfo, setSlideStoryInfo] = useState(() => {
         if (Array.isArray(myStoryEdit)) {
             return myStoryEdit.map((story) => ({
@@ -20,6 +21,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, bookPageStoryEdit
                 description: story.description || "",
                 image: story.image || "",
                 chooseCategory: story.chooseCategory || "",
+              
             }));
 
         }
@@ -61,7 +63,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, bookPageStoryEdit
             ];
         }
     });
-
+    //  console.log(slideStoryInfo[currentSlide].chooseCategory);
     //handle remove slide
     const handleRemoveSlide = (index) => {
         const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
@@ -129,6 +131,9 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, bookPageStoryEdit
     //   setShowModal(false);
     // };
     // Inside the setSelectedCategory function
+
+
+
     const setSelectedCategoryFunction = (category) => {
         setSelectedCategory(category);
         // Update the category for all slides
@@ -138,6 +143,20 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, bookPageStoryEdit
         }));
         setSlideStoryInfo(updatedSlideStoryInfo);
     };
+    // const setSelectedCategoryFunction = (category) => {
+    //     setSelectedCategory(category);
+    //     // Update the category for the current slide only
+    //     const updatedSlideStoryInfo = [...slideStoryInfo];
+    //     updatedSlideStoryInfo[currentSlide].chooseCategory = category;
+    //     setSlideStoryInfo(updatedSlideStoryInfo);
+    // };
+
+
+
+
+
+
+
     // Function to handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -152,12 +171,32 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, bookPageStoryEdit
         // );
 
         if (!isSlideInfoComplete) {
-            alert("Please fill in all fields for all slides.");
+           
             return;
         }
-        // Process form data (e.g., send it to the server)
-        await createPost(slideStoryInfo)
-        showToast('post register successful', { type: 'success' });
+
+
+        
+
+        if (Array.isArray(myStoryEdit)) {
+            await updatePostById(postId , slideStoryInfo)
+            showToast('post update successful', { type: 'success' });
+        } 
+        // Check if myStoryHomeEdits exists and it's an array (indicating editing existing data)
+        else if (Array.isArray(myStoryHomeEdits)) {
+            await updatePostById(postId , slideStoryInfo)
+            showToast('post update successful', { type: 'success' });
+        } 
+      
+
+
+
+
+       else{
+         // Process form data (e.g., send it to the server)
+         await createPost(slideStoryInfo)
+         showToast('post register successful', { type: 'success' });
+       }
 
         // Close the modal after form submission
         closeModal();
@@ -241,7 +280,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, bookPageStoryEdit
                             >
                                 <option value="" disabled >Select category</option>
                                 {categories.map((cat) => (
-                                    <option key={cat} value={cat}>
+                                    <option key={cat} value={cat} selected={cat=== slideStoryInfo[currentSlide]?.chooseCategory}>
                                         {cat}
                                     </option>
                                 ))}

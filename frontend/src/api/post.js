@@ -53,6 +53,28 @@ export const getPostById = async (postId)=>{
     }
 }
 
+//update post by Id
+
+export const updatePostById = async (postId, storiesData) => {
+    try {
+        const reqUrl = `${backendUrl}/update-post/${postId}`;
+        const token = localStorage.getItem("token");
+        const postPayload = { stories: storiesData };
+        axios.defaults.headers.common["Authorization"] = token;
+        const response = await axios.put(reqUrl, postPayload);
+        console.log(response.data);
+        return response.data;
+
+
+    } catch (error) {
+        showToast(error.response.data.errorMessage, { type: 'error' });
+
+
+
+    }
+}
+
+
 //like post api
 
 

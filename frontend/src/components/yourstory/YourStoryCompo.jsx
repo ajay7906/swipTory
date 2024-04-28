@@ -26,8 +26,9 @@ function YourStory() {
     setShowAddStoryModal(false)
   };
 
-  const openshowAddStoryModalModal = () => {
+  const openshowAddStoryModalModal = (postId) => {
     // setMyStoryId(myStorId)
+    setPostId(postId)
     setShowAddStoryModal(true);
 
   };
@@ -66,7 +67,8 @@ function YourStory() {
 
               <div onClick={(e) => {
                 e.stopPropagation()
-                openshowAddStoryModalModal()
+                openshowAddStoryModalModal(data._id)
+                
                 setMyStoryEdit(allUserStory[index].stories)
               }} className={styles.editBtn}>
                 {console.log(allUserStory[0].stories)}
@@ -79,7 +81,11 @@ function YourStory() {
           ))
         } </div>
       {/* {showAddStoryModal && <AddStory closeModal={closeModal} allUserStory={allUserStory}/>} */}
-      {showAddStoryModal && allUserStory && <AddStory closeModal={closeModal} myStoryEdit={myStoryEdit} />}
+      {showAddStoryModal && allUserStory && 
+       <AddStory closeModal={closeModal}
+        myStoryEdit={myStoryEdit} 
+        postId={postId}
+        />}
       <div>
         {showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}
       </div>

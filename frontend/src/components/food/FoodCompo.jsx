@@ -291,7 +291,11 @@ function FoodCompo({ sendData, allData, handleDisplayData }) {
                 </>
             }
             <div>
-                {showAddStoryModals && myStoryHomeEdits && <AddStory closeModal={closeModal} myStoryHomeEdits={myStoryHomeEdits} />}
+                {showAddStoryModals && myStoryHomeEdits && <AddStory 
+                 closeModal={closeModal} 
+                  myStoryHomeEdits={myStoryHomeEdits}
+                  postId={postId}
+                  />}
                 {showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}
             </div>
         </div>
