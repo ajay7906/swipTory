@@ -4,7 +4,7 @@ import {
   bookMarkPost, createPost, getPostById, likePost, trackIsLikePost, trackbookMarkPost,
   tracklikeCountkPost, unbookMarkPost, unlikePost
 } from "../../api/post";
-import { showToast } from "../../utils/showToast";
+
 import LeftMove from '../../assets/left.png'
 import RighttMove from '../../assets/right.png'
 import Remove from '../../assets/Crosss.png'
@@ -16,9 +16,9 @@ import Like from '../../assets/redlike.png'
 import { useParams } from 'react-router-dom';
 import { RotatingLines } from 'react-loader-spinner'
 import useMediaQuery from "../../utils/screenSize";
-import { toast,  } from 'react-toastify';
+import { ToastContainer, toast, } from 'react-toastify';
 import { AuthContext } from "../../context/authContext";
-import {useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 // import { usePostId } from "../../utils/postIdcontext";
 
 function ShareStoryPage({ closeModal, closeStoryModal }) {
@@ -32,27 +32,34 @@ function ShareStoryPage({ closeModal, closeStoryModal }) {
   const { postId } = useParams();
   const isMobile = useMediaQuery('(max-width: 700px)');
   const navigate = useNavigate();
-  const { handleLogin , openLoginModal } = useContext(AuthContext);
-//   const { setPostId } = usePostId();
-const notify = () => toast("Wow so easy!");
+  const { handleLogin, openLoginModal } = useContext(AuthContext);
+  //   const { setPostId } = usePostId();
+  const notify = () => toast("Wow so easy!");
   const [bookStory, setBookStory] = useState()
-  const prevImageDataRef = useRef(null);
 
 
-//   useEffect(() => {
-//     setPostId(postId);
-//   }, [postId, setPostId]);
+  //   useEffect(() => {
+  //     setPostId(postId);
+  //   }, [postId, setPostId]);
+
 
 
   //copy share images
+
   const customToastStyle = {
     backgroundColor: '#333',
     color: '#FF0000',
     fontSize: '20px',
     padding: '10px 20px',
+    textAlign:'center',
     borderRadius: '39px',
-    background:'#ffffff',
-    
+   
+    width:'300px',
+    height:'36px',
+    background: '#D9D9D9',
+
+   
+
 
   };
 
@@ -64,9 +71,10 @@ const notify = () => toast("Wow so easy!");
     if (navigator.clipboard) {
       const link = navigator.clipboard.writeText(shareLink);
       console.log(link);
-    //   notify()
-    toast('Link copied to clipboard', {
-        position: "top-center",
+      //   notify()
+      toast('Link copied to clipboard', {
+        position: 'top-center',
+
         autoClose: 5000,
         hideProgressBar: true,
         closeOnClick: true,
@@ -74,9 +82,9 @@ const notify = () => toast("Wow so easy!");
         draggable: true,
         progress: undefined,
         theme: "light",
-        style:customToastStyle
-       
-        });
+        style: customToastStyle
+
+      });
     } else {
       window.open(shareLink, '_blank');
     }
@@ -86,31 +94,31 @@ const notify = () => toast("Wow so easy!");
   const likeStory = async () => {
     const loggedInUser = localStorage.getItem('token')
     if (loggedInUser) {
-        try {
-            const like = await likePost(postId)
-            if (like.success) {
-              setLikeBtn(true)
-              tracklikeCount();
-            }
-      
-      
-      
-          } catch (error) {
-            console.log(error);
-          }
+      try {
+        const like = await likePost(postId)
+        if (like.success) {
+          setLikeBtn(true)
+          tracklikeCount();
         }
-        else{
-          closeStoryModals()
-          handleLogin()
-          openLoginModal()
-    
-        }
-      
-        
-    }
-  
 
-  
+
+
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    else {
+      closeStoryModals()
+      handleLogin()
+      openLoginModal()
+
+    }
+
+
+  }
+
+
+
   //track like count
 
   const tracklikeCount = async () => {
@@ -127,7 +135,7 @@ const notify = () => toast("Wow so easy!");
       console.log(error);
     }
   }
-   
+
 
   const trackislike = async () => {
 
@@ -184,18 +192,18 @@ const notify = () => toast("Wow so easy!");
         const bookMarkPostData = await bookMarkPost(postId)
         if (bookMarkPostData.success) {
           setBookBtn(true)
-  
+
         }
-  
+
       } catch (error) {
         console.log(error);
       }
-      
+
     } else {
       closeStoryModals()
       handleLogin()
       openLoginModal()
-      
+
     }
   }
 
@@ -216,7 +224,7 @@ const notify = () => toast("Wow so easy!");
 
 
   const fetchJobDetails = async () => {
-    if (!postId) return ;
+    if (!postId) return;
     try {
       const result = await getPostById(postId);
       setImageData(result?.data)
@@ -260,15 +268,15 @@ const notify = () => toast("Wow so easy!");
   const prevImage = () => {
 
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? 0 : prevIndex - 1));
-     if (currentIndex===0) {
-      return ;
-     }
-     else{
+    if (currentIndex === 0) {
+      return;
+    }
+    else {
       filled(0)
-     }
-  
+    }
+
   };
- 
+
 
   useEffect(() => {
     if (filled < 100) {
@@ -296,7 +304,8 @@ const notify = () => toast("Wow so easy!");
 
   return (
     <div className={styles.overlay} onClick={closeModal}>
-     {!isMobile &&  <div ><img onClick={prevImage} src={LeftMove} alt="" className={styles.move} /></div>}
+
+      {!isMobile && <div ><img onClick={prevImage} src={LeftMove} alt="" className={styles.move} /></div>}
       {
         imageData && imageData.length > 0 ?
           <>
@@ -316,7 +325,14 @@ const notify = () => toast("Wow so easy!");
                 <img onClick={generateShareLink} src={Share} alt="Share" />
               </div>
               <div className={styles.imageDiv} style={{ backgroundImage: `linear-gradient(0deg, rgb(0, 0, 0) 20%, rgba(0, 0, 0, 0) 40%), linear-gradient(rgb(0, 0, 0) 14%, rgba(0, 0, 0, 0) 30%), url(${imageData[currentIndex]?.image})` }}>
+                <ToastContainer
+                    className={`${isMobile ? styles.toastcontainer : styles.desktopContainer}`}
+                  theme='dark'
+                  closeButton={false}
+                  
+                  position="top-center"
 
+                />
               </div>
               <div className={styles.info}>
                 <h2>{imageData[currentIndex]?.heading}</h2>
@@ -327,13 +343,13 @@ const notify = () => toast("Wow so easy!");
                   bookBtn === true ? <><img onClick={unbookMarkStory} src={BlueSave} alt="Save" /></> : <> <img onClick={bookMarkStory} src={Save} alt="Save" /></>
                 }
                 <div className={styles.likeAndCount}>
-                {
-                  likeBtn === true ? <><img onClick={unlikeStory} src={Like} alt="Save" /></> : <> <img onClick={likeStory} src={Unlike} alt="Save" /></>
-                }
-                 <div className={styles.likeCount}>{likeCountNumber}</div>
+                  {
+                    likeBtn === true ? <><img onClick={unlikeStory} src={Like} alt="Save" /></> : <> <img onClick={likeStory} src={Unlike} alt="Save" /></>
+                  }
+                  <div className={styles.likeCount}>{likeCountNumber}</div>
                 </div>
               </div>
-             
+
 
             </div>
 

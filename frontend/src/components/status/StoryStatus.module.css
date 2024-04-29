@@ -46,6 +46,7 @@
 .imageDiv {
     background-repeat: no-repeat;
     background-size: 100% 100%;
+    background-position: center;
     bottom: 0;
     left: 0;
     position: absolute;
@@ -143,6 +144,12 @@
     gap: 2rem;
     align-items: center;
     
+}
+.toastcontainer{
+    top: 23rem !important;
+}
+.desktopContainer{
+    top: 40rem !important;
 }
 
 

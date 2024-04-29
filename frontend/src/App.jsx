@@ -21,6 +21,7 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
         <ToastContainer
+         
             theme='dark'
             transition:Bounce
             position="top-center"

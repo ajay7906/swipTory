@@ -12,6 +12,8 @@ function YourStory() {
   const [myStoryEdit, setMyStoryEdit] = useState();
   const [showStoryModal, setShowStoryModal] = useState(false)
   const [postId, setPostId] = useState();
+  const [itemsToShow, setItemsToShow] = useState(4); // Initial number of items to show
+  const [showMoreVisible, setShowMoreVisible] = useState(true);
   const openStoryModal = (postId) => {
     setPostId(postId)
     setShowStoryModal(true);
@@ -31,6 +33,10 @@ function YourStory() {
     setPostId(postId)
     setShowAddStoryModal(true);
 
+  };
+  const handleShowMore = () => {
+    setItemsToShow(allUserStory?.length); // Show all items
+    setShowMoreVisible(false); // Hide the "show more" button
   };
 
   const fetchAllUserPost = async () => {
@@ -61,14 +67,14 @@ function YourStory() {
       <div className={styles.yourStory}>
         {
           allUserStory &&
-          allUserStory?.map((data, index) => (
+          allUserStory.slice(0, itemsToShow)?.map((data, index) => (
 
             <div key={index} className={styles.commanCard} onClick={() => openStoryModal(data._id)} ><BookMarkCompo allUserStory={allUserStory} />
 
               <div onClick={(e) => {
                 e.stopPropagation()
                 openshowAddStoryModalModal(data._id)
-                
+
                 setMyStoryEdit(allUserStory[index].stories)
               }} className={styles.editBtn}>
                 {console.log(allUserStory[0].stories)}
@@ -79,16 +85,24 @@ function YourStory() {
             </div>
 
           ))
-        } </div>
+        }
+        
+
+      </div>
       {/* {showAddStoryModal && <AddStory closeModal={closeModal} allUserStory={allUserStory}/>} */}
-      {showAddStoryModal && allUserStory && 
-       <AddStory closeModal={closeModal}
-        myStoryEdit={myStoryEdit} 
-        postId={postId}
+      {showAddStoryModal && allUserStory &&
+        <AddStory closeModal={closeModal}
+          myStoryEdit={myStoryEdit}
+          postId={postId}
         />}
       <div>
         {showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}
       </div>
+      {showMoreVisible && (
+          <div className={styles.showMoreBtnParen}>
+            <button onClick={handleShowMore} className={styles.showMoreBtn}>See More</button>
+          </div>
+        )}
     </div>
   )
 }

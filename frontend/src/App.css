@@ -1,7 +1,7 @@
 html {
   font-size: 10px; 
 }
-
+/* 
 :root {
   --toastify-color-light: #fff;
   --toastify-color-dark: #121212;
@@ -46,4 +46,9 @@ html {
 .Toastify__toast-theme--dark {
   background: var(--toastify-color-dark);
   color: var(--toastify-text-color-dark);
+} */
+.Toastify__toast-container--top-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

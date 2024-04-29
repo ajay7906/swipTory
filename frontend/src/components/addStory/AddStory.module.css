@@ -22,7 +22,7 @@
   padding: 2rem;
   border-radius: 20px;
   box-shadow: 0 0 10px #0000004d;
-
+ 
   max-width: 700px;
   /* Adjust the max width as needed */
   display: flex;
@@ -111,7 +111,8 @@
 .storyInput {
   margin-top: 2.6rem;
   width: 44rem;
-  padding-left: 2rem;
+  padding-left: 1rem;
+ 
 }
 
 .input {
@@ -281,7 +282,7 @@
   }
   .postBtnBox{
     padding-left: 5rem;
-    padding-bottom: -3rem;
+    margin-top: 2rem;
   }
   .postBtnBox button{
     height: 24px;
@@ -293,21 +294,22 @@
     display: flex;
     justify-content: center;
     align-items: center;
+   
   }
   .slideButton{
     flex-direction: column;
     padding: 0 4px 0 4px;
     gap: 1rem;
+   
   }
   .input{
     flex-direction: column;
     text-align: left;
     align-items: flex-start;
+    padding-top: 6px;
     
   }
-  .storyInput{
-   
-  }
+  
   .modal .storyInput label {
     font-size: 15px;
     
@@ -317,10 +319,7 @@
     height: 52px;
     font-size: 10px;
   }
-  .modal .storyInputn select{
-    font-size: 10ox;
-   
-  }
+
   .modal .storyInput input{
     border: 1px solid #000;
   
@@ -336,7 +335,7 @@
   }
   .modal .storyInput select{
     height: 24px;
-   
+    font-size: 15px;
     
     width: 174px;
 
@@ -351,9 +350,9 @@
   .slideButton button{
    
     
-    height: 38px;
+    height: 45px;
     text-align: center;
-    width: 100%;
+    width:38px ;
     font-size: 9px;
     position: relative;
      
@@ -371,12 +370,12 @@
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 10px;
-    margin-top: 35px;
+    margin-top: 43px;
     text-align: center;
     margin-left: 28px;
   }
   .addStoryForm{
-    margin-top: 20px;
+    margin-top: -10px;
   }
   .addStoryForm{
     margin-left: 3.2rem;

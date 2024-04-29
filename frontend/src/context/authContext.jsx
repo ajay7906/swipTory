@@ -5,6 +5,11 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isLoggedIns, setIsLoggedIns] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [username, setUsername] = useState('');
+
+  const setUser = (user) => {
+    setUsername(user);
+  };
 
   const handleLogin = () => {
     // Perform login logic here
@@ -35,6 +40,8 @@ export const AuthProvider = ({ children }) => {
         handleLogout,
         openLoginModal,
         closeLoginModal,
+        username,
+         setUser
       }}
     >
       {children}

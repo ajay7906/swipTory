@@ -10,7 +10,7 @@ function Register({ closeModal, modalName, setIsLoggedIn }) {
   const [username, setUsername] = useState('');
   const [showError, setShowError] = useState(' ')
   const [password, setPassword] = useState('');
-  const {isLoggedIns } = useContext(AuthContext);
+  const {isLoggedIns , setUser } = useContext(AuthContext);
   console.log(isLoggedIns);
   console.log(username, password);
   useEffect(() => {
@@ -53,11 +53,10 @@ function Register({ closeModal, modalName, setIsLoggedIn }) {
       response = await loginUser({ username, password });
     }
    
-    console.log(response);
+   
 
     if (response?.success) {
-      // const userData = { username: username, password:password };
-      // // login(userData);
+      setUser(response?.username)
       showToast(`${modalName} Successful`, { type: 'success' });
       closeModal();
     } else {

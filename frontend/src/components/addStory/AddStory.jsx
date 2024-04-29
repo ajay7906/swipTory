@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from './AddStory.module.css'
 import { createPost, updatePostById } from "../../api/post";
 import { showToast } from "../../utils/showToast";
-import useMediaQuery from "../../utils/screenSize";
+import useMediaQuery from "../../utils/screenSize"; 
 import RemoveSlide from '../../assets/removeslide.png'
 import BigRemove from '../../assets/bigRemove.png'
 function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
@@ -13,8 +13,9 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
     const categories = ['food', 'sports', 'travel', 'movies', 'education'];
     const isMobile = useMediaQuery('(max-width: 780px)');
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [previousSlide, setPreviousSlide] = useState(0)
     const [activeSlideIndex, setActiveSlideIndex] = useState(currentSlide);
-    { console.log(myStoryEdit) }
+    
     const [slideStoryInfo, setSlideStoryInfo] = useState(() => {
         if (Array.isArray(myStoryEdit)) {
             return myStoryEdit.map((story) => ({
@@ -65,12 +66,48 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         }
     });
     //  console.log(slideStoryInfo[currentSlide].chooseCategory);
+
+    // const handleRemoveSlide = (index) => {
+    //     const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
+    //     setSlideStoryInfo(updatedSlideStoryInfo);
+
+    //     if (index === currentSlide) {
+    //         if (updatedSlideStoryInfo.length === 0) {
+    //             setCurrentSlide(0);
+    //             // Clear input fields
+    //             const newSlideStoryInfo = [...updatedSlideStoryInfo];
+    //             newSlideStoryInfo[0] = {
+    //                 heading: "",
+    //                 description: "",
+    //                 image: "",
+    //                 chooseCategory: "",
+    //             };
+    //             setSlideStoryInfo(newSlideStoryInfo);
+    //         } else {
+    //             setCurrentSlide(currentSlide === 0 ? 0 : currentSlide - 1);
+    //             // Clear input fields for the new currentSlide
+    //             const newSlideStoryInfo = [...updatedSlideStoryInfo];
+    //             newSlideStoryInfo[currentSlide === 0 ? 0 : currentSlide - 1] = {
+    //                 heading: "",
+    //                 description: "",
+    //                 image: "",
+    //                 chooseCategory: "",
+    //             };
+    //             setSlideStoryInfo(newSlideStoryInfo);
+    //         }
+    //     } else if (index < currentSlide) {
+    //         setCurrentSlide(currentSlide - 1);
+    //     }
+    // };
     //handle remove slide
     const handleRemoveSlide = (index) => {
         const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
+
         setSlideStoryInfo(updatedSlideStoryInfo);
-        if (index === currentSlide) {
+
+      if (index === currentSlide) {
             setCurrentSlide(0);
+         
             //  setActiveSlideIndex(0);
             // Reset currentSlide to 0 if the removed slide was the current slide
         } else if (index < currentSlide) {
@@ -78,7 +115,36 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
             // setActiveSlideIndex(currentSlide - 1);
             // Decrement currentSlide if the removed slide was before the current slide
         }
-    };
+    }
+
+
+
+
+    // const handleRemoveSlide = (index) => {
+    //     const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
+    //     setSlideStoryInfo(updatedSlideStoryInfo);
+
+    //     if (index === currentSlide) {
+    //         setCurrentSlide(0);
+    //         // Reset currentSlide to 0 if the removed slide was the current slide
+    //         setSlideStoryInfo((prevState) => [
+    //             ...prevState.slice(0, index),
+    //             {
+    //                 heading: "",
+    //                 description: "",
+    //                 image: "",
+    //                 chooseCategory: "",
+    //             },
+    //             ...prevState.slice(index + 1),
+    //         ]);
+    //     } else if (index < currentSlide) {
+    //         setCurrentSlide(currentSlide - 1);
+    //         // Decrement currentSlide if the removed slide was before the current slide
+    //     }
+    // };
+
+
+
     // Function to handle adding a new slide data object
     const handleAddSlide = () => {
         if (slideStoryInfo.length < 6) {
@@ -111,7 +177,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
     // }
     const handleNextSlide = () => {
         console.log("Current slide before update:", currentSlide);
-        if (currentSlide < 5) {
+        if (currentSlide < slideStoryInfo.length - 1) {
             setCurrentSlide(currentSlide + 1);
 
         }
@@ -210,23 +276,32 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
     };
 
 
+    useEffect(() => {
+        // Add class to body when modal is open
+        document.body.style.overflow = 'hidden';
+
+        // Remove class from body when component unmounts
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, []);
 
 
     return (
         <div className={styles.overlay} onClick={closeModal}>
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                 <span className={styles.close} onClick={closeModal}>X</span>
-               {!isMobile &&  <p className={styles.addslidemess}>Add upto 6 slides </p>}
-               {isMobile && <div className={styles.addlinesmobile}><p >Add story to feed</p></div>}
+                {!isMobile && <p className={styles.addslidemess}>Add upto 6 slides </p>}
+                {isMobile && <div className={styles.addlinesmobile}><p >Add story to feed</p></div>}
                 <div className={styles.addStoryForm}>
-                   
+
                     <div className={styles.slideButton}>
 
-                        {slideStoryInfo.map((_, index) => (<> {console.log(currentSlide, index, activeSlideIndex)}
-                        <button key={index} className={`${styles.slideButton} ${(currentSlide === index) ? styles.activeButton : ''}`} onClick={() => { setCurrentSlide(index); }}> <div className={styles.mobileSlide}>Slide<br /> {index + 1}</div> {index >= 3 && (
-                                    <div className={styles.removeSlide}><img onClick={() => { handleRemoveSlide(index); }} src={BigRemove} alt="" /></div>
+                        {slideStoryInfo.map((_, index) => (<>
+                            <button key={index} className={`${styles.slideButton} ${(currentSlide === index) ? styles.activeButton : ''}`} onClick={() => { setCurrentSlide(index); }}> <div className={styles.mobileSlide}>Slide<br /> {index + 1}</div> {index >= 3 && (
+                                <div className={styles.removeSlide}><img onClick={() => { handleRemoveSlide(index); }} src={BigRemove} alt="" /></div>
 
-                                )}  </button>
+                            )}  </button>
 
                         </>
 
@@ -238,7 +313,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
                     </div>
                     <div className={styles.storyInput}>
-               
+
                         {/* value={username} onChange={(e) => setUsername(e.target.value)} */}
                         <div className={styles.input}>
                             <label htmlFor="">Heading: </label>

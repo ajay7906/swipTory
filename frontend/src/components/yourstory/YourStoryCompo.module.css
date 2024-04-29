@@ -47,7 +47,32 @@
     transform: translate(-50%, -50%);
     width: 79px;
 }
+.showMoreBtnParen{
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
 
+.showMoreBtn {
+  align-items: center;
+  background: #ff7373;
+  border-radius: 2rem;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  font-family: DM Sans;
+  font-size: 1.8rem;
+  font-weight: 700;
+  height: 4.5rem;
+  justify-content: center;
+  border: none;
+  margin-bottom: 2rem;
+  margin-top: 4.6rem;
+
+  text-align: center;
+
+  width: 13.6rem;
+}
 
 @media screen and (max-width: 780px) {
   .yourStory{

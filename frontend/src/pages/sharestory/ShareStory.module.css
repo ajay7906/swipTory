@@ -144,6 +144,12 @@
     
 }
 
+.toastcontainer{
+    top: 23rem !important;
+}
+.desktopContainer{
+    top: 40rem !important;
+}
 
 
 @media screen and (max-width: 700px) {

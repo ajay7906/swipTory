@@ -13,11 +13,12 @@ import Save from '../../assets/save.png'
 import BlueSave from '../../assets/save1.png'
 import Unlike from '../../assets/like.png'
 import Like from '../../assets/redlike.png'
+import { ToastContainer, toast, } from 'react-toastify';
 
-import { RotatingLines } from 'react-loader-spinner'
-import { usePostId } from "../../utils/postIdcontext";
 import { AuthContext } from "../../context/authContext";
 import useMediaQuery from "../../utils/screenSize";
+import Loader from "../loader/Loader";
+
 
 function StoryStatus({ closeModal, postId, closeStoryModal }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -27,25 +28,31 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   const [likeBtn, setLikeBtn] = useState(false)
   const [likeCountNumber, setLikeCountNumber] = useState(0)
   const [bookBtn, setBookBtn] = useState(false)
+  const [dataLoaded, setDataLoaded] = useState(false);
   // const { setPostId } = usePostId();
   const { handleLogin, openLoginModal } = useContext(AuthContext);
   const isMobile = useMediaQuery('(max-width: 700px)');
   const [bookStory, setBookStory] = useState()
-  const prevImageDataRef = useRef(null);
-  const divRef = useRef(null);
-
+ 
 
   // useEffect(() => {
   //   setPostId(postId);
   // }, [postId, setPostId]);
+
   const customToastStyle = {
     backgroundColor: '#333',
     color: '#FF0000',
     fontSize: '20px',
     padding: '10px 20px',
+    textAlign: 'center',
     borderRadius: '39px',
-    background:'#ffffff',
-    
+
+    width: '300px',
+    height: '36px',
+    background: '#D9D9D9',
+
+
+
 
   };
 
@@ -59,8 +66,18 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     if (navigator.clipboard) {
       const link = navigator.clipboard.writeText(shareLink);
       console.log(link);
-      showToast('Share link copied to clipboard', {
-        position: "top-center"
+      toast('Link copied to clipboard', {
+        position: 'top-center',
+
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        style: customToastStyle
+
       });
     } else {
       window.open(shareLink, '_blank');
@@ -110,9 +127,9 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     }
   }
 
-   //track like count
+  //track like count
 
-   const trackislike = async () => {
+  const trackislike = async () => {
 
     try {
       const like = await trackIsLikePost(postId)
@@ -143,7 +160,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
       console.log(error);
     }
   }
-  console.log(bookStory);
+ 
   //trackBook 
   const trackbookMarkStory = async () => {
 
@@ -169,7 +186,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
         console.log(bookMarkPostData);
         if (bookMarkPostData.success) {
           setBookBtn(true)
-         
+
         }
 
       } catch (error) {
@@ -201,11 +218,12 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
 
   const fetchJobDetails = async () => {
-    if (!postId) return ;
+    if (!postId) return;
     try {
       const result = await getPostById(postId);
       setImageData(result?.data)
-      console.log(result.data);
+      // Set dataLoaded flag to true after data is loaded
+      setDataLoaded(true);
 
     } catch (error) {
       console.log(error);
@@ -225,29 +243,32 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     closeStoryModal()
   }
 
-  // useEffect(() => {
-  //   if (prevImageDataRef.current !== imageData) {
-  //     console.log(imageData);
-  //     prevImageDataRef.current = imageData;
-  //   }
-  // }, [imageData]);
+  useEffect(() => {
+    // Add class to body when modal is open
+    document.body.style.overflow = 'hidden';
+
+    // Remove class from body when component unmounts
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+ 
 
 
-  
-
-  // Function to handle previous image
   const prevImage = () => {
-
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? 0 : prevIndex - 1));
-    setFilled(0);
+    if (currentIndex !== 0) {
+      setCurrentIndex((prevIndex) => prevIndex - 1);
+      setFilled(0);
+    }
   };
+
 
 
   const nextImage = () => {
     setCurrentIndex((prevIndex) => (prevIndex === imageData?.length - 1 ? imageData?.length : prevIndex + 1));
     setFilled(0);
   }
-  
+
   // console.log(imageData);
   const handleClick = (e) => {
     const { clientX } = e;
@@ -257,55 +278,66 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     if (clientX > halfWidth) {
       nextImage()
     } else {
-     prevImage()
+      if (currentIndex !== 0) {
+        prevImage()
+
+
+      }
     }
   };
+
+
+
   //next slide function
- console.log(isMobile);
+
 
 
 
 
   useEffect(() => {
-    if (filled < 100) {
+    if (filled < 100 && dataLoaded) {
       setTimeout(() => setFilled(prev => prev += 2), 80)
 
     }
-  }, [filled, currentIndex])
+  }, [filled, currentIndex, dataLoaded])
 
   useEffect(() => {
 
-    const timer = setInterval(() => {
+    if (dataLoaded) {
+      const timer = setInterval(() => {
 
-      nextImage();
-      setFilled(0)
-    }, 4000);
+        nextImage();
+        setFilled(0)
+      }, 4000);
 
-    if (currentIndex === imageData?.length - 1) {
-      clearInterval(timer);
-      setTimerActive(false);
+      if (currentIndex === imageData?.length - 1) {
+        clearInterval(timer);
+        setTimerActive(false);
+      }
+      return () => clearInterval(timer);
+
     }
-    return () => clearInterval(timer);
-  }, [currentIndex, timerActive]);
+  }, [currentIndex, timerActive, dataLoaded]);
 
 
 
   return (
-    <div className={styles.overlay} onClick={()=>{
+    <div className={styles.overlay} onClick={() => {
       closeModal()
-    
-    
+
+
     }}    >
       {!isMobile && <div ><img onClick={prevImage} src={LeftMove} alt="" className={styles.move} /></div>}
       {
         imageData && imageData.length > 0 ?
           <>
-            <div className={styles.modal} onClick={(e) =>
-              {
+            <div className={styles.modal} onClick={(e) => {
+              if (isMobile) {
                 e.stopPropagation()
                 handleClick(e)
               }
-               } >
+            }
+            } >
 
               <div className={styles.prograssbar}>
                 {
@@ -321,7 +353,14 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
                 <img onClick={generateShareLink} src={Share} alt="Share" />
               </div>
               <div className={styles.imageDiv} style={{ backgroundImage: `linear-gradient(0deg, rgb(0, 0, 0) 20%, rgba(0, 0, 0, 0) 40%), linear-gradient(rgb(0, 0, 0) 14%, rgba(0, 0, 0, 0) 30%), url(${imageData[currentIndex]?.image})` }}>
+                <ToastContainer
+                  className={`${isMobile ? styles.toastcontainer : styles.desktopContainer}`}
+                  theme='dark'
+                  closeButton={false}
 
+                  position="top-center"
+
+                />
               </div>
               <div className={styles.info}>
                 <h2>{imageData[currentIndex]?.heading}</h2>
@@ -348,17 +387,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
 
           <>
-            <RotatingLines
-              visible={true}
-              height="96"
-              width="96"
-              color="grey"
-              strokeWidth="5"
-              animationDuration="0.75"
-              ariaLabel="rotating-lines-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-            />
+           <Loader/>
 
 
           </>

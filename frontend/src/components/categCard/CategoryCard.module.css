@@ -6,7 +6,7 @@
 }*/
 .imageCard {
     background-size: cover;
-    border-radius: 2.5rem;
+    border-radius: 3.5rem;
     display: block;
    
     position: relative;
@@ -46,8 +46,8 @@
 
 .activeCategory{
  
-    border-radius: 1.6rem;
-    border: 7px solid #00ACD2;
+    border-radius: 3.5rem;
+    border: 6px solid #00ACD2;
    
     
 }
