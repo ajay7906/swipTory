@@ -6,7 +6,7 @@
 }*/
 .imageCard {
     background-size: cover;
-    border-radius: 1.5rem;
+    border-radius: 2.5rem;
     display: block;
    
     position: relative;
@@ -14,12 +14,12 @@
     max-width: 23.5rem;
     overflow: hidden;
     width: 100%;
-
+    height: 195px;
 }
 .image{
-    height: 13.5vw;
+    height: 13.6vw;
     width: 100%;
-    filter: brightness(60%);
+    filter: brightness(50%);
 }
 
 .imageCard h3 {
@@ -41,14 +41,29 @@
 .imageCard img{
   width: 200px;
   height: 200px;
+ 
 }
 
-
+.activeCategory{
+ 
+    border-radius: 1.6rem;
+    border: 7px solid #00ACD2;
+   
+    
+}
 @media screen and (max-width: 780px) {
   .imageCard{
     width: 143px;
-    width: 95px;
+    height:  95px;
+   
   }
+  .activeCategory{
+ 
+    border-radius: 1.6rem;
+    border: 4px solid #00ACD2;
+   
+    
+}
   .imageCard img{
     width: 143px;
     height: 95px;

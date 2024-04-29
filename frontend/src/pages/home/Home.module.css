@@ -25,7 +25,10 @@
 .categoryCard::-webkit-scrollbar {
   display: none;
 }
-
+/* .activeCategory{
+  border: 5px solid #00acd2;
+    border-radius: 1.6rem;
+} */
 /* media query */
 @media screen and (max-width: 780px) {
  

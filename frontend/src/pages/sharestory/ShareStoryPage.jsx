@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import styles from './ShareStory.module.css'
 import {
-  bookMarkPost, createPost, getPostById, likePost, trackbookMarkPost,
+  bookMarkPost, createPost, getPostById, likePost, trackIsLikePost, trackbookMarkPost,
   tracklikeCountkPost, unbookMarkPost, unlikePost
 } from "../../api/post";
 import { showToast } from "../../utils/showToast";
@@ -18,6 +18,7 @@ import { RotatingLines } from 'react-loader-spinner'
 import useMediaQuery from "../../utils/screenSize";
 import { toast,  } from 'react-toastify';
 import { AuthContext } from "../../context/authContext";
+import {useNavigate } from 'react-router-dom'
 // import { usePostId } from "../../utils/postIdcontext";
 
 function ShareStoryPage({ closeModal, closeStoryModal }) {
@@ -30,7 +31,8 @@ function ShareStoryPage({ closeModal, closeStoryModal }) {
   const [bookBtn, setBookBtn] = useState(false)
   const { postId } = useParams();
   const isMobile = useMediaQuery('(max-width: 700px)');
-  const { handleLogin } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const { handleLogin , openLoginModal } = useContext(AuthContext);
 //   const { setPostId } = usePostId();
 const notify = () => toast("Wow so easy!");
   const [bookStory, setBookStory] = useState()
@@ -88,6 +90,7 @@ const notify = () => toast("Wow so easy!");
             const like = await likePost(postId)
             if (like.success) {
               setLikeBtn(true)
+              tracklikeCount();
             }
       
       
@@ -97,7 +100,9 @@ const notify = () => toast("Wow so easy!");
           }
         }
         else{
-            handleLogin()
+          closeStoryModals()
+          handleLogin()
+          openLoginModal()
     
         }
       
@@ -122,7 +127,22 @@ const notify = () => toast("Wow so easy!");
       console.log(error);
     }
   }
+   
 
+  const trackislike = async () => {
+
+    try {
+      const like = await trackIsLikePost(postId)
+      if (like.success) {
+        setLikeBtn(true)
+      }
+
+
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
   //unlike 
   const unlikeStory = async () => {
 
@@ -130,6 +150,7 @@ const notify = () => toast("Wow so easy!");
       const like = await unlikePost(postId)
       if (like.success) {
         setLikeBtn(false)
+        tracklikeCount();
       }
 
 
@@ -157,15 +178,24 @@ const notify = () => toast("Wow so easy!");
   //bookmark  story
   const bookMarkStory = async () => {
     if (!postId) return;
-    try {
-      const bookMarkPostData = await bookMarkPost(postId)
-      if (bookMarkPostData.success) {
-        setBookBtn(true)
-
+    const token = localStorage.getItem('token')
+    if (!token) {
+      try {
+        const bookMarkPostData = await bookMarkPost(postId)
+        if (bookMarkPostData.success) {
+          setBookBtn(true)
+  
+        }
+  
+      } catch (error) {
+        console.log(error);
       }
-
-    } catch (error) {
-      console.log(error);
+      
+    } else {
+      closeStoryModals()
+      handleLogin()
+      openLoginModal()
+      
     }
   }
 
@@ -186,7 +216,7 @@ const notify = () => toast("Wow so easy!");
 
 
   const fetchJobDetails = async () => {
-    if (!postId) return console.log('nothing');
+    if (!postId) return ;
     try {
       const result = await getPostById(postId);
       setImageData(result?.data)
@@ -202,11 +232,13 @@ const notify = () => toast("Wow so easy!");
     fetchJobDetails();
     trackbookMarkStory();
     tracklikeCount();
+    trackislike();
   }, []);
 
 
   const closeStoryModals = () => {
-    closeStoryModal()
+    navigate('/')
+    // closeStoryModal()
   }
 
   // useEffect(() => {
@@ -228,8 +260,15 @@ const notify = () => toast("Wow so easy!");
   const prevImage = () => {
 
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? 0 : prevIndex - 1));
-    setFilled(0);
+     if (currentIndex===0) {
+      return ;
+     }
+     else{
+      filled(0)
+     }
+  
   };
+ 
 
   useEffect(() => {
     if (filled < 100) {

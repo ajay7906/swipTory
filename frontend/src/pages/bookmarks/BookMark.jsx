@@ -7,12 +7,24 @@ import { Link } from 'react-router-dom';
 import BookMarkCompo from '../../components/bookmarkcompo/BookMarkCompo';
 import AddStory from '../../components/addStory/AddStory';
 import StoryStatus from '../../components/status/StoryStatus';
+import { jwtDecode } from 'jwt-decode';
 function BookMark() {
   const [getBookData, setGetBookData] = useState()
   const [showStoryModal, setShowStoryModal] = useState(false)
   const [postId, setPostId] = useState();
   const [showAddStoryModal, setShowAddStoryModal] = useState(false);
   const [myStoryEdit, setMyStoryEdit] = useState();
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      setCurrentUser(decodedToken.userId);
+    }
+
+  }, []);
 
   const openStoryModal = (postId) => {
     setPostId(postId);
@@ -63,32 +75,28 @@ function BookMark() {
 
         ) : <div className={styles.mainCompo}>
           {
-           
-            getBookData?.map((data, index) => (
-            <div key={index}>
-              {console.log(data)}
-              <div className={styles.mainEditBtn}  onClick={() => { openStoryModal(data._id) }} key={index}><BookMarkCompo data={data} />
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openshowAddStoryModalModal();
-                    setMyStoryEdit(data?.stories);
-                  }}
-                  className={styles.editBtn}
-                >
 
-                  <img
-                    src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg"
-                    alt="edit"
-                  />
-                  <p>edit</p>
+            getBookData?.map((data, index) => (
+              <div key={index}>
+                {console.log(data)}
+                <div className={styles.mainEditBtn} onClick={() => { openStoryModal(data._id) }} key={index}><BookMarkCompo data={data} />
+                  {currentUser && currentUser === data.postedBy && ( // Check if currentUserId matches postedByUserId
+                    <div className={styles.editBtn} onClick={(e) => {
+                      e.stopPropagation()
+                      openshowAddStoryModalModal()
+                      setMyStoryEdit(data.stories)
+
+                    }}>
+                      <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
+                      <p>edit</p>
+                    </div>
+                  )}
                 </div>
               </div>
-            </div>
-            ) )  } </div>
-          
+            ))} </div>
 
-       
+
+
       }
 
       {showAddStoryModal && getBookData && <AddStory postId={postId} closeModal={closeModal} myStoryEdit={myStoryEdit} />}

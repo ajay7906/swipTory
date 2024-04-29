@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from './AddStory.module.css'
 import { createPost, updatePostById } from "../../api/post";
 import { showToast } from "../../utils/showToast";
@@ -13,7 +13,8 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
     const categories = ['food', 'sports', 'travel', 'movies', 'education'];
     const isMobile = useMediaQuery('(max-width: 780px)');
     const [currentSlide, setCurrentSlide] = useState(0);
-    {console.log(myStoryEdit)}
+    const [activeSlideIndex, setActiveSlideIndex] = useState(currentSlide);
+    { console.log(myStoryEdit) }
     const [slideStoryInfo, setSlideStoryInfo] = useState(() => {
         if (Array.isArray(myStoryEdit)) {
             return myStoryEdit.map((story) => ({
@@ -21,7 +22,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                 description: story.description || "",
                 image: story.image || "",
                 chooseCategory: story.chooseCategory || "",
-              
+
             }));
 
         }
@@ -69,9 +70,13 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
         setSlideStoryInfo(updatedSlideStoryInfo);
         if (index === currentSlide) {
-            setCurrentSlide(0); // Reset currentSlide to 0 if the removed slide was the current slide
+            setCurrentSlide(0);
+            //  setActiveSlideIndex(0);
+            // Reset currentSlide to 0 if the removed slide was the current slide
         } else if (index < currentSlide) {
-            setCurrentSlide(currentSlide - 1); // Decrement currentSlide if the removed slide was before the current slide
+            setCurrentSlide(currentSlide - 1);
+            // setActiveSlideIndex(currentSlide - 1);
+            // Decrement currentSlide if the removed slide was before the current slide
         }
     };
     // Function to handle adding a new slide data object
@@ -108,6 +113,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         console.log("Current slide before update:", currentSlide);
         if (currentSlide < 5) {
             setCurrentSlide(currentSlide + 1);
+
         }
         console.log("Current slide after update:", currentSlide);
     };
@@ -116,6 +122,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         console.log("Current slide before update:", currentSlide);
         if (currentSlide > 0) {
             setCurrentSlide(currentSlide - 1);
+
         }
         console.log("Current slide after update:", currentSlide);
     };
@@ -171,47 +178,55 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         // );
 
         if (!isSlideInfoComplete) {
-           
+
             return;
         }
 
 
-        
+
 
         if (Array.isArray(myStoryEdit)) {
-            await updatePostById(postId , slideStoryInfo)
+            await updatePostById(postId, slideStoryInfo)
             showToast('post update successful', { type: 'success' });
-        } 
+        }
         // Check if myStoryHomeEdits exists and it's an array (indicating editing existing data)
         else if (Array.isArray(myStoryHomeEdits)) {
-            await updatePostById(postId , slideStoryInfo)
+            await updatePostById(postId, slideStoryInfo)
             showToast('post update successful', { type: 'success' });
-        } 
-      
+        }
 
 
 
 
-       else{
-         // Process form data (e.g., send it to the server)
-         await createPost(slideStoryInfo)
-         showToast('post register successful', { type: 'success' });
-       }
+
+        else {
+            // Process form data (e.g., send it to the server)
+            await createPost(slideStoryInfo)
+            showToast('post register successful', { type: 'success' });
+        }
 
         // Close the modal after form submission
         closeModal();
     };
+
+
+
+
     return (
         <div className={styles.overlay} onClick={closeModal}>
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                 <span className={styles.close} onClick={closeModal}>X</span>
-                <p className={styles.addslidemess}>Add upto 6 slides </p>
+               {!isMobile &&  <p className={styles.addslidemess}>Add upto 6 slides </p>}
+               {isMobile && <div className={styles.addlinesmobile}><p >Add story to feed</p></div>}
                 <div className={styles.addStoryForm}>
+                   
                     <div className={styles.slideButton}>
-                        {slideStoryInfo.map((_, index) => (<>
-                            <button key={index} onClick={() => setCurrentSlide(index)}>Slide <br /> {index + 1}   {index >= 3 && (
-                                <div className={styles.removeSlide}><img onClick={() => handleRemoveSlide(index)} src={BigRemove} alt="" /></div>
-                            )}  </button>
+
+                        {slideStoryInfo.map((_, index) => (<> {console.log(currentSlide, index, activeSlideIndex)}
+                        <button key={index} className={`${styles.slideButton} ${(currentSlide === index) ? styles.activeButton : ''}`} onClick={() => { setCurrentSlide(index); }}> <div className={styles.mobileSlide}>Slide<br /> {index + 1}</div> {index >= 3 && (
+                                    <div className={styles.removeSlide}><img onClick={() => { handleRemoveSlide(index); }} src={BigRemove} alt="" /></div>
+
+                                )}  </button>
 
                         </>
 
@@ -223,6 +238,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
                     </div>
                     <div className={styles.storyInput}>
+               
                         {/* value={username} onChange={(e) => setUsername(e.target.value)} */}
                         <div className={styles.input}>
                             <label htmlFor="">Heading: </label>
@@ -237,9 +253,10 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                                 }}
                             />
                         </div>
+
                         <div className={styles.input}>
                             <label htmlFor="">Description: </label>
-                            <input className={styles.description} type="text"
+                            {/* <input className={styles.description} type="text"
                                 placeholder="Description"
                                 value={slideStoryInfo[currentSlide]?.description}
                                 onChange={(e) => {
@@ -247,7 +264,19 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                                     newSlideStoryInfo[currentSlide].description = e.target.value;
                                     setSlideStoryInfo(newSlideStoryInfo);
                                 }}
-                                required />
+                                required /> */}
+                            <textarea className={styles.description}
+                                placeholder="Description"
+                                value={slideStoryInfo[currentSlide]?.description}
+                                onChange={(e) => {
+                                    const newSlideStoryInfo = [...slideStoryInfo];
+                                    newSlideStoryInfo[currentSlide].description = e.target.value;
+                                    setSlideStoryInfo(newSlideStoryInfo);
+                                }}
+                                required
+                            >
+
+                            </textarea>
                         </div>
                         <div className={styles.input}>
                             <label htmlFor="">Image: </label>
@@ -270,6 +299,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                                 //     newSlideStoryInfo[currentSlide].chooseCategory = e.target.value;
                                 //     setSlideStoryInfo(newSlideStoryInfo);
                                 // }}
+                                className="customSelect"
                                 onChange={(e) => {
                                     const category = e.target.value;
                                     setSelectedCategoryFunction(category); // This updates selectedCategory state
@@ -280,7 +310,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                             >
                                 <option value="" disabled >Select category</option>
                                 {categories.map((cat) => (
-                                    <option key={cat} value={cat} selected={cat=== slideStoryInfo[currentSlide]?.chooseCategory}>
+                                    <option key={cat} value={cat} selected={cat === slideStoryInfo[currentSlide]?.chooseCategory}>
                                         {cat}
                                     </option>
                                 ))}

@@ -117,6 +117,8 @@ function FoodCompo({ sendData, allData, handleDisplayData }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [showAddStoryModals, setShowAddStoryModals] = useState(false);
     const [postId, setPostId] = useState();
+    const [itemsToShow, setItemsToShow] = useState(4); // Initial number of items to show
+    const [showMoreVisible, setShowMoreVisible] = useState(true);
     const isMobile = useMediaQuery('(max-width: 780px)');
     console.log(allData);
     useEffect(() => {
@@ -143,10 +145,15 @@ function FoodCompo({ sendData, allData, handleDisplayData }) {
         setShowAddStoryModals(true);
 
     };
-
+    
+     // Function to handle the "show more" button click event
+  const handleShowMore = () => {
+    setItemsToShow(sendData.length); // Show all items
+    setShowMoreVisible(false); // Hide the "show more" button
+  };
 
     // const [imageData, setImageData] = useState()
-    let displayData = sendData;
+    // let displayData = sendData;
     console.log(sendData);
     if (!Array.isArray(sendData)) {
         return null; // Return null if sendData is not an array
@@ -278,6 +285,17 @@ function FoodCompo({ sendData, allData, handleDisplayData }) {
                                         <div key={index} onClick={() => openStoryModal(filteredData._id)}>
                                             {console.log(filteredData)}
                                             <CommanCard filteredData={filteredData} />
+                                            {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
+                                                <div className={styles.editBtn} onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    openshowAddStoryModalModal()
+                                                    setMyStoryHomeEdits(filteredData.stories)
+
+                                                }}>
+                                                    <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
+                                                    <p>edit</p>
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
@@ -291,11 +309,11 @@ function FoodCompo({ sendData, allData, handleDisplayData }) {
                 </>
             }
             <div>
-                {showAddStoryModals && myStoryHomeEdits && <AddStory 
-                 closeModal={closeModal} 
-                  myStoryHomeEdits={myStoryHomeEdits}
-                  postId={postId}
-                  />}
+                {showAddStoryModals && myStoryHomeEdits && <AddStory
+                    closeModal={closeModal}
+                    myStoryHomeEdits={myStoryHomeEdits}
+                    postId={postId}
+                />}
                 {showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}
             </div>
         </div>

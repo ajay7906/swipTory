@@ -28,6 +28,7 @@ function Home() {
   const [allData, setAllData] = useState("");
   //const [isInitialRender, setIsInitialRender] = useState(true);
   const [newIsMobile, setNewIsMobile] = useState(isMobiles)
+  const [selectedCategory, setSelectedCategory] = useState('');
   // const { postData, loading, fetchPosts } = useApi();
   // useEffect(() => {
   //   if (isMobiles && (!category || category === "all")) {
@@ -156,7 +157,7 @@ function Home() {
 
 
   const handleCategorySelect = (categoryName) => {
-
+    setSelectedCategory(categoryName);
     setAllData(categoryName)
     setCategory(categoryName === "all" ? "" : categoryName);
     console.log(categoryName);
@@ -184,11 +185,13 @@ function Home() {
           if (isMobiles && categoryItem.name === "all") {
              return ;
           }
+          const isActive = selectedCategory === categoryItem.name;
           return (
-            <div className={styles.allCategoryCard} key={index} onClick={() => handleCategorySelect(categoryItem.name)}>
+            <div className={`${styles.allCategoryCard} ${isActive ? styles.activeCategory : ''}`} key={index} onClick={() => handleCategorySelect(categoryItem.name)}>
               <CategoryCard
                 categoryName={categoryItem.name}
                 categoryImage={categoryItem.image}
+                isActive={isActive}
               />
             </div>
           );

@@ -32,12 +32,22 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   const isMobile = useMediaQuery('(max-width: 700px)');
   const [bookStory, setBookStory] = useState()
   const prevImageDataRef = useRef(null);
+  const divRef = useRef(null);
 
 
   // useEffect(() => {
   //   setPostId(postId);
   // }, [postId, setPostId]);
+  const customToastStyle = {
+    backgroundColor: '#333',
+    color: '#FF0000',
+    fontSize: '20px',
+    padding: '10px 20px',
+    borderRadius: '39px',
+    background:'#ffffff',
+    
 
+  };
 
   //copy share images
 
@@ -191,7 +201,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
 
   const fetchJobDetails = async () => {
-    if (!postId) return console.log('nothing');
+    if (!postId) return ;
     try {
       const result = await getPostById(postId);
       setImageData(result?.data)
@@ -223,12 +233,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   // }, [imageData]);
 
 
-  // console.log(imageData);
-
-  const nextImage = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === imageData?.length - 1 ? imageData?.length : prevIndex + 1));
-    setFilled(0);
-  }
+  
 
   // Function to handle previous image
   const prevImage = () => {
@@ -236,6 +241,30 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? 0 : prevIndex - 1));
     setFilled(0);
   };
+
+
+  const nextImage = () => {
+    setCurrentIndex((prevIndex) => (prevIndex === imageData?.length - 1 ? imageData?.length : prevIndex + 1));
+    setFilled(0);
+  }
+  
+  // console.log(imageData);
+  const handleClick = (e) => {
+    const { clientX } = e;
+    const windowWidth = window.innerWidth;
+    const halfWidth = windowWidth / 2;
+
+    if (clientX > halfWidth) {
+      nextImage()
+    } else {
+     prevImage()
+    }
+  };
+  //next slide function
+ console.log(isMobile);
+
+
+
 
   useEffect(() => {
     if (filled < 100) {
@@ -262,12 +291,21 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
 
   return (
-    <div className={styles.overlay} onClick={closeModal}>
+    <div className={styles.overlay} onClick={()=>{
+      closeModal()
+    
+    
+    }}    >
       {!isMobile && <div ><img onClick={prevImage} src={LeftMove} alt="" className={styles.move} /></div>}
       {
         imageData && imageData.length > 0 ?
           <>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()} >
+            <div className={styles.modal} onClick={(e) =>
+              {
+                e.stopPropagation()
+                handleClick(e)
+              }
+               } >
 
               <div className={styles.prograssbar}>
                 {
