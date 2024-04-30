@@ -2,19 +2,18 @@ import { useEffect, useState } from "react";
 import styles from './AddStory.module.css'
 import { createPost, updatePostById } from "../../api/post";
 import { showToast } from "../../utils/showToast";
-import useMediaQuery from "../../utils/screenSize"; 
+import useMediaQuery from "../../utils/screenSize";
 import RemoveSlide from '../../assets/removeslide.png'
 import BigRemove from '../../assets/bigRemove.png'
 function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
-   
+
     console.log(postId);
     const [selectedCategory, setSelectedCategory] = useState('');
     const categories = ['Fruits', 'Sports', 'World', 'India', 'Education'];
     const isMobile = useMediaQuery('(max-width: 780px)');
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [previousSlide, setPreviousSlide] = useState(0)
-    const [activeSlideIndex, setActiveSlideIndex] = useState(currentSlide);
-    
+
+
     const [slideStoryInfo, setSlideStoryInfo] = useState(() => {
         if (Array.isArray(myStoryEdit)) {
             return myStoryEdit.map((story) => ({
@@ -64,22 +63,36 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
             ];
         }
     });
-   
-    
+
+
     //handle remove slide
+    useEffect(() => {
+        console.log('currentSlide before update:', currentSlide);
+
+        return () => {
+            console.log('currentSlide after update:', currentSlide);
+        };
+    }, [currentSlide]);
     const handleRemoveSlide = (index) => {
+        console.log("Removing slide at index:", index);
         const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
+        setSlideStoryInfo(updatedSlideStoryInfo)
+        console.log("Updated slideStoryInfo:", updatedSlideStoryInfo);
 
-        setSlideStoryInfo(updatedSlideStoryInfo);
 
-      if (index === currentSlide) {
-            setCurrentSlide(0);
-         
-          
+        if (index === currentSlide) {
+            // setCurrentSlide(0);
+            // handlePreviousSlide()
+            // setCurrentSlide(Math.max(currentSlide - 1, 0));
+            setCurrentSlide(currentSlide - 1);
+            console.log("Setting current slide to previous one...");
+
         } else if (index < currentSlide) {
             setCurrentSlide(currentSlide - 1);
-           
+            console.log("Setting current slide to Next  one...");
+
         }
+        console.log("Current slide after removal:", currentSlide);
     }
 
 
@@ -103,7 +116,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         }
     };
 
-  //handle next slide
+    //handle next slide
     const handleNextSlide = () => {
         console.log("Current slide before update:", currentSlide);
         if (currentSlide < slideStoryInfo.length - 1) {
@@ -112,7 +125,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         }
         console.log("Current slide after update:", currentSlide);
     };
-//handle previous slide
+    //handle previous slide
     const handlePreviousSlide = () => {
         console.log("Current slide before update:", currentSlide);
         if (currentSlide > 0) {
@@ -135,7 +148,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         }));
         setSlideStoryInfo(updatedSlideStoryInfo);
     };
-   
+
 
 
 
@@ -149,11 +162,11 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         // Check if all slide fields are filled
         const isSlideInfoComplete = slideStoryInfo.every((slide, index) =>
             slide.heading && slide.description && slide.image && slide.chooseCategory
-           
+
         );
-       console.log(slideStoryInfo);
+        console.log(slideStoryInfo);
         if (!isSlideInfoComplete) {
-           alert('fill all the filled')
+            alert('fill all the filled')
             return;
         }
 
@@ -164,7 +177,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
             await updatePostById(postId, slideStoryInfo)
             showToast('post update successful', { type: 'success' });
         }
-       
+
         else if (Array.isArray(myStoryHomeEdits)) {
             await updatePostById(postId, slideStoryInfo)
             showToast('post update successful', { type: 'success' });
@@ -208,7 +221,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
                         {slideStoryInfo.map((_, index) => (<>
                             <button key={index} className={`${styles.slideButton} ${(currentSlide === index) ? styles.activeButton : ''}`} onClick={() => { setCurrentSlide(index); }}> <div className={styles.mobileSlide}>Slide<br /> {index + 1}</div> {index >= 3 && (
-                                <div className={styles.removeSlide}><img onClick={() => { handleRemoveSlide(index); }} src={BigRemove} alt="" /></div>
+                                <div className={styles.removeSlide}><img onClick={(e) => { handleRemoveSlide(index); e.stopPropagation() }} src={BigRemove} alt="" /></div>
 
                             )}  </button>
 
@@ -218,12 +231,12 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                         <button onClick={handleAddSlide} style={{ display: slideStoryInfo.length < 6 ? 'block' : 'none' }} disabled={slideStoryInfo.length === 6}>Add+</button>
 
 
-                       
+
 
                     </div>
                     <div className={styles.storyInput}>
 
-                      
+
                         <div className={styles.input}>
                             <label htmlFor="">Heading: </label>
                             <input type="text"
@@ -277,14 +290,14 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                         <div className={styles.input}>
                             <label>Category:</label>
                             <select
-                                
+
                                 className="customSelect"
                                 onChange={(e) => {
                                     const category = e.target.value;
                                     setSelectedCategoryFunction(category); // This updates selectedCategory state
                                     // Note: The setSelectedCategory function will also update chooseCategory for all slides
                                 }}
-                           
+
                             >
                                 <option value="" disabled >Select category</option>
                                 {categories.map((cat) => (
@@ -295,7 +308,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                             </select>
                         </div>
 
-                        
+
 
 
                     </div>

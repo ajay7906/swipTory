@@ -153,7 +153,7 @@ function MainCompo({ sendData, allData }) {
                                     <div className={styles.main}>
                                         {sendData.slice(0, itemsToShowWithCat).map((filteredData, index) => (
                                             <div key={index} onClick={() => openStoryModal(filteredData._id)}>
-                                                {console.log(filteredData)}
+                                              
                                                 <CommanCard filteredData={filteredData} />
                                                 {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
                                                     <div className={styles.editBtn} onClick={(e) => {
@@ -194,7 +194,7 @@ function MainCompo({ sendData, allData }) {
             <div>
                 {showAddStoryModals && myStoryHomeEdits && <AddStory
                     closeModal={closeModal}
-                    myStoryHomeEdits={myStoryHomeEdits}
+                    myStoryHomeEdits={myStoryHomeEdits} 
                     postId={postId}
                 />}
                 {showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}
