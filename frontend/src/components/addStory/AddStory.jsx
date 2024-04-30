@@ -3,11 +3,11 @@ import styles from './AddStory.module.css'
 import { createPost, updatePostById } from "../../api/post";
 import { showToast } from "../../utils/showToast";
 import useMediaQuery from "../../utils/screenSize";
-
+import { ColorRing } from 'react-loader-spinner'
 import BigRemove from '../../assets/bigRemove.png'
 function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
-   
+    const [loading, setLoading] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('');
     const categories = ['Fruits', 'Sports', 'World', 'India', 'Education'];
     const isMobile = useMediaQuery('(max-width: 780px)');
@@ -66,12 +66,12 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
 
     //handle remove slide
-   
+
     const handleRemoveSlide = (index) => {
-       
+
         const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
         setSlideStoryInfo(updatedSlideStoryInfo)
-       
+
 
 
         if (index === currentSlide) {
@@ -79,14 +79,14 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
             // handlePreviousSlide()
             // setCurrentSlide(Math.max(currentSlide - 1, 0));
             setCurrentSlide(currentSlide - 1);
-         
+
 
         } else if (index < currentSlide) {
             setCurrentSlide(currentSlide - 1);
-          
+
 
         }
-      
+
     }
 
 
@@ -112,21 +112,21 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
     //handle next slide
     const handleNextSlide = () => {
-       
+
         if (currentSlide < slideStoryInfo.length - 1) {
             setCurrentSlide(currentSlide + 1);
 
         }
-       
+
     };
     //handle previous slide
     const handlePreviousSlide = () => {
-      
+
         if (currentSlide > 0) {
             setCurrentSlide(currentSlide - 1);
 
         }
-       
+
     };
 
 
@@ -158,9 +158,9 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
             slide.heading && slide.description && slide.image && slide.chooseCategory
 
         );
-      
+
         if (!isSlideInfoComplete) {
-           showToast('Please fill all the filled ', {type:'error'})
+            showToast('Please fill all the filled ', { type: 'error' })
             return;
         }
 
@@ -193,10 +193,10 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
 
     useEffect(() => {
-       
+
         document.body.style.overflow = 'hidden';
 
-      
+
         return () => {
             document.body.style.overflow = '';
         };
@@ -318,7 +318,22 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                             <> </>
                     }
                     <div className={styles.postBtnBox}>
-                        <button onClick={handleSubmit}>Post</button>
+                        {/* <button onClick={handleSubmit}>Post</button> */}
+                        {loading ? ( // Display loading indicator if loading is true
+                            <button disabled style={{ background: '#ff7373' }}>
+                                <ColorRing
+                                    visible={true}
+                                    height="50"
+                                    width="50"
+                                    ariaLabel="color-ring-loading"
+                                    wrapperStyle={{}}
+                                    wrapperClass="color-ring-wrapper"
+                                    colors={['#e15b64', '#FFFF00', '#f8b26a', '#00FF00', '#849b87']}
+                                />
+                            </button>
+                        ) : (
+                            <button onClick={handleSubmit}>Post</button>
+                        )}
                     </div>
                 </div>
             </div>
