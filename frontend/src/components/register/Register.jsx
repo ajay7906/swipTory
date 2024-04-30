@@ -4,13 +4,14 @@ import { loginUser, registerUser } from "../../api/auth";
 import { showToast } from "../../utils/showToast";
 import { ColorRing } from 'react-loader-spinner'
 import { AuthContext } from "../../context/authContext";
+import { ToastContainer } from 'react-toastify';
 function Register({ closeModal, modalName, setIsLoggedIn }) {
 
   const [username, setUsername] = useState('');
   const [showError, setShowError] = useState(' ')
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { isLoggedIns, setUser } = useContext(AuthContext);
+  const { isLoggedIns ,handleLogin } = useContext(AuthContext);
 
   useEffect(() => {
 
@@ -47,8 +48,9 @@ function Register({ closeModal, modalName, setIsLoggedIn }) {
 
 
     if (response?.success) {
-      setUser(response?.username)
+    
       showToast(`${modalName} Successful`, { type: 'success' });
+      handleLogin()
       closeModal();
     } else {
       setShowError(response)
@@ -75,15 +77,7 @@ function Register({ closeModal, modalName, setIsLoggedIn }) {
 
 
 
-          {/* {modalName === 'Register' ?
-            <>
-              <button onClick={handleSubmit}>Register</button>
-            </>
-            :
-            <>
-              <button onClick={handleSubmit}>Login</button>
-            </>
-          } */}
+
           {loading ? ( // Display loading indicator if loading is true
             <button disabled style={{ background: '#ff7373' }}>
               <ColorRing
@@ -101,6 +95,13 @@ function Register({ closeModal, modalName, setIsLoggedIn }) {
           )}
         </form>
       </div>
+      <ToastContainer
+
+        theme='dark'
+        transition:Bounce
+        position="top-center"
+
+      />
     </div>
   )
 }

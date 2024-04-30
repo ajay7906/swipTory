@@ -9,18 +9,19 @@ import Image5 from '../../assets/india.jpeg'
 import styles from './Home.module.css'
 import MainCompo from "../../components/main/MainCompo";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { getAllPost } from "../../api/post";
 
 import YourStoryCompo from "../../components/yourstory/YourStoryCompo";
 
 import { useMediaQuery } from 'react-responsive';
 import Loader from "../../components/loader/Loader";
+import { AuthContext } from "../../context/authContext";
 
 function Home() {
   const isMobiles = useMediaQuery({ maxWidth: 780 });
-
-
+  const { showYourStory } = useContext(AuthContext);
+ 
   const [category, setCategory] = useState(isMobiles ? 'Education' : '');
   const [sendData, setSendData] = useState("");
   const [loading, setLoading] = useState(true);
@@ -130,7 +131,7 @@ function Home() {
           <Loader />
         ) :
         <>
-          {!isMobiles && <div>
+          {!isMobiles && showYourStory &&<div>
             <YourStoryCompo />
           </div>}
           <MainCompo sendData={sendData} allData={allData} />

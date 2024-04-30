@@ -10,7 +10,7 @@ import useMediaQuery from '../../utils/screenSize';
 import Save from '../../assets/save.png'
 
 import { AuthContext } from '../../context/authContext';
-import { jwtDecode } from 'jwt-decode';
+
 function Navbar() {
   // State variables
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -19,31 +19,32 @@ function Navbar() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showAddStoryModal, setShowAddStoryModal] = useState(false);
   const [showResponsiveModal, setShowResponsiveModal] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
+ 
   const isMobile = useMediaQuery('(max-width: 780px)');
   
-  const {isLoggedIns, showLoginModal, closeLoginModal , username } = useContext(AuthContext);
-  const loggedInUser = localStorage.getItem('token');
-  useEffect(() => {
+  const {isLoggedIns, showLoginModal, closeLoginModal , username ,  logout } = useContext(AuthContext);
+  // const loggedInUser = localStorage.getItem('token');
+  console.log(username?.username);
+//   useEffect(() => {
  
-    if (loggedInUser) {
-        const decodedToken = jwtDecode(loggedInUser);
-        setCurrentUser(decodedToken);
-    }
+//     if (loggedInUser) {
+//         const decodedToken = jwtDecode(loggedInUser);
+//         setCurrentUser(decodedToken);
+//     }
 
-}, []);
+// }, []);
   
-  useEffect(() => {
+//   useEffect(() => {
    
     
-    if (loggedInUser) {
-      setIsLoggedIn(true);
-    }
-    else{
-      setIsLoggedIn(false)
-    }
-     // Update isLoggedIn based on whether token exists
-  }, [isLoggedIn, isLoggedIns,  loggedInUser]);
+//     if (loggedInUser) {
+//       setIsLoggedIn(true);
+//     }
+//     else{
+//       setIsLoggedIn(false)
+//     }
+//      // Update isLoggedIn based on whether token exists
+//   }, [isLoggedIn, isLoggedIns,  loggedInUser]);
 
   // Function to handle opening the register modal
   
@@ -58,9 +59,13 @@ function Navbar() {
   
   const handleLogout = () => {
    
-    localStorage.removeItem('token');
+  //  localStorage.removeItem('token');
     setShowProfileModal(false);
     setShowResponsiveModal(!showResponsiveModal);
+    logout()
+   
+//setIsLoggedIn(false);
+   
 
   };
 
@@ -113,7 +118,7 @@ function Navbar() {
                 {showProfileModal && (
                   <div className={styles.profileModal}>
                     <div className={styles.profileContent}>
-                      <h3>{currentUser?.username}</h3>
+                      <h3>{username?.username}</h3>
                       <button onClick={() => {
                         closeProfileModal()
                         handleLogout()
@@ -121,7 +126,7 @@ function Navbar() {
                     </div>
                   </div>
                 )}
-                {isLoggedIn ? (
+                {isLoggedIns ? (
                   <>
                     <div className={styles.bookmarksLink}>
                       <img src={Save} alt="" />
@@ -166,7 +171,7 @@ function Navbar() {
 
         showResponsiveModal && isMobile ? (
           <div className={styles.mobileResponsiveContainer}>
-            {isLoggedIn ? (
+            {isLoggedIns ? (
               <div className={styles.mobileResponsive}>
                 <img className={styles.mobileResponsiveCrossBtn} src={CrossBtn} alt="cross" onClick={toggleResponsiveModal} />
                 <div className={styles.profileImg}>
@@ -175,7 +180,7 @@ function Navbar() {
                 </div>
                 <div className={styles.responsiveNavLink}>
                   <div className={styles.profileContent}>
-                    <h1>{currentUser?.username}</h1>
+                    <h1>{username?.username}</h1>
                   </div>
                   <div className={styles.profileContent}>
                     <Link to='/your_story' onClick={toggleResponsiveModal} className={styles.bookmarksLink}>

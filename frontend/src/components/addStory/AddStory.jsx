@@ -5,6 +5,7 @@ import { showToast } from "../../utils/showToast";
 import useMediaQuery from "../../utils/screenSize";
 import { ColorRing } from 'react-loader-spinner'
 import BigRemove from '../../assets/bigRemove.png'
+import { ToastContainer, toast } from 'react-toastify';
 function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
     const [loading, setLoading] = useState(false);
@@ -154,13 +155,18 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         // Check if all slide fields are filled
+        setLoading(true)
         const isSlideInfoComplete = slideStoryInfo.every((slide, index) =>
             slide.heading && slide.description && slide.image && slide.chooseCategory
 
         );
 
         if (!isSlideInfoComplete) {
+
             showToast('Please fill all the filled ', { type: 'error' })
+            
+           
+            setLoading(false)
             return;
         }
 
@@ -170,11 +176,13 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         if (Array.isArray(myStoryEdit)) {
             await updatePostById(postId, slideStoryInfo)
             showToast('post update successful', { type: 'success' });
+            setLoading(false)
         }
 
         else if (Array.isArray(myStoryHomeEdits)) {
             await updatePostById(postId, slideStoryInfo)
             showToast('post update successful', { type: 'success' });
+            setLoading(false)
         }
 
 
@@ -183,8 +191,10 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
         else {
             // Process form data (e.g., send it to the server)
+
             await createPost(slideStoryInfo)
             showToast('post register successful', { type: 'success' });
+            setLoading(false)
         }
 
         // Close the modal after form submission
@@ -337,6 +347,13 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                     </div>
                 </div>
             </div>
+            <ToastContainer
+
+                theme='dark'
+                transition:Bounce
+                position="top-center"
+
+            />
         </div>
     )
 }
