@@ -1,10 +1,10 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import styles from './StoryStatus.module.css'
 import {
-  bookMarkPost, createPost, getPostById, likePost, trackIsLikePost, trackbookMarkPost,
+  bookMarkPost,  getPostById, likePost, trackIsLikePost, trackbookMarkPost,
   tracklikeCountkPost, unbookMarkPost, unlikePost
 } from "../../api/post";
-import { showToast } from "../../utils/showToast";
+
 import LeftMove from '../../assets/left.png'
 import RighttMove from '../../assets/right.png'
 import Remove from '../../assets/Crosss.png'
@@ -29,15 +29,12 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   const [likeCountNumber, setLikeCountNumber] = useState(0)
   const [bookBtn, setBookBtn] = useState(false)
   const [dataLoaded, setDataLoaded] = useState(false);
-  // const { setPostId } = usePostId();
+ 
   const { handleLogin, openLoginModal } = useContext(AuthContext);
   const isMobile = useMediaQuery('(max-width: 700px)');
-  const [bookStory, setBookStory] = useState()
- 
 
-  // useEffect(() => {
-  //   setPostId(postId);
-  // }, [postId, setPostId]);
+
+ 
 
   const customToastStyle = {
     backgroundColor: '#333',
@@ -62,7 +59,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     const baseUrl = 'http://localhost:5173'; // Replace with your actual domain
     const shareLink = `${baseUrl}/share/${postId}`;
 
-    // You can either copy the link to the user's clipboard or open a new window/tab
+   
     if (navigator.clipboard) {
       const link = navigator.clipboard.writeText(shareLink);
       console.log(link);
@@ -244,10 +241,10 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   }
 
   useEffect(() => {
-    // Add class to body when modal is open
+    
     document.body.style.overflow = 'hidden';
 
-    // Remove class from body when component unmounts
+  
     return () => {
       document.body.style.overflow = '';
     };
@@ -269,7 +266,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     setFilled(0);
   }
 
-  // console.log(imageData);
+ 
   const handleClick = (e) => {
     const { clientX } = e;
     const windowWidth = window.innerWidth;

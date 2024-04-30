@@ -1,6 +1,6 @@
 import Images from '../../assets/img1.jpg'
 import styles from './CommonCard.module.css'
-function CommanCard({ filteredData , allUserStory}) {
+function CommanCard({ filteredData }) {
    
     return (
         <div className={styles.styleImg}>

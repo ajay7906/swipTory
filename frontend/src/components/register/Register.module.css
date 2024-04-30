@@ -1,4 +1,4 @@
-/* RegisterModal.module.css */
+
 .modal-open {
   overflow: hidden !important;
 }
@@ -12,7 +12,7 @@
 
 
   background-color: #000000e6;
-  /* Semi-transparent black overlay */
+  
   display: flex;
   justify-content: center;
   align-items: center;

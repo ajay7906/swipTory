@@ -3,11 +3,11 @@ import styles from './AddStory.module.css'
 import { createPost, updatePostById } from "../../api/post";
 import { showToast } from "../../utils/showToast";
 import useMediaQuery from "../../utils/screenSize";
-import RemoveSlide from '../../assets/removeslide.png'
+
 import BigRemove from '../../assets/bigRemove.png'
 function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
-    console.log(postId);
+   
     const [selectedCategory, setSelectedCategory] = useState('');
     const categories = ['Fruits', 'Sports', 'World', 'India', 'Education'];
     const isMobile = useMediaQuery('(max-width: 780px)');
@@ -66,18 +66,12 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
 
     //handle remove slide
-    useEffect(() => {
-        console.log('currentSlide before update:', currentSlide);
-
-        return () => {
-            console.log('currentSlide after update:', currentSlide);
-        };
-    }, [currentSlide]);
+   
     const handleRemoveSlide = (index) => {
-        console.log("Removing slide at index:", index);
+       
         const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
         setSlideStoryInfo(updatedSlideStoryInfo)
-        console.log("Updated slideStoryInfo:", updatedSlideStoryInfo);
+       
 
 
         if (index === currentSlide) {
@@ -85,14 +79,14 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
             // handlePreviousSlide()
             // setCurrentSlide(Math.max(currentSlide - 1, 0));
             setCurrentSlide(currentSlide - 1);
-            console.log("Setting current slide to previous one...");
+         
 
         } else if (index < currentSlide) {
             setCurrentSlide(currentSlide - 1);
-            console.log("Setting current slide to Next  one...");
+          
 
         }
-        console.log("Current slide after removal:", currentSlide);
+      
     }
 
 
@@ -118,21 +112,21 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
     //handle next slide
     const handleNextSlide = () => {
-        console.log("Current slide before update:", currentSlide);
+       
         if (currentSlide < slideStoryInfo.length - 1) {
             setCurrentSlide(currentSlide + 1);
 
         }
-        console.log("Current slide after update:", currentSlide);
+       
     };
     //handle previous slide
     const handlePreviousSlide = () => {
-        console.log("Current slide before update:", currentSlide);
+      
         if (currentSlide > 0) {
             setCurrentSlide(currentSlide - 1);
 
         }
-        console.log("Current slide after update:", currentSlide);
+       
     };
 
 
@@ -164,9 +158,9 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
             slide.heading && slide.description && slide.image && slide.chooseCategory
 
         );
-        console.log(slideStoryInfo);
+      
         if (!isSlideInfoComplete) {
-            alert('fill all the filled')
+           showToast('Please fill all the filled ', {type:'error'})
             return;
         }
 
@@ -199,10 +193,10 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
 
     useEffect(() => {
-        // Add class to body when modal is open
+       
         document.body.style.overflow = 'hidden';
 
-        // Remove class from body when component unmounts
+      
         return () => {
             document.body.style.overflow = '';
         };

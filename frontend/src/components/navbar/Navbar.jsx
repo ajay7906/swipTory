@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import CrossBtn from '../../assets/cross.png'
 import useMediaQuery from '../../utils/screenSize';
 import Save from '../../assets/save.png'
-import useUserAuth from '../../utils/useUserAuth';
+
 import { AuthContext } from '../../context/authContext';
 import { jwtDecode } from 'jwt-decode';
 function Navbar() {
@@ -25,16 +25,14 @@ function Navbar() {
   const {isLoggedIns, showLoginModal, closeLoginModal , username } = useContext(AuthContext);
   const loggedInUser = localStorage.getItem('token');
   useEffect(() => {
-   // const token = localStorage.getItem('token');
-
+ 
     if (loggedInUser) {
         const decodedToken = jwtDecode(loggedInUser);
         setCurrentUser(decodedToken);
     }
 
 }, []);
-  console.log(currentUser?.username  );
-  console.log(username );
+  
   useEffect(() => {
    
     
@@ -48,7 +46,7 @@ function Navbar() {
   }, [isLoggedIn, isLoggedIns,  loggedInUser]);
 
   // Function to handle opening the register modal
-  console.log(isLoggedIn);
+  
   const openshowAddStoryModalModal = () => {
     setShowAddStoryModal(true);
 
@@ -57,9 +55,7 @@ function Navbar() {
     setShowRegisterModal(true);
 
   };
-  // useEffect(()=>{
-   
-  // })
+  
   const handleLogout = () => {
    
     localStorage.removeItem('token');
@@ -162,10 +158,10 @@ function Navbar() {
             <img src={BarImg} alt="" />
           </div> */}
         </nav>
-        {/* Register Modal */}
+      
 
       </div>
-      {/* Mobile responsive modal */}
+    
       {
 
         showResponsiveModal && isMobile ? (

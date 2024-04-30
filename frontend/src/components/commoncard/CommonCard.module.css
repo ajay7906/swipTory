@@ -34,9 +34,9 @@
 }
 .storyInfo p{
     
-    margin: 0 auto; /* Center the paragraph horizontally */
+    margin: 0 auto; 
     font-size: 1rem;
-    max-width: 100%; /* Set maximum width to prevent overflow */
+    max-width: 100%; 
    
    
 }
