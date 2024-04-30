@@ -1,69 +1,9 @@
 // controllers/storyController.js
 const Story = require('../model/storyModel');
 const mongoose = require('mongoose')
-//const { body, validationResult } = require('express-validator');
-
-// Create a new story
 
 
-//const Story = require('../models/Story');
-
-// const createStory = async (req, res, next) => {
-//   try {
-//     const { userId } = req;
-//     const {
-//       postedBy,
-//       stories,
-//       category,
-//       slide
-//       // likes,
-//       // bookmarkedBy,
-//       // shareLink
-//     } = req.body;
-
-
-//     // console.log(req);
-//     if (!userId ) {
-//       return res.status(400).json({
-//         errorMessage: "Bad request. userId s."
-//       });
-//     }
-//     const filteredSlides = jsonData.slide.filter(slide => slide.stories.length > 3);
-//     console.log(filteredSlides);
-//     if ( filteredSlides) {
-//       return res.status(400).json({
-//         errorMessage: "Bad request. story."
-//       });
-//     }
-
-//     if (!filteredSlides) {
-//       return res.status(400).json({
-//         errorMessage: "Bad request.length ."
-//       });
-//     }
-//     let newCategory ;
-//     const existingStoryCategory = await Story.findOne({ category });
-//     if (!existingStoryCategory) {
-//        newCategory =  category;
-
-//     }
-//     const newStory = new Story({
-//       postedBy: userId,
-//       stories,
-
-
-//       // likes,
-//       // bookmarkedBy,
-//       // shareLink
-//     });
-
-//     await newStory.save();
-//     res.status(201).json({ message: "Story created successfully", data: newStory });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
+//create post
 const createStory = async (req, res, next) => {
   try {
     const { userId } = req;
@@ -105,50 +45,24 @@ const createStory = async (req, res, next) => {
 };
 
 
-// const getStoriesByCategory = async (req, res, next) => {
-//   try {
-//     const { category } = req.query;
-//     const regexCategory = category || ""; // Ensure category is a string or set to an empty string if not provided
-
-//     const postList = await Story.find(
-//       { category: { $regex: regexCategory, $options: "i" } },
-//       { _id: 1 }
-//     );
-
-//     res.json({ data: postList });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 
+// get  stories all and by category filter
 const getStoriesByCategory = async (req, res, next) => {
   try {
     const { category } = req.query;
 
     let stories;
-    let extractedStories;
+   
     if (category) {
       console.log(category);
       stories = await Story.find({ 'stories.chooseCategory': category });
     } else {
       stories = await Story.find();
-      let categoryMap = ['education', 'sports', 'food', 'movies', 'travel'];
+    
       extractedStories = stories.map(entry => entry.stories);
 
-      // Iterate through each category in the category map
-      // categoryMap.forEach(cat => {
-      //   // Filter stories based on the current category
-      //   const filteredStories = stories.filter(story => story.stories.some(storyItem => storyItem.category === cat));
-
-      //   // Add filtered stories to the categorized stories object
-      //   categorizedStories[cat] = filteredStories.map(story => {
-      //     return {
-
-      //       stories: story.stories.filter(storyItem => storyItem.category === cat)
-      //     };
-      //   });
-      // });
+    
 
     }
 
@@ -157,39 +71,7 @@ const getStoriesByCategory = async (req, res, next) => {
     next(error);
   }
 };
-// const getStoriesByCategory = async (req, res, next) => {
-//   try {
-//     const { category } = req.query;
 
-//     let stories;
-//     let groupedStories = {};
-//     if (category) {
-//       stories = await Story.find({ 'stories.category': category });
-//     } else {
-//       const allStories = await Story.find();
-
-//       // Group stories by category using reduce
-//       // const storiesByCategory = allStories.reduce((acc, item) => {
-//       //   item.stories.forEach(story => {
-//       //     const category = story.category;
-//       //     if (!acc[category]) {
-//       //       acc[category] = [];
-//       //     }
-//       //     if (!acc[category].some(existingStory => existingStory.postId === story.postId)) {
-//       //       acc[category].push(story);
-//       //     }
-//       //   });
-//       //   return acc;
-//       // }, {});
-
-//       // stories = storiesByCategory;
-
-
-//     res.status(200).json({ success: true, data: allStories });
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 
 
@@ -224,7 +106,7 @@ const getUserStories = async (req, res, next) => {
 
     const userStories = await Story.find({ postedBy: userId });
     if (!userStories || userStories.length === 0) {
-      res.status(400).json({ success: false, error: "stories not found" });
+     return  res.status(400).json({ success: false, error: "stories not found" });
 
     }
 
@@ -266,11 +148,11 @@ const updateStoryById = async (req, res, next) => {
     next(error);
   }
 };
-
+// like  the post api
 const likePost = async (req, res, next) => {
   try {
     const { postId } = req.params
-    console.log(postId);
+  
     const userId = req.userId;
     if (!postId) {
       return res.status(400).json({
@@ -296,7 +178,7 @@ const likePost = async (req, res, next) => {
 
   }
 }
-//get like data
+//get like count data
 const getLikeCount = async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -318,7 +200,7 @@ const getLikeCount = async (req, res, next) => {
     next(error);
   }
 };
-
+//unlike post
 const unlikePost = async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -353,7 +235,7 @@ const unlikePost = async (req, res, next) => {
   }
 };
 
-
+//  bookmark  post
 const bookmarkPost = async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -371,10 +253,10 @@ const bookmarkPost = async (req, res, next) => {
     }
 
 
-    // Check if the user has already bookmarked the post
+   
     
 
-    // Find the story by postId   postId, { $addToSet: { likes: userId } }, { new: true }
+    
     const story = await Story.findByIdAndUpdate(postId, { $addToSet: { bookmarkedBy: userId } }, { new: true });
 
 
@@ -388,10 +270,6 @@ const bookmarkPost = async (req, res, next) => {
     
 
 
-    // Add the user's ID to the bookmarkedBy array
-
-    // story.bookmarkedBy.push(userId);
-    // await story.save();
 
     res.status(200).json({ success: true, message: "Post bookmarked successfully" });
   } catch (error) {
@@ -399,7 +277,7 @@ const bookmarkPost = async (req, res, next) => {
   }
 };
 
-//get  data of bookmark
+//get  data of bookmark  // Find all posts that have been bookmarked by the user
 const getBookmarkedPosts = async (req, res, next) => {
   try {
     const userId = req.userId;
@@ -410,7 +288,7 @@ const getBookmarkedPosts = async (req, res, next) => {
       });
     }
 
-    // Find all posts that have been bookmarked by the user
+   
     const bookmarkedPosts = await Story.find({ bookmarkedBy: userId });
 
     res.status(200).json({ success: true, data: bookmarkedPosts });
@@ -446,7 +324,7 @@ const TrackbookmarkPost = async (req, res, next) => {
       });
     }
 
-    // Check if the user has already bookmarked the post
+ 
     const isBookmarked = story.bookmarkedBy.includes(userId);
     if (isBookmarked) {
       return res.status(200).json({
@@ -457,7 +335,7 @@ const TrackbookmarkPost = async (req, res, next) => {
     }
     else {
       return res.status(400).json({
-        success: true,
+        success: false,
         data: userId,
         errorMessage: "Post is not bookmarked",
       });
@@ -498,7 +376,7 @@ const TrackIsLikePost = async (req, res, next) => {
     }
 
     const isPostLiked = await Story.exists({ _id: postId, likes: { $in: [userId] } });
-    // const islikemarked = story.likes.includes(userId);
+  
     if (isPostLiked) {
       return res.status(200).json({
         success: true,
@@ -522,7 +400,7 @@ const TrackIsLikePost = async (req, res, next) => {
   }
 };
 
-
+//unbook mark post
 const unbookmarkPost = async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -539,9 +417,9 @@ const unbookmarkPost = async (req, res, next) => {
       });
     }
 
-    // Find the story by postId
+  
     const story = await Story.findByIdAndUpdate( postId,
-      { $pull: { bookmarkedBy: userId } }, // Use $pull to remove userId from book array
+      { $pull: { bookmarkedBy: userId } }, 
       { new: true });
     if (!story) {
       return res.status(404).json({
@@ -549,17 +427,7 @@ const unbookmarkPost = async (req, res, next) => {
       });
     }
 
-    // // Check if the user has bookmarked the post
-    // const isBookmarked = story.bookmarkedBy.includes(userId);
-    // if (!isBookmarked) {
-    //   return res.status(400).json({
-    //     errorMessage: "Post is not bookmarked",
-    //   });
-    // }
-
-    // Remove the user's ID from the bookmarkedBy array
-    // story.bookmarkedBy = story.bookmarkedBy.filter(id => id.toString() !== userId.toString());
-    // await story.save();
+  
 
     res.status(200).json({ success: true, message: "Post unbookmarked successfully" });
   } catch (error) {
@@ -567,35 +435,10 @@ const unbookmarkPost = async (req, res, next) => {
   }
 };
 
-//share the post
-const sharePost = async (req, res, next) => {
-  try {
-    const { postId } = req.params;
-
-    // Check if the postId is valid
-    if (!postId) {
-      return res.status(400).json({ errorMessage: "Bad Request: Post ID is missing" });
-    }
-
-    // Construct the share link based on the postId
-    const shareLink = `${req.protocol}://${req.get('host')}/api/postDetail/${postId}`;
-
-    // Update the shareLink field in the database
-    const updatedStory = await Story.findByIdAndUpdate(postId, { shareLink }, { new: true });
-
-    if (!updatedStory) {
-      return res.status(404).json({ errorMessage: "Story not found" });
-    }
-
-    res.status(200).json({ success: true, shareLink });
-  } catch (error) {
-    next(error);
-  }
-}
 
 module.exports = {
   createStory, getStoriesByCategory, getStoryById
   , getUserStories, updateStoryById, likePost, unlikePost
-  , bookmarkPost, unbookmarkPost, sharePost, TrackbookmarkPost,
+  , bookmarkPost, unbookmarkPost, TrackbookmarkPost,
   getBookmarkedPosts, getLikeCount, TrackIsLikePost
 };
