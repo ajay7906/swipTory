@@ -1,8 +1,7 @@
 import Images from '../../assets/img1.jpg'
 import styles from './CommonCard.module.css'
 function CommanCard({ filteredData , allUserStory}) {
-    console.log(filteredData?.stories[0]?.image);
-
+   
     return (
         <div className={styles.styleImg}>
 

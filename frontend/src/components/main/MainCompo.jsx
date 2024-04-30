@@ -1,27 +1,33 @@
 
 
 
-import { getPostById } from "../../api/post";
+
 import CommanCard from "../commoncard/CommanCard";
 import StoryStatus from "../status/StoryStatus";
 import styles from './MainCompo.module.css';
 import React, { useEffect, useState } from "react";
 
-import { jwtDecode } from 'jwt-decode';
 import AddStory from "../addStory/AddStory";
+
+
+import { jwtDecode } from 'jwt-decode';
+
 import useMediaQuery from "../../utils/screenSize";
 
-function MainCompo({ sendData, allData, handleDisplayData }) {
+function MainCompo({ sendData, allData }) {
     const [showStoryModal, setShowStoryModal] = useState(false)
-
+   
     const [myStoryHomeEdits, setMyStoryHomeEdits] = useState();
     const [currentUser, setCurrentUser] = useState(null);
     const [showAddStoryModals, setShowAddStoryModals] = useState(false);
     const [postId, setPostId] = useState();
-    const [itemsToShow, setItemsToShow] = useState(4); // Initial number of items to show
+   
+    const [itemsToShowWithCat, setItemsToShowWithCat] = useState(4); 
     const [showMoreVisible, setShowMoreVisible] = useState(true);
+    const [showMoreVisibleWithCat, setShowMoreVisibleWithCat] = useState(true);
+    const [categoryItemsToShow, setCategoryItemsToShow] = useState({});
     const isMobile = useMediaQuery('(max-width: 780px)');
-    console.log(allData);
+    let categoryMap = ['Education', 'sports', 'Fruits', 'World', 'India'];
     useEffect(() => {
         const token = localStorage.getItem('token');
 
@@ -42,27 +48,36 @@ function MainCompo({ sendData, allData, handleDisplayData }) {
     };
 
     const openshowAddStoryModalModal = () => {
-        // setMyStoryId(myStorId)
+        
         setShowAddStoryModals(true);
 
     };
+   
+     
 
-    // Function to handle the "show more" button click event
-    const handleShowMore = () => {
-        setItemsToShow(sendData.length); // Show all items
-        setShowMoreVisible(false); // Hide the "show more" button
+
+   
+    const handleShowMore = (categoryName) => {
+        setCategoryItemsToShow((prevState) => ({
+            ...prevState,
+            [categoryName]: sendData.filter((item) => item.chooseCategory === categoryName).length,
+        }));
+        setShowMoreVisible(false)
     };
 
-    // const [imageData, setImageData] = useState()
-    // let displayData = sendData;
-    console.log(sendData);
+    const handleShowMoreWithCategory = () => {
+        setShowMoreVisibleWithCat(false)
+        setItemsToShowWithCat(sendData.length)
+
+    }
+    
     if (!Array.isArray(sendData)) {
-        return null; // Return null if sendData is not an array
+        return null;  
     }
 
-    // console.log(allData === "all");
-    let categoryMap = ['Education', 'sports', 'Fruits', 'World', 'India'];
-    // console.log(displayData);
+   
+   
+    
     const openStoryModal = (postId) => {
         setPostId(postId)
         setShowStoryModal(true);
@@ -73,30 +88,6 @@ function MainCompo({ sendData, allData, handleDisplayData }) {
     }
 
 
-    // const fetchJobDetails = async () => {
-    //     if (!postId) return console.log('nothing');
-    //     try {
-    //       const result = await getPostById(postId);
-    //       setImageData(result?.data)
-    //       console.log(result.data);
-
-    //     } catch (error) {
-    //       console.log(error);
-
-    //     }
-
-    //   };
-    //   useEffect(() => {
-    //     fetchJobDetails();
-    //   }, [postId]);
-
-    //   useEffect(() => {
-    //     if (allData === "all") {
-    //         setFilteredData(sendData);
-    //     } else {
-    //         setFilteredData(sendData.filter(categoryData => categoryData.chooseCategory === allData));
-    //     }
-    // }, [allData, sendData]);
 
     return (
         <div className={styles.data}>
@@ -104,31 +95,20 @@ function MainCompo({ sendData, allData, handleDisplayData }) {
                 allData === "All" ?
                 <> {categoryMap.map((categoryName, index) => (
                     <div key={index}>
+                       
                         <div className={styles.htag}><h2>Top Stories About {categoryName}</h2></div>
-                        {/* <div className={styles.main}>
-                               
-                                {sendData.filter((categoryData) => categoryData.chooseCategory === categoryName).length > 0 ? (
-                                    sendData
-                                        .filter((categoryData) => categoryData.chooseCategory === categoryName)
-                                        .map((filteredData, index) => (
-                                            <div key={index} onClick={() => openStoryModal(filteredData._id)}>
-                                                <CommanCard filteredData={filteredData} />
-                                            </div>
-                                        ))
-                                ) : (
-                                    <div className={styles.storyNotFound}><h3>Stories not found</h3></div>
-                                )}
-                            </div> */}
+                      
                         {sendData
                             .filter((categoryData) => categoryData.chooseCategory === categoryName)
                             .length > 0 ? (<>
                                 <div className={styles.main}>
                                     {sendData
                                         .filter((categoryData) => categoryData.chooseCategory === categoryName)
-                                        .slice(0, itemsToShow).map((filteredData, index) => (
+                                        .slice(0, categoryItemsToShow[categoryName] || 4).map((filteredData, index) => (
 
                                             <div className={styles.CommanCardMain} key={index} onClick={() => openStoryModal(filteredData._id)}>
-                                                {console.log(filteredData.stories)}
+                                               
+
                                                 <CommanCard filteredData={filteredData} />
                                                 {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
                                                     <div className={styles.editBtn} onClick={(e) => {
@@ -144,29 +124,19 @@ function MainCompo({ sendData, allData, handleDisplayData }) {
                                             </div>
                                         ))}
                                 </div>
-                                {showMoreVisible && (
+                               
+                                {!categoryItemsToShow[categoryName] && ( // Show the button only if categoryItemsToShow doesn't have a value for the current category
                                     <div className={styles.showMoreBtnParen}>
-                                        <button onClick={handleShowMore} className={styles.showMoreBtn}>See More</button>
+                                        <button onClick={() => handleShowMore(categoryName)} className={styles.showMoreBtn}>
+                                            See More
+                                        </button>
                                     </div>
                                 )}
                             </>
                         ) : (
                             <div className={styles.storyNotFound}><h3>No stories Available</h3></div>
                         )}
-                        {/* {sendData
-                                    .filter(categoryData => categoryData.chooseCategory === categoryName)
-                                    .map((filteredData, index) => (
-                                       
-                                        <div key={index} onClick={()=>openStoryModal(filteredData._id)}>
-                                        
-
-                                            <CommanCard filteredData={filteredData} />
-
-                                        </div>
-                                    ))
-                                  
-                                    
-                                    } */}
+                       
 
 
                     </div>
@@ -176,21 +146,12 @@ function MainCompo({ sendData, allData, handleDisplayData }) {
                     <div >
                         {isMobile ? <> </> :
                             <> <div className={styles.htag}><h2>Top Stories About {allData}</h2></div></>}
-                        {/* <div className={styles.main}>
-                                {sendData
-
-                                    .map((filteredData, index) => (
-                                        <div key={index} onClick={openStoryModal} >
-                                            
-                                            <CommanCard filteredData={filteredData} />
-                                        </div>
-                                    ))}
-                            </div> */}
+                     
                         {
                             sendData.length > 0 ? (
                                 <>
                                     <div className={styles.main}>
-                                        {sendData.slice(0, itemsToShow).map((filteredData, index) => (
+                                        {sendData.slice(0, itemsToShowWithCat).map((filteredData, index) => (
                                             <div key={index} onClick={() => openStoryModal(filteredData._id)}>
                                                 {console.log(filteredData)}
                                                 <CommanCard filteredData={filteredData} />
@@ -210,9 +171,9 @@ function MainCompo({ sendData, allData, handleDisplayData }) {
                                         ))}
 
                                     </div>
-                                    {showMoreVisible && (
+                                    {showMoreVisibleWithCat && (
                                         <div className={styles.showMoreBtnParen}>
-                                            <button onClick={handleShowMore} className={styles.showMoreBtn}>See More</button>
+                                            <button onClick={handleShowMoreWithCategory} className={styles.showMoreBtn}>See More</button>
                                         </div>
                                     )}
                                 </>
@@ -243,4 +204,18 @@ function MainCompo({ sendData, allData, handleDisplayData }) {
 }
 
 export default MainCompo;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
