@@ -53,7 +53,7 @@ function Register({ closeModal, modalName, setIsLoggedIn }) {
     } else {
       setShowError(response)
     }
-
+    setLoading(false);
 
   };
   return (

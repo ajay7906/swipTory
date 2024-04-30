@@ -1,10 +1,10 @@
 
 import axios from 'axios'
-import { showToast } from '../utils/showToast';
+
 
 export async function registerUser({ username, password }) {
   try {
-    const response = await axios.post('http://localhost:3000/api/v1/user/register', {
+    const response = await axios.post('https://swiptory-2.onrender.com/api/v1/user/register', {
       username,
       password
     });
@@ -21,7 +21,7 @@ export async function registerUser({ username, password }) {
 //login 
 export async function loginUser({ username, password }) {
   try {
-    const response = await axios.post('http://localhost:3000/api/v1/user/login', {
+    const response = await axios.post('https://swiptory-2.onrender.com/api/v1/user/login', {
       username,
       password
     });

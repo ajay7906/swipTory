@@ -2,7 +2,7 @@ import axios from 'axios'
 import { showToast } from '../utils/showToast';
 
 
-const backendUrl = 'http://localhost:3000/api/v1/post';
+const backendUrl = 'https://swiptory-2.onrender.com/api/v1/post';
 
 export const getAllPost = async (filter) => {
     
@@ -14,8 +14,9 @@ export const getAllPost = async (filter) => {
         return response?.data;
 
     } catch (error) {
-        console.log(error);
+        // console.log(error);
         // toast something went wrong please try after sometime
+        return error.response.data.errorMessage;
     }
 };
 
