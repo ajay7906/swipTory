@@ -335,9 +335,16 @@
   }
   .modal .storyInput select{
     height: 24px;
-    font-size: 15px;
+    font-size: 10px;
     
     width: 174px;
+
+  }
+  .storyInput{
+    height: 300px;
+  }
+   .storyInput select option{
+    font-size: 15px;
 
   }
   .mobileSlide{

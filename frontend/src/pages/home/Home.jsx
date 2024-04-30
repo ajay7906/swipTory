@@ -7,7 +7,7 @@ import Image3 from '../../assets/download.jpeg'
 import Image4 from '../../assets/download (2).jpeg'
 import Image5 from '../../assets/india.jpeg'
 import styles from './Home.module.css'
-import FoodCompo from "../../components/food/FoodCompo";
+import MainCompo from "../../components/main/MainCompo";
 
 import { useEffect, useState } from "react";
 import { getAllPost } from "../../api/post";
@@ -15,6 +15,7 @@ import { getAllPost } from "../../api/post";
 import YourStoryCompo from "../../components/yourstory/YourStoryCompo";
 
 import { useMediaQuery } from 'react-responsive';
+import Loader from "../../components/loader/Loader";
 
 function Home() {
   const isMobiles = useMediaQuery({ maxWidth: 780 });
@@ -22,7 +23,7 @@ function Home() {
 
   const [category, setCategory] = useState(isMobiles ? 'Education' : '');
   const [sendData, setSendData] = useState("");
-
+  const [loading, setLoading] = useState(true);
   const [allData, setAllData] = useState("");
 
 
@@ -46,13 +47,14 @@ function Home() {
         setCategory('Education')
         const result = await getAllPost({ category: 'Education' });
         setSendData(result?.data)
+        setLoading(false)
 
       } else {
         const result = await getAllPost({ category });
 
         console.log("Fetched data for category:", category);
         setSendData(result?.data)
-        console.log('categor', category);
+        setLoading(false)
         console.log("Result:", result.data);
 
       }
@@ -99,7 +101,7 @@ function Home() {
 
 
 
-  console.log(sendData);
+
   return (
     <div>
 
@@ -123,10 +125,17 @@ function Home() {
         })}
       </div>
 
-      {!isMobiles && <div>
-        <YourStoryCompo />
-      </div>}
-      <FoodCompo sendData={sendData} allData={allData} />
+      {loading ?
+        (
+          <Loader />
+        ) :
+        <>
+          {!isMobiles && <div>
+            <YourStoryCompo />
+          </div>}
+          <MainCompo sendData={sendData} allData={allData} />
+        </>
+      }
 
 
     </div>

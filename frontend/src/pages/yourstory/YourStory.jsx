@@ -120,6 +120,7 @@ import BookMarkCompo from '../../components/bookmarkcompo/BookMarkCompo';
 import StoryStatus from '../../components/status/StoryStatus';
 import NoStory from '../../assets/nostory.jpg'
 import { Link } from 'react-router-dom';
+import Loader from '../../components/loader/Loader';
 
 function YourStory() {
   const [allUserStory, setAllUserStory] = useState();
@@ -127,7 +128,7 @@ function YourStory() {
   const [myStoryEdit, setMyStoryEdit] = useState();
   const [showStoryModal, setShowStoryModal] = useState(false);
   const [postId, setPostId] = useState();
-
+  const [loading, setLoading] = useState(true);
   const openStoryModal = (postId) => {
     setPostId(postId);
     setShowStoryModal(true);
@@ -148,12 +149,11 @@ function YourStory() {
   const fetchAllUserPost = async () => {
     try {
       const result = await getAllUserPost();
-      setAllUserStory(result?.stories || []); // Set allUserStory to an empty array if result?.stories is falsy
-      console.log(allUserStory);
-      console.log("Result:", result);
+      setAllUserStory(result?.stories || []); 
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching posts:", error);
-      setAllUserStory([]); // Set allUserStory to an empty array if an error occurred
+      setAllUserStory([]); 
     }
   };
 
@@ -164,37 +164,46 @@ function YourStory() {
   return (
     <div className={styles.mainYourStory}>
 
-      {!allUserStory || allUserStory.length === 0 ? (
-        // <div>Story not found</div>
-        <div className={styles.NoBookMark}>
-          <p>Your Story not found</p>
-          <img src={NoStory} alt="" />
-          <Link to='/' className={styles.backHome}>Back to Home</Link>
-        </div>
-      ) : (
-        <div className={styles.main}>
-          {allUserStory.map((data, index) => (
-            <div key={index} className={styles.commanCard} onClick={() => openStoryModal(data._id)}>
-              <BookMarkCompo allUserStory={allUserStory} />
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openshowAddStoryModalModal();
-                  setMyStoryEdit(allUserStory[index].stories);
-                }}
-                className={styles.editBtn}
-              >
-                {console.log(allUserStory[0].stories)}
-                <img
-                  src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg"
-                  alt="edit"
-                />
-                <p>edit</p>
+      {
+        loading ? 
+        (
+        <Loader/> 
+      )
+         : <>
+         {!allUserStory || allUserStory.length === 0 ? (
+         
+          <div className={styles.NoBookMark}>
+            <p>Your Story not found</p>
+            <img src={NoStory} alt="" />
+            <Link to='/' className={styles.backHome}>Back to Home</Link>
+          </div>
+        ) : (
+          <div className={styles.main}>
+            {allUserStory.map((data, index) => (
+              <div key={index} className={styles.commanCard} onClick={() => openStoryModal(data._id)}>
+                <BookMarkCompo allUserStory={allUserStory} />
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openshowAddStoryModalModal();
+                    setMyStoryEdit(allUserStory[index].stories);
+                  }}
+                  className={styles.editBtn}
+                >
+                  {console.log(allUserStory[0].stories)}
+                  <img
+                    src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg"
+                    alt="edit"
+                  />
+                  <p>edit</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}  </>
+      
+      }
+      
       {showAddStoryModal && allUserStory && <AddStory postId={postId} closeModal={closeModal} myStoryEdit={myStoryEdit} />}
       <div>{showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}</div>
     </div>

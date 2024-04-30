@@ -6,11 +6,10 @@ import useMediaQuery from "../../utils/screenSize";
 import RemoveSlide from '../../assets/removeslide.png'
 import BigRemove from '../../assets/bigRemove.png'
 function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
-    // State variables
-    //const [showModal, setShowModal] = useState(false);
+   
     console.log(postId);
     const [selectedCategory, setSelectedCategory] = useState('');
-    const categories = ['food', 'sports', 'travel', 'movies', 'education'];
+    const categories = ['Fruits', 'Sports', 'World', 'India', 'Education'];
     const isMobile = useMediaQuery('(max-width: 780px)');
     const [currentSlide, setCurrentSlide] = useState(0);
     const [previousSlide, setPreviousSlide] = useState(0)
@@ -65,40 +64,8 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
             ];
         }
     });
-    //  console.log(slideStoryInfo[currentSlide].chooseCategory);
-
-    // const handleRemoveSlide = (index) => {
-    //     const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
-    //     setSlideStoryInfo(updatedSlideStoryInfo);
-
-    //     if (index === currentSlide) {
-    //         if (updatedSlideStoryInfo.length === 0) {
-    //             setCurrentSlide(0);
-    //             // Clear input fields
-    //             const newSlideStoryInfo = [...updatedSlideStoryInfo];
-    //             newSlideStoryInfo[0] = {
-    //                 heading: "",
-    //                 description: "",
-    //                 image: "",
-    //                 chooseCategory: "",
-    //             };
-    //             setSlideStoryInfo(newSlideStoryInfo);
-    //         } else {
-    //             setCurrentSlide(currentSlide === 0 ? 0 : currentSlide - 1);
-    //             // Clear input fields for the new currentSlide
-    //             const newSlideStoryInfo = [...updatedSlideStoryInfo];
-    //             newSlideStoryInfo[currentSlide === 0 ? 0 : currentSlide - 1] = {
-    //                 heading: "",
-    //                 description: "",
-    //                 image: "",
-    //                 chooseCategory: "",
-    //             };
-    //             setSlideStoryInfo(newSlideStoryInfo);
-    //         }
-    //     } else if (index < currentSlide) {
-    //         setCurrentSlide(currentSlide - 1);
-    //     }
-    // };
+   
+    
     //handle remove slide
     const handleRemoveSlide = (index) => {
         const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
@@ -108,40 +75,15 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
       if (index === currentSlide) {
             setCurrentSlide(0);
          
-            //  setActiveSlideIndex(0);
-            // Reset currentSlide to 0 if the removed slide was the current slide
+          
         } else if (index < currentSlide) {
             setCurrentSlide(currentSlide - 1);
-            // setActiveSlideIndex(currentSlide - 1);
-            // Decrement currentSlide if the removed slide was before the current slide
+           
         }
     }
 
 
 
-
-    // const handleRemoveSlide = (index) => {
-    //     const updatedSlideStoryInfo = slideStoryInfo.filter((_, i) => i !== index);
-    //     setSlideStoryInfo(updatedSlideStoryInfo);
-
-    //     if (index === currentSlide) {
-    //         setCurrentSlide(0);
-    //         // Reset currentSlide to 0 if the removed slide was the current slide
-    //         setSlideStoryInfo((prevState) => [
-    //             ...prevState.slice(0, index),
-    //             {
-    //                 heading: "",
-    //                 description: "",
-    //                 image: "",
-    //                 chooseCategory: "",
-    //             },
-    //             ...prevState.slice(index + 1),
-    //         ]);
-    //     } else if (index < currentSlide) {
-    //         setCurrentSlide(currentSlide - 1);
-    //         // Decrement currentSlide if the removed slide was before the current slide
-    //     }
-    // };
 
 
 
@@ -161,20 +103,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         }
     };
 
-
-    // Function to handle moving to the previous slide
-    // const handlePreviousSlide = () => {
-    //     if (currentSlide > 0) {
-    //         setCurrentSlide(prevSlide => prevSlide - 1);
-    //         console.log(currentSlide);
-    //     }
-    // };
-    // const handleNextSlide = () =>{
-    //     if (currentSlide < 5) {
-    //         setCurrentSlide(prevSlide => prevSlide + 1);
-    //         console.log(currentSlide);
-    //     }
-    // }
+  //handle next slide
     const handleNextSlide = () => {
         console.log("Current slide before update:", currentSlide);
         if (currentSlide < slideStoryInfo.length - 1) {
@@ -183,7 +112,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         }
         console.log("Current slide after update:", currentSlide);
     };
-
+//handle previous slide
     const handlePreviousSlide = () => {
         console.log("Current slide before update:", currentSlide);
         if (currentSlide > 0) {
@@ -194,16 +123,6 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
     };
 
 
-    // Function to handle opening the modal
-    // const openModal = () => {
-    //   setShowModal(true);
-    // };
-
-    // Function to handle closing the modal
-    // const closeModal = () => {
-    //   setShowModal(false);
-    // };
-    // Inside the setSelectedCategory function
 
 
 
@@ -216,13 +135,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         }));
         setSlideStoryInfo(updatedSlideStoryInfo);
     };
-    // const setSelectedCategoryFunction = (category) => {
-    //     setSelectedCategory(category);
-    //     // Update the category for the current slide only
-    //     const updatedSlideStoryInfo = [...slideStoryInfo];
-    //     updatedSlideStoryInfo[currentSlide].chooseCategory = category;
-    //     setSlideStoryInfo(updatedSlideStoryInfo);
-    // };
+   
 
 
 
@@ -236,15 +149,11 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         // Check if all slide fields are filled
         const isSlideInfoComplete = slideStoryInfo.every((slide, index) =>
             slide.heading && slide.description && slide.image && slide.chooseCategory
+           
         );
-        // const isSlideInfoCompletes = slideStoryInfo.every(slide =>
-
-        //     console.log(slide.chooseCategory)
-
-        // );
-
+       console.log(slideStoryInfo);
         if (!isSlideInfoComplete) {
-
+           alert('fill all the filled')
             return;
         }
 
@@ -255,7 +164,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
             await updatePostById(postId, slideStoryInfo)
             showToast('post update successful', { type: 'success' });
         }
-        // Check if myStoryHomeEdits exists and it's an array (indicating editing existing data)
+       
         else if (Array.isArray(myStoryHomeEdits)) {
             await updatePostById(postId, slideStoryInfo)
             showToast('post update successful', { type: 'success' });
@@ -309,12 +218,12 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                         <button onClick={handleAddSlide} style={{ display: slideStoryInfo.length < 6 ? 'block' : 'none' }} disabled={slideStoryInfo.length === 6}>Add+</button>
 
 
-                        {/* remove slide */}
+                       
 
                     </div>
                     <div className={styles.storyInput}>
 
-                        {/* value={username} onChange={(e) => setUsername(e.target.value)} */}
+                      
                         <div className={styles.input}>
                             <label htmlFor="">Heading: </label>
                             <input type="text"
@@ -368,31 +277,25 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                         <div className={styles.input}>
                             <label>Category:</label>
                             <select
-                                // value={slideStoryInfo[currentSlide].chooseCategory}
-                                // onChange={(e) => {
-                                //     const newSlideStoryInfo = [...slideStoryInfo];
-                                //     newSlideStoryInfo[currentSlide].chooseCategory = e.target.value;
-                                //     setSlideStoryInfo(newSlideStoryInfo);
-                                // }}
+                                
                                 className="customSelect"
                                 onChange={(e) => {
                                     const category = e.target.value;
                                     setSelectedCategoryFunction(category); // This updates selectedCategory state
                                     // Note: The setSelectedCategory function will also update chooseCategory for all slides
                                 }}
-                            // value={selectedCategory}
-                            // onChange={(e) => setSelectedCategory(e.target.value)}
+                           
                             >
                                 <option value="" disabled >Select category</option>
                                 {categories.map((cat) => (
-                                    <option key={cat} value={cat} selected={cat === slideStoryInfo[currentSlide]?.chooseCategory}>
+                                    <option key={cat} value={cat} selected={cat === slideStoryInfo[currentSlide]?.chooseCategory || cat}>
                                         {cat}
                                     </option>
                                 ))}
                             </select>
                         </div>
 
-                        {/* <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required /> */}
+                        
 
 
                     </div>

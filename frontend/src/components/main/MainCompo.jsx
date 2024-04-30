@@ -4,16 +4,16 @@
 import { getPostById } from "../../api/post";
 import CommanCard from "../commoncard/CommanCard";
 import StoryStatus from "../status/StoryStatus";
-import styles from './FoodCompo.module.css';
+import styles from './MainCompo.module.css';
 import React, { useEffect, useState } from "react";
-// import jwt_decode from 'jwt-decode';
+
 import { jwtDecode } from 'jwt-decode';
 import AddStory from "../addStory/AddStory";
 import useMediaQuery from "../../utils/screenSize";
 
-function FoodCompo({ sendData, allData, handleDisplayData }) {
+function MainCompo({ sendData, allData, handleDisplayData }) {
     const [showStoryModal, setShowStoryModal] = useState(false)
-    const [filteredData, setFilteredData] = useState([])
+
     const [myStoryHomeEdits, setMyStoryHomeEdits] = useState();
     const [currentUser, setCurrentUser] = useState(null);
     const [showAddStoryModals, setShowAddStoryModals] = useState(false);
@@ -121,29 +121,35 @@ function FoodCompo({ sendData, allData, handleDisplayData }) {
                             </div> */}
                         {sendData
                             .filter((categoryData) => categoryData.chooseCategory === categoryName)
-                            .length > 0 ? (
-                            <div className={styles.main}>
-                                {sendData
-                                    .filter((categoryData) => categoryData.chooseCategory === categoryName)
-                                    .map((filteredData, index) => (
+                            .length > 0 ? (<>
+                                <div className={styles.main}>
+                                    {sendData
+                                        .filter((categoryData) => categoryData.chooseCategory === categoryName)
+                                        .slice(0, itemsToShow).map((filteredData, index) => (
 
-                                        <div className={styles.CommanCardMain} key={index} onClick={() => openStoryModal(filteredData._id)}>
-                                            {console.log(filteredData.stories)}
-                                            <CommanCard filteredData={filteredData} />
-                                            {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
-                                                <div className={styles.editBtn} onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    openshowAddStoryModalModal()
-                                                    setMyStoryHomeEdits(filteredData.stories)
+                                            <div className={styles.CommanCardMain} key={index} onClick={() => openStoryModal(filteredData._id)}>
+                                                {console.log(filteredData.stories)}
+                                                <CommanCard filteredData={filteredData} />
+                                                {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
+                                                    <div className={styles.editBtn} onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        openshowAddStoryModalModal()
+                                                        setMyStoryHomeEdits(filteredData.stories)
 
-                                                }}>
-                                                    <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
-                                                    <p>edit</p>
-                                                </div>
-                                            )}
-                                        </div>
-                                    ))}
-                            </div>
+                                                    }}>
+                                                        <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
+                                                        <p>edit</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                </div>
+                                {showMoreVisible && (
+                                    <div className={styles.showMoreBtnParen}>
+                                        <button onClick={handleShowMore} className={styles.showMoreBtn}>See More</button>
+                                    </div>
+                                )}
+                            </>
                         ) : (
                             <div className={styles.storyNotFound}><h3>No stories Available</h3></div>
                         )}
@@ -161,6 +167,7 @@ function FoodCompo({ sendData, allData, handleDisplayData }) {
                                   
                                     
                                     } */}
+
 
                     </div>
                 ))}</>
@@ -204,9 +211,9 @@ function FoodCompo({ sendData, allData, handleDisplayData }) {
 
                                     </div>
                                     {showMoreVisible && (
-                                      <div className={styles.showMoreBtnParen}>
-                                        <button onClick={handleShowMore} className={styles.showMoreBtn}>See More</button>
-                                      </div>
+                                        <div className={styles.showMoreBtnParen}>
+                                            <button onClick={handleShowMore} className={styles.showMoreBtn}>See More</button>
+                                        </div>
                                     )}
                                 </>
 
@@ -235,5 +242,5 @@ function FoodCompo({ sendData, allData, handleDisplayData }) {
     );
 }
 
-export default FoodCompo;
+export default MainCompo;
 
