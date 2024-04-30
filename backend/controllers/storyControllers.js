@@ -1,6 +1,6 @@
-// controllers/storyController.js
+
 const Story = require('../model/storyModel');
-const mongoose = require('mongoose')
+
 
 
 //create post
