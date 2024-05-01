@@ -50,6 +50,7 @@
   .imageCard{
     width: 143px;
     height:  95px;
+    border-radius: 1.6rem;
    
   }
   .activeCategory{

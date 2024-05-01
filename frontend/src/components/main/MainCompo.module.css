@@ -93,6 +93,8 @@
 @media screen and (max-width: 780px) {
     .main {
         grid-template-columns: 1fr;
+        padding-left: 1.6rem;
+        padding-right: 1.6rem;
     }
 
     .data {

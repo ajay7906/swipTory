@@ -1,8 +1,3 @@
-/* .categoryCard{
-    display: grid;
-    grid-template-columns: 1fr 1fr  1fr  1fr 1fr 1fr;
-    justify-content: space-around;
-} */
 
 .categoryCard {
     display: flex;
@@ -11,7 +6,7 @@
  
     white-space: nowrap;
     justify-content: space-around;
-    padding: 3.3rem 3.9rem 0 4.3rem;
+    padding: 3.3rem 3.9rem 0 3.1rem;
 }
 .allCategoryCard{
   width: 235px;
@@ -34,6 +29,10 @@
  
   .allCategoryCard{
     width: 180px;
+   
+  }
+  .categoryCard{
+    padding: 3.3rem 3.9rem 0 1.7rem;
   }
   
 }

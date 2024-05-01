@@ -296,7 +296,7 @@ function ShareStoryPage({ closeModal, }) {
         }, 100);
 
         // Clear interval when the last image is reached
-        if (currentIndex === imageData.length) {
+        if (currentIndex === imageData?.length) {
           clearInterval(interval);
           setTimerActive(false);
         }

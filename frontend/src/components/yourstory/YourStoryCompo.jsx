@@ -64,7 +64,7 @@ function YourStoryCompo() {
   return (
 
     <div className={styles.mainYourStory}>
-      <h2>Your Story</h2>
+      <h2>Your Stories</h2>
       <div className={styles.yourStory}>
         {
           allUserStory &&

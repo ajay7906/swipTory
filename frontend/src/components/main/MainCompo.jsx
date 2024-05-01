@@ -13,16 +13,17 @@ import AddStory from "../addStory/AddStory";
 import { jwtDecode } from 'jwt-decode';
 
 import useMediaQuery from "../../utils/screenSize";
+import Loader from "../loader/Loader";
 
 function MainCompo({ sendData, allData }) {
     const [showStoryModal, setShowStoryModal] = useState(false)
-   
+
     const [myStoryHomeEdits, setMyStoryHomeEdits] = useState();
     const [currentUser, setCurrentUser] = useState(null);
     const [showAddStoryModals, setShowAddStoryModals] = useState(false);
     const [postId, setPostId] = useState();
-   
-    const [itemsToShowWithCat, setItemsToShowWithCat] = useState(4); 
+    // const [loading, setLoading] = useState(false)
+    const [itemsToShowWithCat, setItemsToShowWithCat] = useState(4);
     const [showMoreVisible, setShowMoreVisible] = useState(true);
     const [showMoreVisibleWithCat, setShowMoreVisibleWithCat] = useState(true);
     const [categoryItemsToShow, setCategoryItemsToShow] = useState({});
@@ -48,15 +49,15 @@ function MainCompo({ sendData, allData }) {
     };
 
     const openshowAddStoryModalModal = () => {
-        
+
         setShowAddStoryModals(true);
 
     };
-   
-     
 
 
-   
+
+
+
     const handleShowMore = (categoryName) => {
         //const categoryItemCount = sendData.filter((item) => item.chooseCategory === categoryName).length;
         setCategoryItemsToShow((prevState) => ({
@@ -71,14 +72,14 @@ function MainCompo({ sendData, allData }) {
         setItemsToShowWithCat(sendData.length)
 
     }
-    
+
     if (!Array.isArray(sendData)) {
-        return null;  
+        return null;
     }
 
-   
-   
-    
+
+
+
     const openStoryModal = (postId) => {
         setPostId(postId)
         setShowStoryModal(true);
@@ -91,116 +92,125 @@ function MainCompo({ sendData, allData }) {
 
 
     return (
-        <div className={styles.data}>
-            {!isMobile &&
-                allData === "All" ?
-                <> {categoryMap.map((categoryName, index) => (
-                    <div key={index}>
-                       
-                        <div className={styles.htag}><h2>Top Stories About {categoryName}</h2></div>
-                      
-                        {sendData
-                            .filter((categoryData) => categoryData.chooseCategory === categoryName)
-                            .length > 0 ? (<>
-                                <div className={styles.main}>
-                                    {sendData
-                                        .filter((categoryData) => categoryData.chooseCategory === categoryName)
-                                        .slice(0, categoryItemsToShow[categoryName] || 4).map((filteredData, index) => (
-
-                                            <div className={styles.CommanCardMain} key={index} onClick={() => openStoryModal(filteredData._id)}>
-                                               
-
-                                                <CommanCard filteredData={filteredData} />
-                                                {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
-                                                    <div className={styles.editBtn} onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        openshowAddStoryModalModal()
-                                                        setMyStoryHomeEdits(filteredData.stories)
-
-                                                    }}>
-                                                        <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
-                                                        <p>edit</p>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        ))}
-                                </div>
-                               
-                                { showMoreVisible && !categoryItemsToShow[categoryName] < sendData.filter((item) => item.chooseCategory === categoryName).length && ( // Show the button only if categoryItemsToShow doesn't have a value for the current category
-                                    <div className={styles.showMoreBtnParen}>
-                                        <button onClick={() => handleShowMore(categoryName)} className={styles.showMoreBtn}>
-                                            See More
-                                        </button>
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <div className={styles.storyNotFound}><h3>No stories Available</h3></div>
-                        )}
-                       
+        <>
 
 
-                    </div>
-                ))}</>
-                :
-                <>
-                    <div >
-                        {isMobile ? <> </> :
-                            <> <div className={styles.htag}><h2>Top Stories About {allData}</h2></div></>}
-                     
-                        {
-                            sendData.length > 0 ? (
-                                <>
+            <div className={styles.data}>
+                {!isMobile &&
+                    allData === "All" ?
+                    <> {categoryMap.map((categoryName, index) => (
+                        <div key={index}>
+
+                            <div className={styles.htag}><h2>Top Stories About {categoryName}</h2></div>
+
+                            {sendData
+                                .filter((categoryData) => categoryData.chooseCategory === categoryName)
+                                .length > 0 ? (<>
                                     <div className={styles.main}>
-                                        {sendData.slice(0, itemsToShowWithCat).map((filteredData, index) => (
-                                            <div key={index} className={styles.CommanCardMain} onClick={() => openStoryModal(filteredData._id)}>
-                                              
-                                                <CommanCard filteredData={filteredData} />
-                                                {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
-                                                    <div className={styles.editBtn} onClick={(e) => {
-                                                        e.stopPropagation()
-                                                        openshowAddStoryModalModal()
-                                                        setMyStoryHomeEdits(filteredData.stories)
+                                        {sendData
+                                            .filter((categoryData) => categoryData.chooseCategory === categoryName)
+                                            .slice(0, categoryItemsToShow[categoryName] || 4).map((filteredData, index) => (
 
-                                                    }}>
-                                                        <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
-                                                        <p>edit</p>
-                                                    </div>
-                                                )}
-                                            </div>
+                                                <div className={styles.CommanCardMain} key={index} onClick={() => openStoryModal(filteredData._id)}>
 
-                                        ))}
 
+                                                    <CommanCard filteredData={filteredData} />
+                                                    {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
+                                                        <div className={styles.editBtn} onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            openshowAddStoryModalModal()
+                                                            setMyStoryHomeEdits(filteredData.stories)
+
+                                                        }}>
+                                                            <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
+                                                            <p>edit</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
                                     </div>
-                                    {!isMobile && showMoreVisibleWithCat && sendData.length > 4 &&(
+
+                                    {showMoreVisible && !categoryItemsToShow[categoryName] < sendData.filter((item) => item.chooseCategory === categoryName).length && ( // Show the button only if categoryItemsToShow doesn't have a value for the current category
                                         <div className={styles.showMoreBtnParen}>
-                                            <button onClick={handleShowMoreWithCategory} className={styles.showMoreBtn}>See More</button>
+                                            <button onClick={() => handleShowMore(categoryName)} className={styles.showMoreBtn}>
+                                                See More
+                                            </button>
                                         </div>
                                     )}
                                 </>
-
-
-
-
                             ) : (
-
                                 <div className={styles.storyNotFound}><h3>No stories Available</h3></div>
-                            )
+                            )}
 
 
-                        }
-                    </div>
-                </>
-            }
-            <div>
-                {showAddStoryModals && myStoryHomeEdits && <AddStory
-                    closeModal={closeModal}
-                    myStoryHomeEdits={myStoryHomeEdits} 
-                    postId={postId}
-                />}
-                {showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}
+
+                        </div>
+                    ))}</>
+                    :
+                    <>
+                        <div >
+                            {isMobile ? <> </> :
+                                <> <div className={styles.htag}><h2>Top Stories About {allData}</h2></div></>
+                            }
+
+
+
+                        
+
+                            {
+                                sendData.length > 0 ? (
+                                    <>
+                                        <div className={styles.main}>
+                                            {sendData.slice(0, itemsToShowWithCat).map((filteredData, index) => (
+                                                <div key={index} className={styles.CommanCardMain} onClick={() => openStoryModal(filteredData._id)}>
+
+                                                    <CommanCard filteredData={filteredData} />
+                                                    {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
+                                                        <div className={styles.editBtn} onClick={(e) => {
+                                                            e.stopPropagation()
+                                                            openshowAddStoryModalModal()
+                                                            setMyStoryHomeEdits(filteredData.stories)
+
+                                                        }}>
+                                                            <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
+                                                            <p>edit</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                            ))}
+
+                                        </div>
+                                        {!isMobile && showMoreVisibleWithCat && sendData.length > 4 && (
+                                            <div className={styles.showMoreBtnParen}>
+                                                <button onClick={handleShowMoreWithCategory} className={styles.showMoreBtn}>See More</button>
+                                            </div>
+                                        )}
+                                    </>
+
+
+
+
+                                ) : (
+
+                                    <div className={styles.storyNotFound}><h3>No stories Available</h3></div>
+                                )
+
+
+                            }  
+                        </div>
+                    </>
+                }
+                <div>
+                    {showAddStoryModals && myStoryHomeEdits && <AddStory
+                        closeModal={closeModal}
+                        myStoryHomeEdits={myStoryHomeEdits}
+                        postId={postId}
+                    />}
+                    {showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 

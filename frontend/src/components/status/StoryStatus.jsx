@@ -56,7 +56,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   //copy share images
 
   const generateShareLink = () => {
-    const baseUrl = 'http://localhost:5173'; // Replace with your actual domain
+    const baseUrl = 'https://swip-tory-six.vercel.app'; // Replace with your actual domain
     const shareLink = `${baseUrl}/share/${postId}`;
 
 
@@ -65,8 +65,8 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
       console.log(link);
       toast('Link copied to clipboard', {
         position: 'top-center',
-
-        autoClose: 5000,
+        className:'mobiletoast',
+        autoClose: 3000,
         hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,

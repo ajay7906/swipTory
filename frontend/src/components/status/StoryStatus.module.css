@@ -172,6 +172,10 @@
     .likeAndCount{
         gap: 2rem;
     }
+    .toastcontainer{
+    top: 45rem !important;
+    left: 4.3rem !important;
+   }
 }
 
 @media screen and (max-width: 350px) {

@@ -43,12 +43,12 @@ function Home() {
 
   const fetchAllPost = async () => {
     try {
-
+      setLoading(true)
       if (isMobiles && (!category || category === 'All')) {
         setCategory('Education')
         const result = await getAllPost({ category: 'Education' });
         setSendData(result?.data)
-        setLoading(false)
+       
 
       } else {
         const result = await getAllPost({ category });
@@ -62,6 +62,7 @@ function Home() {
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
+    setLoading(false)
 
   };
 
@@ -125,15 +126,16 @@ function Home() {
           );
         })}
       </div>
+      {!isMobiles && showYourStory &&<div>
+            <YourStoryCompo />
+          </div>}
 
       {loading ?
         (
           <Loader />
         ) :
         <>
-          {!isMobiles && showYourStory &&<div>
-            <YourStoryCompo />
-          </div>}
+        
           <MainCompo sendData={sendData} allData={allData} />
         </>
       }
