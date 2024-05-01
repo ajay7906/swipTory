@@ -92,6 +92,24 @@ const getStoryById = async (req, res, next) => {
     next(error);
   }
 };
+
+//get post by of share
+const getShareStoryById = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    console.log(postId);
+
+    const story = await Story.findById(postId);
+
+    if (!story) {
+      return res.status(404).json({ success: false, error: 'Story not found' });
+    }
+
+    res.status(200).json({ success: true, data: story.stories });
+  } catch (error) {
+    next(error);
+  }
+};
 // Get all stories of a user
 const getUserStories = async (req, res, next) => {
   try {
@@ -440,5 +458,5 @@ module.exports = {
   createStory, getStoriesByCategory, getStoryById
   , getUserStories, updateStoryById, likePost, unlikePost
   , bookmarkPost, unbookmarkPost, TrackbookmarkPost,
-  getBookmarkedPosts, getLikeCount, TrackIsLikePost
+  getBookmarkedPosts, getLikeCount, TrackIsLikePost , getShareStoryById
 };

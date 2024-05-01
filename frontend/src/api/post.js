@@ -53,6 +53,20 @@ export const getPostById = async (postId)=>{
     }
 }
 
+export const getSharePostById = async (postId)=>{
+   
+    try {
+        const reqUrl = `http://localhost:3000/api/v1/post/share/${postId}`;
+     
+        const response = await axios?.get(reqUrl);
+        return response?.data;
+
+    } catch (error) {
+        return error
+       
+    }
+}
+
 //update post by Id
 
 export const updatePostById = async (postId, storiesData) => {

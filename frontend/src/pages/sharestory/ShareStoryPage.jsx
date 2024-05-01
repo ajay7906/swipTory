@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import styles from './ShareStory.module.css'
 import {
-  bookMarkPost, createPost, getPostById, likePost, trackIsLikePost, trackbookMarkPost,
+  bookMarkPost, createPost, getPostById, getSharePostById, likePost, trackIsLikePost, trackbookMarkPost,
   tracklikeCountkPost, unbookMarkPost, unlikePost
 } from "../../api/post";
 
@@ -220,7 +220,7 @@ function ShareStoryPage({ closeModal, }) {
   const fetchJobDetails = async () => {
     if (!postId) return;
     try {
-      const result = await getPostById(postId);
+      const result = await getSharePostById(postId);
       setImageData(result?.data)
       setDataLoaded(true);
 
