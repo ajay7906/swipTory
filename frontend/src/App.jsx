@@ -36,7 +36,7 @@ function App() {
             <Route path="/your_story" element={<Layout><YourStory /></Layout>} />
 
 
-            <Route path="https://swip-tory-six.vercel.app/share/:postId" element={<ShareStoryPage />} />
+            <Route path="/share/:postId" element={<ShareStoryPage />} />
           </Routes>
 
 
