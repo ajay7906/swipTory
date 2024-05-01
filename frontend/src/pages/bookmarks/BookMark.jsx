@@ -64,7 +64,7 @@ function BookMark() {
       setLoading(false);
 
     } catch (error) {
-      console.log(error);
+      return error
     }
   }
   useEffect(() => {
@@ -91,7 +91,7 @@ function BookMark() {
 
                 getBookData?.map((data, index) => (
                   <div key={index}>
-                    {console.log(data)}
+                   
                     <div className={styles.mainEditBtn} onClick={() => { openStoryModal(data._id) }} key={index}><BookMarkCompo data={data} />
                       {currentUser && currentUser === data.postedBy && ( // Check if currentUserId matches postedByUserId
                         <div className={styles.editBtn} onClick={(e) => {

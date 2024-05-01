@@ -52,11 +52,11 @@ function YourStory() {
       setAllUserStory(result?.stories || []); 
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching posts:", error);
+     
       setAllUserStory([]); 
     }
   };
-  console.log(allUserStory);
+ 
   useEffect(() => {
     fetchAllUserPost();
   }, []);

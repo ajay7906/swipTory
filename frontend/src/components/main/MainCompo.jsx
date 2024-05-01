@@ -13,7 +13,6 @@ import AddStory from "../addStory/AddStory";
 import { jwtDecode } from 'jwt-decode';
 
 import useMediaQuery from "../../utils/screenSize";
-import Loader from "../loader/Loader";
 
 function MainCompo({ sendData, allData }) {
     const [showStoryModal, setShowStoryModal] = useState(false)
@@ -22,7 +21,7 @@ function MainCompo({ sendData, allData }) {
     const [currentUser, setCurrentUser] = useState(null);
     const [showAddStoryModals, setShowAddStoryModals] = useState(false);
     const [postId, setPostId] = useState();
-    // const [loading, setLoading] = useState(false)
+ 
     const [itemsToShowWithCat, setItemsToShowWithCat] = useState(4);
     const [showMoreVisible, setShowMoreVisible] = useState(true);
     const [showMoreVisibleWithCat, setShowMoreVisibleWithCat] = useState(true);
@@ -59,12 +58,12 @@ function MainCompo({ sendData, allData }) {
 
 
     const handleShowMore = (categoryName) => {
-        //const categoryItemCount = sendData.filter((item) => item.chooseCategory === categoryName).length;
+        const categoryItemCount = sendData.filter((item) => item.chooseCategory === categoryName).length;
         setCategoryItemsToShow((prevState) => ({
             ...prevState,
             [categoryName]: sendData.filter((item) => item.chooseCategory === categoryName).length,
         }));
-        setShowMoreVisible(false)
+        setShowMoreVisible(categoryItemCount > 4)
     };
 
     const handleShowMoreWithCategory = () => {
@@ -130,7 +129,7 @@ function MainCompo({ sendData, allData }) {
                                             ))}
                                     </div>
 
-                                    {showMoreVisible && !categoryItemsToShow[categoryName] < sendData.filter((item) => item.chooseCategory === categoryName).length && ( // Show the button only if categoryItemsToShow doesn't have a value for the current category
+                                    {showMoreVisible && !categoryItemsToShow[categoryName]  && sendData.filter((item) => item.chooseCategory === categoryName).length > 4 &&( // Show the button only if categoryItemsToShow doesn't have a value for the current category
                                         <div className={styles.showMoreBtnParen}>
                                             <button onClick={() => handleShowMore(categoryName)} className={styles.showMoreBtn}>
                                                 See More

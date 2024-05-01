@@ -25,10 +25,10 @@ export const createPost = async (storiesData) => {
         const reqUrl = `${backendUrl}/createpost`;
         const token = localStorage.getItem("token");
         const postPayload = { stories: storiesData };
-        console.log(postPayload);
+      
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.post(reqUrl, postPayload);
-        console.log(response.data);
+       
         return response?.data;
 
 
@@ -76,7 +76,7 @@ export const updatePostById = async (postId, storiesData) => {
         const postPayload = { stories: storiesData };
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.put(reqUrl, postPayload);
-        console.log(response.data);
+      
         return response?.data;
 
 
@@ -99,7 +99,7 @@ export const likePost = async (postId) => {
         
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.put(reqUrl);
-        console.log(response.data);
+       
         return response?.data;
 
 
@@ -119,7 +119,7 @@ export const unlikePost = async (postId) => {
         
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.put(reqUrl);
-        console.log(response.data);
+        
         return response?.data;
 
 
@@ -140,7 +140,7 @@ export const tracklikeCountkPost = async (postId) => {
         
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.get(reqUrl);
-        console.log(response.data);
+       
         return response?.data;
 
 
@@ -185,7 +185,7 @@ export const unbookMarkPost = async (postId) => {
         
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.put(reqUrl);
-        console.log(response.data);
+        
         return response?.data;
 
 
@@ -206,7 +206,7 @@ export const trackbookMarkPost = async (postId) => {
         
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.get(reqUrl);
-        console.log(response.data);
+   
         return response?.data;
 
 
@@ -226,7 +226,7 @@ export const trackIsLikePost = async (postId) => {
         
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.get(reqUrl);
-        console.log(response.data);
+        
         return response?.data;
 
 
@@ -247,7 +247,7 @@ export const getAllUserPost = async () => {
         
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.get(reqUrl);
-        console.log(response?.data);
+        
         return response?.data;
 
 
@@ -267,7 +267,7 @@ export const getBookmarkedPosts = async () => {
         
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.get(reqUrl);
-        console.log(response.data);
+        
         return response?.data;
 
 

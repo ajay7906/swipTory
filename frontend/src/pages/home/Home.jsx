@@ -53,14 +53,13 @@ function Home() {
       } else {
         const result = await getAllPost({ category });
 
-        console.log("Fetched data for category:", category);
         setSendData(result?.data)
         setLoading(false)
-        console.log("Result:", result.data);
+    
 
       }
     } catch (error) {
-      console.error("Error fetching posts:", error);
+     return error
     }
     setLoading(false)
 
@@ -92,8 +91,7 @@ function Home() {
     setSelectedCategory(categoryName);
     setAllData(categoryName)
     setCategory(categoryName === "All" ? "" : categoryName);
-    console.log(categoryName);
-    console.log(category);
+   
 
 
   };

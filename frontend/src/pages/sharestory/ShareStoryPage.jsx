@@ -20,7 +20,7 @@ import { ToastContainer, toast, } from 'react-toastify';
 import { AuthContext } from "../../context/authContext";
 import { useNavigate } from 'react-router-dom'
 import Loader from "../../components/loader/Loader";
-// import { usePostId } from "../../utils/postIdcontext";
+
 
 function ShareStoryPage({ closeModal, }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -58,14 +58,14 @@ function ShareStoryPage({ closeModal, }) {
   };
 
   const generateShareLink = () => {
-    const baseUrl = 'https://swip-tory-six.vercel.app'; 
+    const baseUrl = 'https://swip-tory-six.vercel.app';
     const shareLink = `${baseUrl}/share/${postId}`;
 
-   
+
     if (navigator.clipboard) {
       const link = navigator.clipboard.writeText(shareLink);
-      console.log(link);
      
+
       toast('Link copied to clipboard', {
         position: 'top-center',
 
@@ -98,7 +98,7 @@ function ShareStoryPage({ closeModal, }) {
 
 
       } catch (error) {
-        console.log(error);
+        return error
       }
     }
     else {
@@ -126,11 +126,11 @@ function ShareStoryPage({ closeModal, }) {
 
 
     } catch (error) {
-      console.log(error);
+     return error
     }
   }
 
- //track like
+  //track like
   const trackislike = async () => {
 
     try {
@@ -142,7 +142,7 @@ function ShareStoryPage({ closeModal, }) {
 
 
     } catch (error) {
-      console.log(error);
+      return error
     }
   }
   //unlike 
@@ -158,7 +158,7 @@ function ShareStoryPage({ closeModal, }) {
 
 
     } catch (error) {
-      console.log(error);
+     return error
     }
   }
 
@@ -173,7 +173,7 @@ function ShareStoryPage({ closeModal, }) {
       }
 
     } catch (error) {
-      console.log(error);
+      return error
     }
   }
 
@@ -190,7 +190,7 @@ function ShareStoryPage({ closeModal, }) {
         }
 
       } catch (error) {
-        console.log(error);
+        return error
       }
 
     } else {
@@ -212,7 +212,7 @@ function ShareStoryPage({ closeModal, }) {
       }
 
     } catch (error) {
-      console.log(error);
+      return error
     }
   }
 
@@ -225,7 +225,7 @@ function ShareStoryPage({ closeModal, }) {
       setDataLoaded(true);
 
     } catch (error) {
-      console.log(error);
+      return error
 
     }
 
@@ -244,13 +244,21 @@ function ShareStoryPage({ closeModal, }) {
   }
 
 
-
   const nextImage = () => {
-    setCurrentIndex((prevIndex) => (prevIndex === imageData?.length - 1 ? imageData?.length : prevIndex + 1));
+    setCurrentIndex((prevIndex) => {
+        // Check if the next index would be out of bounds
+        if (prevIndex === imageData?.length - 1) {
+            // If so, don't change the index
+            return prevIndex;
+        } else {
+            // Otherwise, increment the index by 1
+            return prevIndex + 1;
+        }
+    });
     setFilled(0);
-  }
+}
 
-  // Function to handle previous image
+ 
   const prevImage = () => {
     if (currentIndex !== 0) {
       setCurrentIndex((prevIndex) => prevIndex - 1);
@@ -276,30 +284,29 @@ function ShareStoryPage({ closeModal, }) {
   };
 
 
-
-
-
   useEffect(() => {
     let interval;
 
     const startInterval = () => {
       if (dataLoaded && imageData?.length > 0) {
         interval = setInterval(() => {
+         
           // Progress bar logic
           if (filled < 100) {
             setFilled((prev) => prev + 2);
           } else {
-            // Move to the next image
-            nextImage();
-            setFilled(0);
+            // Check if there is a next image
+            if (currentIndex < imageData.length - 1) {
+              // Move to the next image
+              nextImage();
+              setFilled(0);
+            } else {
+              // Clear the interval and stop the timer
+              clearInterval(interval);
+              setTimerActive(false);
+            }
           }
         }, 100);
-
-        // Clear interval when the last image is reached
-        if (currentIndex === imageData?.length) {
-          clearInterval(interval);
-          setTimerActive(false);
-        }
       }
     };
 
@@ -308,6 +315,9 @@ function ShareStoryPage({ closeModal, }) {
     // Clean up the interval when the component unmounts
     return () => clearInterval(interval);
   }, [currentIndex, dataLoaded, filled, imageData?.length, nextImage]);
+
+
+
 
 
 

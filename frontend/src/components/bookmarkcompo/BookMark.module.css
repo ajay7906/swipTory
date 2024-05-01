@@ -17,7 +17,7 @@
 
 .styleImg{
    
-    
+   
    overflow: hidden;
  
    
@@ -26,6 +26,7 @@
 .container{
    cursor: pointer;
    position: relative;
+ 
   
 }
 
@@ -103,11 +104,16 @@
 @media screen and (max-width: 780px) {
    .bookMarkMain {
        grid-template-columns: 1fr;
+      
    }
 
    .NoBookMark img {
        width: 35rem;
    }
+   .container{
+      margin-top: 1ewm;
+   }
+   
 
 }
 

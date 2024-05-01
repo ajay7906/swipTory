@@ -1,7 +1,7 @@
 .data {
     margin-top: 3rem;
-    margin-right: 1rem;
-    margin-left: 1rem;
+  
+
     text-align: center;
 }
 
@@ -115,7 +115,9 @@
 @media screen and (max-width: 780px) {
     .mainCompo {
         grid-template-columns: 1fr;
-    }
+        
+        padding: 0 1.6rem 3 1.6rem;
+    }  
 
     .NoBookMark img {
         width: 35rem;

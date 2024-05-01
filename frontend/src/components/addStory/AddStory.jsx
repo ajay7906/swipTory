@@ -93,7 +93,6 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
 
 
-console.log(slideStoryInfo[currentSlide].chooseCategory);
 
     // Function to handle adding a new slide data object
     const handleAddSlide = () => {
@@ -300,7 +299,7 @@ console.log(slideStoryInfo[currentSlide].chooseCategory);
                                 {categories.map((cat) => (
                                     
                                     <option key={cat} value={cat} selected={cat}>
-                                        {cat}{console.log(cat === slideStoryInfo[currentSlide]?.chooseCategory , cat)}
+                                        {cat}
                                     </option>
                                 ))}
                             </select>

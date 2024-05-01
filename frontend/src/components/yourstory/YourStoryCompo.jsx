@@ -46,10 +46,9 @@ function YourStoryCompo() {
 
 
       setAllUserStory(result?.stories)
-      console.log(allUserStory);
-      console.log("Result:", result);
+     
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      return error
     }
 
   };
@@ -78,8 +77,7 @@ function YourStoryCompo() {
 
                 setMyStoryEdit(allUserStory[index].stories)
               }} className={styles.editBtn}>
-                {console.log(allUserStory[index].stories)}
-                {console.log(allUserStory)}
+                
                 <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="edit" />
                 <p>edit</p>
               </div>

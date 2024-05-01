@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
-const path = require('path');
+
 const bodyParser = require('body-parser');
 const userRoute = require("./routes/userRoutes");
 const postRoute = require("./routes/storyRoutes")
@@ -17,8 +17,7 @@ mongoose
     .then(() => console.log("DB Connected!"))
     .catch((error) => console.log("DB failed to connect", error));
 
-
-app.use(express.static(path.join(__dirname, 'build')));    
+    
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/post", postRoute);
