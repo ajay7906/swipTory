@@ -9,14 +9,13 @@ export const getAllPost = async (filter) => {
     try {
        
         const reqUrl = `${backendUrl}/allpost?category=${filter.category || ""}`;
-        // Construct the request URL without the skills query parameter
+      
         const response = await axios.get(reqUrl);
         return response?.data;
 
     } catch (error) {
-        // console.log(error);
-        // toast something went wrong please try after sometime
-        return error.response.data.errorMessage;
+       
+        return error
     }
 };
 
@@ -30,11 +29,11 @@ export const createPost = async (storiesData) => {
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.post(reqUrl, postPayload);
         console.log(response.data);
-        return response.data;
+        return response?.data;
 
 
     } catch (error) {
-        showToast(error.response.data.errorMessage, { type: 'error' });
+        return error
 
 
 
@@ -44,13 +43,13 @@ export const getPostById = async (postId)=>{
    
     try {
         const reqUrl = `${backendUrl}/post-details/${postId}`;
-        // Construct the request URL without the skills query parameter
+     
         const response = await axios?.get(reqUrl);
         return response?.data;
 
     } catch (error) {
-        console.log(error);
-        // toast something went wrong please try after sometime
+        return error
+       
     }
 }
 
@@ -64,11 +63,11 @@ export const updatePostById = async (postId, storiesData) => {
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.put(reqUrl, postPayload);
         console.log(response.data);
-        return response.data;
+        return response?.data;
 
 
     } catch (error) {
-        showToast(error.response.data.errorMessage, { type: 'error' });
+        return error
 
 
 
@@ -87,11 +86,11 @@ export const likePost = async (postId) => {
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.put(reqUrl);
         console.log(response.data);
-        return response.data;
+        return response?.data;
 
 
     } catch (error) {
-        showToast(error.response.data.errorMessage, { type: 'error' });
+        return error
 
 
 
@@ -107,11 +106,11 @@ export const unlikePost = async (postId) => {
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.put(reqUrl);
         console.log(response.data);
-        return response.data;
+        return response?.data;
 
 
     } catch (error) {
-        showToast(error.response.data.errorMessage, { type: 'error' });
+        return error
 
 
 
@@ -128,11 +127,11 @@ export const tracklikeCountkPost = async (postId) => {
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.get(reqUrl);
         console.log(response.data);
-        return response.data;
+        return response?.data;
 
 
     } catch (error) {
-        showToast(error.response.data.errorMessage, { type: 'error' });
+        return error
 
 
 
@@ -173,7 +172,7 @@ export const unbookMarkPost = async (postId) => {
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.put(reqUrl);
         console.log(response.data);
-        return response.data;
+        return response?.data;
 
 
     } catch (error) {
@@ -194,7 +193,7 @@ export const trackbookMarkPost = async (postId) => {
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.get(reqUrl);
         console.log(response.data);
-        return response.data;
+        return response?.data;
 
 
     } catch (error) {
@@ -214,7 +213,7 @@ export const trackIsLikePost = async (postId) => {
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.get(reqUrl);
         console.log(response.data);
-        return response.data;
+        return response?.data;
 
 
     } catch (error) {
@@ -239,8 +238,7 @@ export const getAllUserPost = async () => {
 
 
     } catch (error) {
-        showToast(error.response.data.errorMessage, { type: 'error' });
-
+        return error
 
 
     }
@@ -256,51 +254,14 @@ export const getBookmarkedPosts = async () => {
         axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.get(reqUrl);
         console.log(response.data);
-        return response.data;
+        return response?.data;
 
 
     } catch (error) {
-        showToast(error.response.data.errorMessage, { type: 'error' });
+        return error
 
 
 
     }
 }
 
-// import React, { createContext, useContext, useEffect, useState } from 'react';
-// import axios from 'axios';
-
-// const ApiContext = createContext();
-
-// export const useApi = () => useContext(ApiContext);
-
-// const backendUrl = 'http://localhost:3000/api/v1/post';
-
-// export const ApiProvider = ({ children }) => {
-//   const [postData, setPostData] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   const getAllPost = async (filter) => {
-//     try {
-//       const reqUrl = `${backendUrl}/allpost?category=${filter?.category || ""}`;
-//       const response = await axios.get(reqUrl);
-//       setPostData(response.data);
-//       setLoading(false);
-//     } catch (error) {
-//       console.error('Error fetching posts:', error);
-//     }
-//   };
-
-//   useEffect(() => {
-   
-
-//     getAllPost();
-
-//   }, []);
-
-//   return (
-//     <ApiContext.Provider value={{ postData, loading, getAllPost }}>
-//       {children}
-//     </ApiContext.Provider>
-//   );
-// };

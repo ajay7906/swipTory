@@ -27,7 +27,7 @@ function MainCompo({ sendData, allData }) {
     const [showMoreVisibleWithCat, setShowMoreVisibleWithCat] = useState(true);
     const [categoryItemsToShow, setCategoryItemsToShow] = useState({});
     const isMobile = useMediaQuery('(max-width: 780px)');
-    let categoryMap = ['Education', 'sports', 'Fruits', 'World', 'India'];
+    let categoryMap = ['Education', 'Sports', 'Fruits', 'World', 'India'];
     useEffect(() => {
         const token = localStorage.getItem('token');
 
@@ -58,6 +58,7 @@ function MainCompo({ sendData, allData }) {
 
    
     const handleShowMore = (categoryName) => {
+        //const categoryItemCount = sendData.filter((item) => item.chooseCategory === categoryName).length;
         setCategoryItemsToShow((prevState) => ({
             ...prevState,
             [categoryName]: sendData.filter((item) => item.chooseCategory === categoryName).length,
@@ -125,7 +126,7 @@ function MainCompo({ sendData, allData }) {
                                         ))}
                                 </div>
                                
-                                {!categoryItemsToShow[categoryName] && ( // Show the button only if categoryItemsToShow doesn't have a value for the current category
+                                { showMoreVisible && !categoryItemsToShow[categoryName] < sendData.filter((item) => item.chooseCategory === categoryName).length && ( // Show the button only if categoryItemsToShow doesn't have a value for the current category
                                     <div className={styles.showMoreBtnParen}>
                                         <button onClick={() => handleShowMore(categoryName)} className={styles.showMoreBtn}>
                                             See More
@@ -152,7 +153,7 @@ function MainCompo({ sendData, allData }) {
                                 <>
                                     <div className={styles.main}>
                                         {sendData.slice(0, itemsToShowWithCat).map((filteredData, index) => (
-                                            <div key={index} onClick={() => openStoryModal(filteredData._id)}>
+                                            <div key={index} className={styles.CommanCardMain} onClick={() => openStoryModal(filteredData._id)}>
                                               
                                                 <CommanCard filteredData={filteredData} />
                                                 {currentUser && currentUser === filteredData.postedBy && ( // Check if currentUserId matches postedByUserId
@@ -171,7 +172,7 @@ function MainCompo({ sendData, allData }) {
                                         ))}
 
                                     </div>
-                                    {showMoreVisibleWithCat && (
+                                    {!isMobile && showMoreVisibleWithCat && sendData.length > 4 &&(
                                         <div className={styles.showMoreBtnParen}>
                                             <button onClick={handleShowMoreWithCategory} className={styles.showMoreBtn}>See More</button>
                                         </div>

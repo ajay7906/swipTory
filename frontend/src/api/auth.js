@@ -13,7 +13,7 @@ export async function registerUser({ username, password }) {
   } catch (error) {
 
     // console.log(error.response.data.errorMessage);
-    return error.response.data.errorMessage;
+    return error?.response?.data?.errorMessage;
   }
 }
 

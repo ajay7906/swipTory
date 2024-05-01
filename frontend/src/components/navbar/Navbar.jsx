@@ -23,30 +23,7 @@ function Navbar() {
   const isMobile = useMediaQuery('(max-width: 780px)');
   
   const {isLoggedIns, showLoginModal, closeLoginModal , username ,  logout } = useContext(AuthContext);
-  // const loggedInUser = localStorage.getItem('token');
-  console.log(username?.username);
-//   useEffect(() => {
  
-//     if (loggedInUser) {
-//         const decodedToken = jwtDecode(loggedInUser);
-//         setCurrentUser(decodedToken);
-//     }
-
-// }, []);
-  
-//   useEffect(() => {
-   
-    
-//     if (loggedInUser) {
-//       setIsLoggedIn(true);
-//     }
-//     else{
-//       setIsLoggedIn(false)
-//     }
-//      // Update isLoggedIn based on whether token exists
-//   }, [isLoggedIn, isLoggedIns,  loggedInUser]);
-
-  // Function to handle opening the register modal
   
   const openshowAddStoryModalModal = () => {
     setShowAddStoryModal(true);

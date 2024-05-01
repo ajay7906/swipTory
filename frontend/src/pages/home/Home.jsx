@@ -34,7 +34,7 @@ function Home() {
   let categories = [
     { name: "All", image: Image },
     { name: "Education", image: Image1 },
-    { name: "sports", image: Image3 },
+    { name: "Sports", image: Image3 },
     { name: "Fruits", image: Image2 },
     { name: "World", image: Image4 },
     { name: "India", image: Image5 }

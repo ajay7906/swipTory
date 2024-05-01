@@ -93,7 +93,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
 
 
-
+console.log(slideStoryInfo[currentSlide].chooseCategory);
 
     // Function to handle adding a new slide data object
     const handleAddSlide = () => {
@@ -257,15 +257,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
                         <div className={styles.input}>
                             <label htmlFor="">Description: </label>
-                            {/* <input className={styles.description} type="text"
-                                placeholder="Description"
-                                value={slideStoryInfo[currentSlide]?.description}
-                                onChange={(e) => {
-                                    const newSlideStoryInfo = [...slideStoryInfo];
-                                    newSlideStoryInfo[currentSlide].description = e.target.value;
-                                    setSlideStoryInfo(newSlideStoryInfo);
-                                }}
-                                required /> */}
+                          
                             <textarea className={styles.description}
                                 placeholder="Description"
                                 value={slideStoryInfo[currentSlide]?.description}
@@ -301,12 +293,14 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                                     setSelectedCategoryFunction(category); // This updates selectedCategory state
                                     // Note: The setSelectedCategory function will also update chooseCategory for all slides
                                 }}
+                                value={slideStoryInfo[currentSlide]?.chooseCategory}
 
                             >
                                 <option value="" disabled >Select category</option>
                                 {categories.map((cat) => (
-                                    <option key={cat} value={cat} selected={cat === slideStoryInfo[currentSlide]?.chooseCategory || cat}>
-                                        {cat}
+                                    
+                                    <option key={cat} value={cat} selected={cat}>
+                                        {cat}{console.log(cat === slideStoryInfo[currentSlide]?.chooseCategory , cat)}
                                     </option>
                                 ))}
                             </select>

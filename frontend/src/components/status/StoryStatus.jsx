@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import styles from './StoryStatus.module.css'
 import {
-  bookMarkPost,  getPostById, likePost, trackIsLikePost, trackbookMarkPost,
+  bookMarkPost, getPostById, likePost, trackIsLikePost, trackbookMarkPost,
   tracklikeCountkPost, unbookMarkPost, unlikePost
 } from "../../api/post";
 
@@ -29,12 +29,12 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   const [likeCountNumber, setLikeCountNumber] = useState(0)
   const [bookBtn, setBookBtn] = useState(false)
   const [dataLoaded, setDataLoaded] = useState(false);
- 
+
   const { handleLogin, openLoginModal } = useContext(AuthContext);
   const isMobile = useMediaQuery('(max-width: 700px)');
 
 
- 
+
 
   const customToastStyle = {
     backgroundColor: '#333',
@@ -59,7 +59,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     const baseUrl = 'http://localhost:5173'; // Replace with your actual domain
     const shareLink = `${baseUrl}/share/${postId}`;
 
-   
+
     if (navigator.clipboard) {
       const link = navigator.clipboard.writeText(shareLink);
       console.log(link);
@@ -157,7 +157,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
       console.log(error);
     }
   }
- 
+
   //trackBook 
   const trackbookMarkStory = async () => {
 
@@ -241,15 +241,15 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
   }
 
   useEffect(() => {
-    
+
     document.body.style.overflow = 'hidden';
 
-  
+
     return () => {
       document.body.style.overflow = '';
     };
   }, []);
- 
+
 
 
   const prevImage = () => {
@@ -266,7 +266,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
     setFilled(0);
   }
 
- 
+
   const handleClick = (e) => {
     const { clientX } = e;
     const windowWidth = window.innerWidth;
@@ -291,30 +291,36 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
 
 
-  useEffect(() => {
-    if (filled < 100 && dataLoaded) {
-      setTimeout(() => setFilled(prev => prev += 2), 80)
-
-    }
-  }, [filled, currentIndex, dataLoaded])
 
   useEffect(() => {
+    let interval;
+    console.log(interval, currentIndex, imageData?.length);
+    const startInterval = () => {
+      if (dataLoaded && imageData?.length > 0) {
+        interval = setInterval(() => {
+          // Progress bar logic
+          if (filled < 100) {
+            setFilled((prev) => prev + 2);
+          } else {
+            // Move to the next image
+            nextImage();
+            setFilled(0);
+          }
+        }, 100);
 
-    if (dataLoaded) {
-      const timer = setInterval(() => {
-
-        nextImage();
-        setFilled(0)
-      }, 4000);
-
-      if (currentIndex === imageData?.length - 1) {
-        clearInterval(timer);
-        setTimerActive(false);
+        // Clear interval when the last image is reached
+        if (currentIndex === imageData?.length) {
+          clearInterval(interval);
+          setTimerActive(false);
+        }
       }
-      return () => clearInterval(timer);
+    };
 
-    }
-  }, [currentIndex, timerActive, dataLoaded]);
+    startInterval();
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(interval);
+  }, [currentIndex, dataLoaded, filled, imageData?.length, nextImage]);
 
 
 
@@ -384,7 +390,7 @@ function StoryStatus({ closeModal, postId, closeStoryModal }) {
 
 
           <>
-           <Loader/>
+            <Loader />
 
 
           </>

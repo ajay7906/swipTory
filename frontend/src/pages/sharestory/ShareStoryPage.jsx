@@ -19,9 +19,10 @@ import useMediaQuery from "../../utils/screenSize";
 import { ToastContainer, toast, } from 'react-toastify';
 import { AuthContext } from "../../context/authContext";
 import { useNavigate } from 'react-router-dom'
+import Loader from "../../components/loader/Loader";
 // import { usePostId } from "../../utils/postIdcontext";
 
-function ShareStoryPage({ closeModal, closeStoryModal }) {
+function ShareStoryPage({ closeModal, }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timerActive, setTimerActive] = useState(true);
   const [imageData, setImageData] = useState()
@@ -33,45 +34,38 @@ function ShareStoryPage({ closeModal, closeStoryModal }) {
   const isMobile = useMediaQuery('(max-width: 700px)');
   const navigate = useNavigate();
   const { handleLogin, openLoginModal } = useContext(AuthContext);
-  //   const { setPostId } = usePostId();
-  const notify = () => toast("Wow so easy!");
-  const [bookStory, setBookStory] = useState()
-
-
-  //   useEffect(() => {
-  //     setPostId(postId);
-  //   }, [postId, setPostId]);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
 
 
-  //copy share images
+
 
   const customToastStyle = {
     backgroundColor: '#333',
     color: '#FF0000',
     fontSize: '20px',
     padding: '10px 20px',
-    textAlign:'center',
+    textAlign: 'center',
     borderRadius: '39px',
-   
-    width:'300px',
-    height:'36px',
+
+    width: '300px',
+    height: '36px',
     background: '#D9D9D9',
 
-   
+
 
 
   };
 
   const generateShareLink = () => {
-    const baseUrl = 'http://localhost:5173'; // Replace with your actual domain
+    const baseUrl = 'https://swip-tory-six.vercel.app'; 
     const shareLink = `${baseUrl}/share/${postId}`;
 
-    // You can either copy the link to the user's clipboard or open a new window/tab
+   
     if (navigator.clipboard) {
       const link = navigator.clipboard.writeText(shareLink);
       console.log(link);
-      //   notify()
+     
       toast('Link copied to clipboard', {
         position: 'top-center',
 
@@ -136,7 +130,7 @@ function ShareStoryPage({ closeModal, closeStoryModal }) {
     }
   }
 
-
+ //track like
   const trackislike = async () => {
 
     try {
@@ -167,7 +161,7 @@ function ShareStoryPage({ closeModal, closeStoryModal }) {
       console.log(error);
     }
   }
-  console.log(bookStory);
+
   //trackBook 
   const trackbookMarkStory = async () => {
 
@@ -228,7 +222,7 @@ function ShareStoryPage({ closeModal, closeStoryModal }) {
     try {
       const result = await getPostById(postId);
       setImageData(result?.data)
-      console.log(result.data);
+      setDataLoaded(true);
 
     } catch (error) {
       console.log(error);
@@ -249,15 +243,7 @@ function ShareStoryPage({ closeModal, closeStoryModal }) {
     // closeStoryModal()
   }
 
-  // useEffect(() => {
-  //   if (prevImageDataRef.current !== imageData) {
-  //     console.log(imageData);
-  //     prevImageDataRef.current = imageData;
-  //   }
-  // }, [imageData]);
 
-
-  // console.log(imageData);
 
   const nextImage = () => {
     setCurrentIndex((prevIndex) => (prevIndex === imageData?.length - 1 ? imageData?.length : prevIndex + 1));
@@ -266,39 +252,62 @@ function ShareStoryPage({ closeModal, closeStoryModal }) {
 
   // Function to handle previous image
   const prevImage = () => {
-
-    setCurrentIndex((prevIndex) => (prevIndex === 0 ? 0 : prevIndex - 1));
-    if (currentIndex === 0) {
-      return;
+    if (currentIndex !== 0) {
+      setCurrentIndex((prevIndex) => prevIndex - 1);
+      setFilled(0);
     }
-    else {
-      filled(0)
-    }
-
   };
 
 
-  useEffect(() => {
-    if (filled < 100) {
-      setTimeout(() => setFilled(prev => prev += 2), 80)
+  const handleClick = (e) => {
+    const { clientX } = e;
+    const windowWidth = window.innerWidth;
+    const halfWidth = windowWidth / 2;
 
+    if (clientX > halfWidth) {
+      nextImage()
+    } else {
+      if (currentIndex !== 0) {
+        prevImage()
+
+
+      }
     }
-  }, [filled, currentIndex])
+  };
+
+
+
+
 
   useEffect(() => {
+    let interval;
 
-    const timer = setInterval(() => {
+    const startInterval = () => {
+      if (dataLoaded && imageData?.length > 0) {
+        interval = setInterval(() => {
+          // Progress bar logic
+          if (filled < 100) {
+            setFilled((prev) => prev + 2);
+          } else {
+            // Move to the next image
+            nextImage();
+            setFilled(0);
+          }
+        }, 100);
 
-      nextImage();
-      setFilled(0)
-    }, 4000);
+        // Clear interval when the last image is reached
+        if (currentIndex === imageData.length) {
+          clearInterval(interval);
+          setTimerActive(false);
+        }
+      }
+    };
 
-    if (currentIndex === imageData?.length - 1) {
-      clearInterval(timer);
-      setTimerActive(false);
-    }
-    return () => clearInterval(timer);
-  }, [currentIndex, timerActive]);
+    startInterval();
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(interval);
+  }, [currentIndex, dataLoaded, filled, imageData?.length, nextImage]);
 
 
 
@@ -309,7 +318,12 @@ function ShareStoryPage({ closeModal, closeStoryModal }) {
       {
         imageData && imageData.length > 0 ?
           <>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()} >
+            <div className={styles.modal} onClick={(e) => {
+              if (isMobile) {
+                e.stopPropagation()
+                handleClick(e)
+              }
+            }} >
 
               <div className={styles.prograssbar}>
                 {
@@ -326,10 +340,10 @@ function ShareStoryPage({ closeModal, closeStoryModal }) {
               </div>
               <div className={styles.imageDiv} style={{ backgroundImage: `linear-gradient(0deg, rgb(0, 0, 0) 20%, rgba(0, 0, 0, 0) 40%), linear-gradient(rgb(0, 0, 0) 14%, rgba(0, 0, 0, 0) 30%), url(${imageData[currentIndex]?.image})` }}>
                 <ToastContainer
-                    className={`${isMobile ? styles.toastcontainer : styles.desktopContainer}`}
+                  className={`${isMobile ? styles.toastcontainer : styles.desktopContainer}`}
                   theme='dark'
                   closeButton={false}
-                  
+
                   position="top-center"
 
                 />
@@ -359,17 +373,7 @@ function ShareStoryPage({ closeModal, closeStoryModal }) {
 
 
           <>
-            <RotatingLines
-              visible={true}
-              height="96"
-              width="96"
-              color="grey"
-              strokeWidth="5"
-              animationDuration="0.75"
-              ariaLabel="rotating-lines-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-            />
+            <Loader />
 
 
           </>

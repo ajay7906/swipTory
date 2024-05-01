@@ -9,7 +9,9 @@ import AddStory from '../../components/addStory/AddStory';
 import StoryStatus from '../../components/status/StoryStatus';
 import { jwtDecode } from 'jwt-decode';
 import Loader from '../../components/loader/Loader';
+import { useMediaQuery } from 'react-responsive';
 function BookMark() {
+  const isMobiles = useMediaQuery({ maxWidth: 780 });
   const [getBookData, setGetBookData] = useState()
   const [showStoryModal, setShowStoryModal] = useState(false)
   const [postId, setPostId] = useState();
@@ -115,7 +117,7 @@ function BookMark() {
 
             </div>
 
-              {showMoreVisible && (
+              {!isMobiles && showMoreVisible && getBookData.length > 4 &&(
                 <div className={styles.showMoreBtnParen}>
                   <button onClick={handleShowMore} className={styles.showMoreBtn}>See More</button>
                 </div>

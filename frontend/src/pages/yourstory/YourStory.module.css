@@ -4,7 +4,7 @@
     margin-left: 1rem;
     text-align: center;
 }
-.htag h2{
+.mainYourStory h2{
     font-size: 3rem;
     font-weight: 700;
     margin-bottom: 2rem;
@@ -14,6 +14,7 @@
 } 
 .commanCard{
     position: relative;
+    margin-bottom: 2rem;
 }
 
 .editBtn{
@@ -86,6 +87,7 @@
 @media screen and (max-width: 780px) {
     .main{
         grid-template-columns: 1fr;
+        
     }
     .bookMarkMain {
         grid-template-columns: 1fr;
@@ -93,6 +95,9 @@
 
     .NoBookMark img {
         width: 35rem;
+    }
+    .commanCard{
+        margin-bottom: 2.3rem;
     }
  
 }

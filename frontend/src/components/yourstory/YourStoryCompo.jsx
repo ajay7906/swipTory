@@ -5,8 +5,9 @@ import { getAllUserPost } from '../../api/post';
 import AddStory from '../addStory/AddStory';
 import BookMarkCompo from '../bookmarkcompo/BookMarkCompo';
 import StoryStatus from '../status/StoryStatus';
-
-function YourStory() {
+import { useMediaQuery } from 'react-responsive';
+function YourStoryCompo() {
+  const isMobiles = useMediaQuery({ maxWidth: 780 });
   const [allUserStory, setAllUserStory] = useState()
   const [showAddStoryModal, setShowAddStoryModal] = useState(false);
   const [myStoryEdit, setMyStoryEdit] = useState();
@@ -69,7 +70,7 @@ function YourStory() {
           allUserStory &&
           allUserStory.slice(0, itemsToShow)?.map((data, index) => (
 
-            <div key={index} className={styles.commanCard} onClick={() => openStoryModal(data._id)} ><BookMarkCompo allUserStory={allUserStory} />
+            <div key={index} className={styles.commanCard} onClick={() => openStoryModal(data._id)} >< BookMarkCompo index={index} allUserStory={allUserStory} />
 
               <div onClick={(e) => {
                 e.stopPropagation()
@@ -77,7 +78,8 @@ function YourStory() {
 
                 setMyStoryEdit(allUserStory[index].stories)
               }} className={styles.editBtn}>
-                {console.log(allUserStory[0].stories)}
+                {console.log(allUserStory[index].stories)}
+                {console.log(allUserStory)}
                 <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="edit" />
                 <p>edit</p>
               </div>
@@ -98,7 +100,7 @@ function YourStory() {
       <div>
         {showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}
       </div>
-      {showMoreVisible && (
+      {!isMobiles && showMoreVisible && allUserStory.length > 4 &&(
           <div className={styles.showMoreBtnParen}>
             <button onClick={handleShowMore} className={styles.showMoreBtn}>See More</button>
           </div>
@@ -107,5 +109,5 @@ function YourStory() {
   )
 }
 
-export default YourStory
+export default YourStoryCompo
 
