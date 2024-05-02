@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [username, setUsername] = useState(null);
   const loggedInUser = localStorage.getItem('token');
   const [showYourStory, setShowYourStory] = useState(false);
+  const [key, setKey] = useState(0); // Key to force re-render
   useEffect(() => {
  
     if (loggedInUser) {
@@ -31,7 +32,12 @@ export const AuthProvider = ({ children }) => {
     }
      // Update isLoggedIn based on whether token exists
   }, [isLoggedIns,  loggedInUser , username ,showYourStory]);
+  const upDateNewStory = () =>{
+   
+    setKey(prevKey => prevKey + 1)
+  }
 
+  
 
   const setUser = (user) => {
     setUsername(user);
@@ -67,8 +73,8 @@ export const AuthProvider = ({ children }) => {
         logout,
         openLoginModal,
         closeLoginModal,
-        username,
-         setUser, showYourStory
+        username, key ,
+         setUser, showYourStory , upDateNewStory
       }}
     >
       {children}

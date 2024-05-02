@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import styles from './YourStoryCompo.module.css'
 import { getAllUserPost } from '../../api/post';
@@ -6,6 +6,7 @@ import AddStory from '../addStory/AddStory';
 import BookMarkCompo from '../bookmarkcompo/BookMarkCompo';
 import StoryStatus from '../status/StoryStatus';
 import { useMediaQuery } from 'react-responsive';
+import { AuthContext } from '../../context/authContext';
 function YourStoryCompo() {
   const isMobiles = useMediaQuery({ maxWidth: 780 });
   const [allUserStory, setAllUserStory] = useState()
@@ -15,6 +16,7 @@ function YourStoryCompo() {
   const [postId, setPostId] = useState();
   const [itemsToShow, setItemsToShow] = useState(4); // Initial number of items to show
   const [showMoreVisible, setShowMoreVisible] = useState(true);
+  
   const openStoryModal = (postId) => {
     setPostId(postId)
     setShowStoryModal(true);
@@ -61,8 +63,11 @@ function YourStoryCompo() {
   }
 
   return (
-
-    <div className={styles.mainYourStory}>
+    
+  <>
+    
+     
+      <div className={styles.mainYourStory}>
       <h2>Your Stories</h2>
       <div className={styles.yourStory}>
         {
@@ -103,7 +108,10 @@ function YourStoryCompo() {
             <button onClick={handleShowMore} className={styles.showMoreBtn}>See More</button>
           </div>
         )}
-    </div>
+    </div> 
+
+
+    </>
   )
 }
 

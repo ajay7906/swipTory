@@ -309,6 +309,10 @@
     padding-top: 6px;
     
   }
+  .loader{
+  width: 20px;
+  height: 3px;
+}
   
   .modal .storyInput label {
     font-size: 15px;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from './AddStory.module.css'
 import { createPost, updatePostById } from "../../api/post";
 import { showToast } from "../../utils/showToast";
@@ -6,6 +6,7 @@ import useMediaQuery from "../../utils/screenSize";
 import { ColorRing } from 'react-loader-spinner'
 import BigRemove from '../../assets/bigRemove.png'
 import { ToastContainer, toast } from 'react-toastify';
+import { AuthContext } from "../../context/authContext";
 function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
     const [loading, setLoading] = useState(false);
@@ -13,6 +14,7 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
     const categories = ['Fruits', 'Sports', 'World', 'India', 'Education'];
     const isMobile = useMediaQuery('(max-width: 780px)');
     const [currentSlide, setCurrentSlide] = useState(0);
+    const { upDateNewStory } = useContext(AuthContext);
 
 
     const [slideStoryInfo, setSlideStoryInfo] = useState(() => {
@@ -174,12 +176,15 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
 
         if (Array.isArray(myStoryEdit)) {
             await updatePostById(postId, slideStoryInfo)
+            upDateNewStory()
             showToast('post update successful', { type: 'success' });
             setLoading(false)
+           
         }
 
         else if (Array.isArray(myStoryHomeEdits)) {
             await updatePostById(postId, slideStoryInfo)
+            upDateNewStory()
             showToast('post update successful', { type: 'success' });
             setLoading(false)
         }
@@ -191,7 +196,8 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
         else {
             // Process form data (e.g., send it to the server)
 
-            await createPost(slideStoryInfo)
+            await createPost(slideStoryInfo) 
+            upDateNewStory()
             showToast('post register successful', { type: 'success' });
             setLoading(false)
         }
@@ -324,7 +330,8 @@ function AddStory({ closeModal, myStoryEdit, myStoryHomeEdits, postId }) {
                         {/* <button onClick={handleSubmit}>Post</button> */}
                         {loading ? ( // Display loading indicator if loading is true
                             <button disabled style={{ background: '#ff7373' }}>
-                                <ColorRing
+                                <ColorRing 
+                                    className="loader"
                                     visible={true}
                                     height="50"
                                     width="50"

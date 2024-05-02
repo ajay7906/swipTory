@@ -20,7 +20,7 @@ import { AuthContext } from "../../context/authContext";
 
 function Home() {
   const isMobiles = useMediaQuery({ maxWidth: 780 });
-  const { showYourStory } = useContext(AuthContext);
+  const { showYourStory, key} = useContext(AuthContext);
  
   const [category, setCategory] = useState(isMobiles ? 'Education' : '');
   const [sendData, setSendData] = useState("");
@@ -124,9 +124,11 @@ function Home() {
           );
         })}
       </div>
-      {!isMobiles && showYourStory &&<div>
-            <YourStoryCompo />
-          </div>}
+      <>
+     { !isMobiles && showYourStory &&<div>
+          <YourStoryCompo  key={key}/>
+        </div>}
+      </> 
 
       {loading ?
         (
