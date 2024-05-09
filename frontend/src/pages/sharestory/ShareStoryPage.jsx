@@ -221,6 +221,7 @@ function ShareStoryPage({ closeModal, }) {
     if (!postId) return;
     try {
       const result = await getSharePostById(postId);
+      console.log(result);
       setImageData(result?.data)
       setDataLoaded(true);
 
