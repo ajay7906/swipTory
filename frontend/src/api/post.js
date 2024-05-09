@@ -56,7 +56,7 @@ export const getPostById = async (postId)=>{
 export const getSharePostById = async (postId)=>{
    
     try {
-        const reqUrl = `http://localhost:3000/api/v1/post/share/${postId}`;
+        const reqUrl = `${backendUrl}/share/${postId}`;
      
         const response = await axios?.get(reqUrl);
         return response?.data;
