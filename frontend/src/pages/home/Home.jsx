@@ -65,6 +65,35 @@ function Home() {
 
   };
 
+ 
+
+
+
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const tokenExpiration = localStorage.getItem("tokenExpiration");
+
+    if (token && tokenExpiration) {
+      const now = Date.now();
+      if (now >= tokenExpiration) {
+        // Token is expired, remove it
+        localStorage.removeItem("token");
+        localStorage.removeItem("tokenExpiration");
+      } else {
+        // Token is still valid, set a timeout to remove it
+        const remainingTime = tokenExpiration - now;
+        setTimeout(() => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("tokenExpiration");
+        }, remainingTime);
+      }
+    }
+  }, []);
+
+
+
+
 
 
 
