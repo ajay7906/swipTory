@@ -86,7 +86,7 @@ function Navbar() {
       <div className={styles.main}>
         <nav className={styles.nav}>
           <div className={styles.swiptory}>
-            <h2>SwipTory</h2>
+            <h2 className='underline underline-offset-8'>SwipTory</h2>
           </div>
           {/* desktop  navigation bar */}
           {
@@ -111,7 +111,11 @@ function Navbar() {
                     </div>
                     <button onClick={openshowAddStoryModalModal}>Add Story</button>
                     <div className={styles.profileImg}>
+                      
+                      <Link to='/profile'>
                       <img src="https://swiptory001.netlify.app/static/media/user.5eb483b86d841223e1b4.png" alt="" />
+                       
+                      </Link>
 
                     </div>
                     <div className={styles.barImgs}>
@@ -178,7 +182,7 @@ function Navbar() {
                   <div className={styles.profileContent} onClick={() => {
                     handleLogout()
                     closeProfileModal()
-                  }}><button>Logout</button></div>
+                  }}><button className='text-3xl font-bold underline'>Logout</button></div>
                 </div>
               </div>
             ) : (
@@ -209,3 +213,14 @@ function Navbar() {
 }
 
 export default Navbar 
+
+
+
+
+
+
+
+
+
+
+

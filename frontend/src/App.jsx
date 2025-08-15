@@ -9,6 +9,7 @@ import YourStory from "./pages/yourstory/YourStory"
 
 import ShareStoryPage from "./pages/sharestory/ShareStoryPage"
 import { AuthProvider } from "./context/authContext"
+import ProfilePage from "./pages/profile/ProfilePage"
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
 
 
             <Route path="/share/:postId" element={<ShareStoryPage />} />
+            <Route path="/profile" element={<Layout><ProfilePage /></Layout>} />
           </Routes>
 
 
