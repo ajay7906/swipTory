@@ -9,7 +9,7 @@ const cors = require('cors')
 
 const app = express();
 const corsOptions = {
-    origin:["http://localhost:5173", "https://swiptory-2.onrender.com"],
+    origin:["http://localhost:5173", "http://swip-tory-six.vercel.app"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 }
 app.use(cors(corsOptions))
