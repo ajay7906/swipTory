@@ -22,7 +22,9 @@ import axios from 'axios'
 export async function registerUser({ username, password }) {
   try {
     const response = await axios.post('https://swiptory-2.onrender.com/api/v1/user/register', {
+      
       username,
+      email,
       password
     });
 

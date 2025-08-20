@@ -5,9 +5,9 @@ const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, email } = req.body;
 
-        if (!username || !password) {
+        if (!username || !password || !email) {
             return res.status(400).json({
                 errorMessage: "complete all filled",
                 success: false
@@ -26,12 +26,12 @@ const registerUser = async (req, res) => {
 
         const userData = new User({
             username,
-
+            email,
             password: hashedPassword,
 
         });
         const token = jwt.sign(
-            { userId: userData._id, username: userData.username },
+            { userId: userData._id, username: userData.username, email: userData.email },
             process.env.SECRET_CODE,
             { expiresIn: "60h" }
         );
