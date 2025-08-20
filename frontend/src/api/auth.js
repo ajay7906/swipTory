@@ -19,7 +19,7 @@ import axios from 'axios'
 //   }
 // }
 
-export async function registerUser({ username, password }) {
+export async function registerUser({ username, password, email }) {
   try {
     const response = await axios.post('https://swiptory-2.onrender.com/api/v1/user/register', {
       
@@ -27,6 +27,8 @@ export async function registerUser({ username, password }) {
       email,
       password
     });
+
+    console.log('Response:', response);
 
     const token = response.data.token;
     const expirationTime = Date.now() + 60 * 60 * 1000 * 60; // 60 hours from now

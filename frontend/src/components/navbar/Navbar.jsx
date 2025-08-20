@@ -226,7 +226,7 @@ import { useContext, useEffect, useState } from 'react';
 import Register from '../register/Register';
 import AddStory from '../addStory/AddStory';
 import BarImg from '../../assets/bar.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import CrossBtn from '../../assets/cross.png';
 import useMediaQuery from '../../utils/screenSize';
 import Save from '../../assets/save.png';
@@ -238,6 +238,7 @@ function Navbar() {
   const [showSignInModal, setShowSignInModal] = useState(false);
   const [showAddStoryModal, setShowAddStoryModal] = useState(false);
   const [showResponsiveModal, setShowResponsiveModal] = useState(false);
+  const navigate = useNavigate();
   
   const isMobile = useMediaQuery('(max-width: 780px)');
   const { isLoggedIns, showLoginModal, closeLoginModal, username, logout } = useContext(AuthContext);
@@ -249,6 +250,7 @@ function Navbar() {
   const handleLogout = () => {
     logout();
     setShowResponsiveModal(false);
+    navigate('/');
   };
 
   useEffect(() => {

@@ -8,7 +8,11 @@ const postRoute = require("./routes/storyRoutes")
 const cors = require('cors')
 
 const app = express();
-app.use(cors())
+const corsOptions = {
+    origin:["http://localhost:5173", "https://swiptory-2.onrender.com"],
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+}
+app.use(cors(corsOptions))
 
 app.use(function (req, res, next){
     res.header("Access-Control-Allow-Origin", "*");

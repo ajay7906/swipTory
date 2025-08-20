@@ -1,5 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 import React, { createContext, useEffect, useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
 
@@ -54,6 +55,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
     setIsLoggedIns(false);
     setUsername(null);
+    // redirect to home page or any other page witohut reloading the page
+    
+    
+
   };
 
   const openLoginModal = () => {

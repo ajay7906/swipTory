@@ -244,6 +244,7 @@ function Register({ closeModal, modalName, setIsLoggedIn }) {
         }
         
         response = await registerUser({ username, email, password });
+        console.log('Register Response:', response);
       } else {
         if (!username || !password) {
           setShowError('Username and password are required');
