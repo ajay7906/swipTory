@@ -56,6 +56,7 @@ const storySchema = new mongoose.Schema({
     isDraft: { type: Boolean, default: false },
     views: [{ type: ObjectId, ref: "User" }],
     viewCount: { type: Number, default: 0 },
+    shareCount: { type: Number, default: 0 },
     comments: [{
         author: { type: ObjectId, ref: "User", required: true },
         text: { type: String, required: true, maxlength: 1000 },

@@ -33,5 +33,10 @@ router.put("/post-details/:postId/unbookmark", verifyToken, postControllers.unbo
 router.get('/:storyId/comments', social.comments);
 router.post('/:storyId/comments', verifyToken, social.addComment);
 router.post('/:storyId/report', verifyToken, social.report);
+router.post('/:storyId/share', (req, res, next) => {
+    const token = req.headers.authorization;
+    if (token) { try { req.userId = require('jsonwebtoken').verify(token, process.env.SECRET_CODE).userId; } catch (_) { /* Public share links are permitted. */ } }
+    next();
+}, postControllers.shareStory);
 
 module.exports = router;

@@ -433,7 +433,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { 
   bookMarkPost, getPostById, likePost, trackIsLikePost, trackbookMarkPost,
   tracklikeCountkPost, unbookMarkPost, unlikePost
-  , getComments, addComment, reportStory
+  , getComments, addComment, reportStory, trackShare
 } from "../../api/post";
 import { ToastContainer, toast } from 'react-toastify';
 import { AuthContext } from "../../context/authContext";
@@ -478,11 +478,12 @@ function StoryStatus({ closeStoryModal, postId }) {
   const generateShareLink = () => {
     const baseUrl = 'https://swip-tory-six.vercel.app';
     const shareLink = `${baseUrl}/share/${postId}`;
+    const recordShare = () => trackShare(postId).catch(() => {});
 
     if (navigator.share) {
-      navigator.share({ title: imageData[0]?.heading || 'SwipTory story', text: imageData[0]?.description || 'Read this story on SwipTory', url: shareLink }).catch(() => {});
+      navigator.share({ title: imageData[0]?.heading || 'SwipTory story', text: imageData[0]?.description || 'Read this story on SwipTory', url: shareLink }).then(recordShare).catch(() => {});
     } else if (navigator.clipboard) {
-      navigator.clipboard.writeText(shareLink);
+      navigator.clipboard.writeText(shareLink).then(recordShare).catch(() => {});
       toast('Link copied to clipboard!', {
         position: 'top-center',
         autoClose: 2000,
@@ -496,6 +497,7 @@ function StoryStatus({ closeStoryModal, postId }) {
       });
     } else {
       window.open(shareLink, '_blank');
+      recordShare();
     }
   };
 

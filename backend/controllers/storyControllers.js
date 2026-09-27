@@ -1,7 +1,7 @@
 
 const Story = require('../model/storyModel');
 const User = require('../model/userModel');
-const Notification = require('../model/notificationModel');
+const notifyUser = require('../utils/notifyUser');
 
 
 
@@ -207,7 +207,7 @@ const likePost = async (req, res, next) => {
         errorMessage: "Story not found",
       });
     }
-    if (!alreadyLiked && updatedStory.postedBy !== userId) await Notification.create({ recipient: updatedStory.postedBy, actor: userId, type: 'like', story: updatedStory._id, message: 'liked your story' });
+    if (!alreadyLiked) await notifyUser({ recipient: updatedStory.postedBy, actor: userId, type: 'like', story: updatedStory._id, message: 'liked your story' });
     res.status(200).json({ success: true, data: updatedStory });
 
   } catch (error) {
@@ -294,6 +294,7 @@ const bookmarkPost = async (req, res, next) => {
     
 
     
+    const alreadyBookmarked = await Story.exists({ _id: postId, bookmarkedBy: userId });
     const story = await Story.findByIdAndUpdate(postId, { $addToSet: { bookmarkedBy: userId } }, { new: true });
 
 
@@ -304,6 +305,8 @@ const bookmarkPost = async (req, res, next) => {
       });
     }
 
+    if (!alreadyBookmarked) await notifyUser({ recipient: story.postedBy, actor: userId, type: 'bookmark', story: story._id, message: 'saved your story' });
+
     
 
 
@@ -312,6 +315,16 @@ const bookmarkPost = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+const shareStory = async (req, res, next) => {
+  try {
+    const { storyId } = req.params;
+    const story = await Story.findOneAndUpdate({ _id: storyId, isDraft: false }, { $inc: { shareCount: 1 } }, { new: true });
+    if (!story) return res.status(404).json({ errorMessage: 'Story not found' });
+    if (req.userId) await notifyUser({ recipient: story.postedBy, actor: req.userId, type: 'share', story: story._id, message: 'shared your story' });
+    res.json({ success: true, shareCount: story.shareCount });
+  } catch (error) { next(error); }
 };
 
 //get  data of bookmark  // Find all posts that have been bookmarked by the user
@@ -326,7 +339,7 @@ const getBookmarkedPosts = async (req, res, next) => {
     }
 
    
-    const bookmarkedPosts = await Story.find({ bookmarkedBy: userId });
+    const bookmarkedPosts = await Story.find({ bookmarkedBy: userId, isDraft: false });
 
     res.status(200).json({ success: true, data: bookmarkedPosts });
   } catch (error) {
@@ -477,5 +490,5 @@ module.exports = {
   createStory, getStoriesByCategory, getStoryById
   , getUserStories, updateStoryById, likePost, unlikePost
   , bookmarkPost, unbookmarkPost, TrackbookmarkPost,
-  getBookmarkedPosts, getLikeCount, TrackIsLikePost , getShareStoryById
+  getBookmarkedPosts, getLikeCount, TrackIsLikePost , getShareStoryById, shareStory
 };

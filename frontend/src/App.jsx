@@ -15,6 +15,7 @@ import FollowingFeed from "./pages/social/FollowingFeed"
 import Notifications from "./pages/social/Notifications"
 import Drafts from "./pages/social/Drafts"
 import AccountAction from "./pages/auth/AccountAction"
+import { NotificationProvider } from "./context/notificationContext"
 
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
           />
 
 
+          <NotificationProvider>
           <Routes>
 
             <Route path="/" element={<Layout><Home /></Layout>} />
@@ -53,6 +55,7 @@ function App() {
             <Route path="/reset-password" element={<AccountAction mode="reset" />} />
             <Route path="/addstory" element={<Layout><AddStoryPage /></Layout>} />
           </Routes>
+          </NotificationProvider>
 
 
 

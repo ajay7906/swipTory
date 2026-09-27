@@ -231,6 +231,7 @@ import CrossBtn from '../../assets/cross.png';
 import useMediaQuery from '../../utils/screenSize';
 import Save from '../../assets/save.png';
 import { AuthContext } from '../../context/authContext';
+import { useNotifications } from '../../context/notificationContext';
 
 function Navbar() {
   // State variables
@@ -242,6 +243,7 @@ function Navbar() {
   
   const isMobile = useMediaQuery('(max-width: 780px)');
   const { isLoggedIns, showLoginModal, closeLoginModal, username, logout } = useContext(AuthContext);
+  const { unreadCount } = useNotifications();
 
   const openRegisterModal = () => setShowRegisterModal(true);
   const openSignInModal = () => setShowSignInModal(true);
@@ -273,7 +275,7 @@ function Navbar() {
   return (
     <>
       <div className="h-20 shadow-md flex items-center bg-white">
-        <nav className="flex justify-between items-center w-full px-8 py-6" style={{padding:'10px'}}>
+        <nav className="flex justify-between items-center w-full px-4 py-3 sm:px-8" style={{padding:'10px'}}>
           <div className="text-3xl font-bold underline underline-offset-8">
             <Link to="/">SwipTory</Link>
           </div>
@@ -292,7 +294,7 @@ function Navbar() {
                     Bookmarks
                   </Link>
                   <Link to="/following" className="rounded-full px-3 py-2 font-semibold text-gray-700 hover:bg-violet-50 hover:text-violet-700">Following</Link>
-                  <Link to="/notifications" className="rounded-full px-3 py-2 font-semibold text-gray-700 hover:bg-violet-50 hover:text-violet-700">Notifications</Link>
+                  <Link to="/notifications" className="relative rounded-full px-3 py-2 font-semibold text-gray-700 hover:bg-violet-50 hover:text-violet-700">Notifications{unreadCount > 0 && <span className="ml-2 inline-flex min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 py-0.5 text-[11px] font-black text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}</Link>
                   
                   <Link 
                     to="/addstory" 
@@ -346,7 +348,7 @@ function Navbar() {
       {/* Mobile Menu Modal */}
       {showResponsiveModal && isMobile && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-end">
-          <div className="bg-white w-full h-full p-6 flex flex-col">
+          <div className="h-dvh w-full overflow-y-auto bg-white p-5 sm:p-6">
             <div className="flex justify-end">
               <button onClick={toggleResponsiveModal}>
                 <img src={CrossBtn} alt="Close" className="w-6 h-6" />
@@ -354,7 +356,7 @@ function Navbar() {
             </div>
             
             {isLoggedIns ? (
-              <div className="flex flex-col items-center mt-10 gap-8">
+              <div className="flex flex-col items-center gap-4 pb-8 pt-5 sm:mt-5 sm:gap-6">
                 <Link to="/profile" onClick={toggleResponsiveModal} className="flex flex-col items-center gap-2">
                   <img src={username?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(username?.username || 'Creator')}&background=6d28d9&color=fff`} alt="Profile" className="w-20 h-20 rounded-full object-cover shadow-md" />
                   <span className="text-lg font-bold">View your profile</span>
@@ -389,7 +391,7 @@ function Navbar() {
                   Bookmarks
                 </Link>
                 <Link to="/following" onClick={toggleResponsiveModal} className="text-lg font-medium hover:text-violet-700">Following</Link>
-                <Link to="/notifications" onClick={toggleResponsiveModal} className="text-lg font-medium hover:text-violet-700">Notifications</Link>
+                <Link to="/notifications" onClick={toggleResponsiveModal} className="flex items-center justify-between text-lg font-medium hover:text-violet-700">Notifications{unreadCount > 0 && <span className="rounded-full bg-rose-500 px-2 py-0.5 text-xs font-bold text-white">{unreadCount > 99 ? '99+' : unreadCount}</span>}</Link>
                 
                 <button 
                   onClick={handleLogout}

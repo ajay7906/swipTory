@@ -33,6 +33,11 @@ export const reportStory = async (storyId, reason) => {
     const response = await axios.post(`${backendUrl}/${storyId}/report`, { reason }, { headers: { Authorization: localStorage.getItem('token') } });
     return response.data;
 };
+export const trackShare = async (storyId) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${backendUrl}/${storyId}/share`, {}, { headers: token ? { Authorization: token } : {} });
+    return response.data;
+};
 
 
 export const createPost = async (storiesData, metadata = {}) => {

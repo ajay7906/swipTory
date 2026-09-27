@@ -1,6 +1,6 @@
 const User = require('../model/userModel');
 const Story = require('../model/storyModel');
-const Notification = require('../model/notificationModel');
+const notifyUser = require('../utils/notifyUser');
 
 const publicUser = (user) => ({
   _id: user._id, username: user.username, bio: user.bio, avatar: user.avatar,
@@ -49,8 +49,8 @@ exports.follow = async (req, res, next) => {
     await Promise.all([
       User.updateOne({ _id: actor._id }, { $addToSet: { following: target._id } }),
       User.updateOne({ _id: target._id }, { $addToSet: { followers: actor._id } }),
-      ...(!alreadyFollowing ? [Notification.create({ recipient: target._id, actor: actor._id, type: 'follow', message: 'started following you' })] : []),
     ]);
+    if (!alreadyFollowing) await notifyUser({ recipient: target._id, actor: actor._id, type: 'follow', message: 'started following you' });
     res.json({ following: true });
   } catch (e) { next(e); }
 };
@@ -104,7 +104,7 @@ exports.addComment = async (req, res, next) => {
     story.comments.push(comment);
     await story.save();
     await story.populate('comments.author', 'username avatar');
-    if (story.postedBy !== req.userId) await Notification.create({ recipient: story.postedBy, actor: req.userId, type: 'comment', story: story._id, message: 'commented on your story' });
+    await notifyUser({ recipient: story.postedBy, actor: req.userId, type: 'comment', story: story._id, message: 'commented on your story' });
     res.status(201).json({ comment: story.comments[story.comments.length - 1] });
   } catch (e) { next(e); }
 };
@@ -136,8 +136,14 @@ exports.block = async (req, res, next) => {
 
 exports.notifications = async (req, res, next) => {
   try {
-    const data = await Notification.find({ recipient: req.userId }).populate('actor', 'username avatar').sort({ createdAt: -1 }).limit(50);
-    res.json({ data });
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const limit = 50;
+    const [data, total, unreadCount] = await Promise.all([
+      Notification.find({ recipient: req.userId }).populate('actor', 'username avatar').sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit),
+      Notification.countDocuments({ recipient: req.userId }),
+      Notification.countDocuments({ recipient: req.userId, read: false }),
+    ]);
+    res.json({ data, page, unreadCount, hasMore: page * limit < total });
   } catch (e) { next(e); }
 };
 
