@@ -4,8 +4,10 @@ import StoryStatus from "../status/StoryStatus";
 import AddStory from "../addStory/AddStory";
 import { jwtDecode } from 'jwt-decode';
 import useMediaQuery from "../../utils/screenSize";
+import { useNavigate } from 'react-router-dom';
 
 function MainCompo({ sendData, allData }) {
+  const navigate = useNavigate();
   const [showStoryModal, setShowStoryModal] = useState(false);
   const [myStoryHomeEdits, setMyStoryHomeEdits] = useState();
   const [myStoryHomeTags, setMyStoryHomeTags] = useState([]);
@@ -46,6 +48,11 @@ function MainCompo({ sendData, allData }) {
   };
 
   const openStoryModal = (postId) => {
+    const selectedPost = sendData.find((item) => String(item._id) === String(postId));
+    if (selectedPost?.postType !== 'status') {
+      navigate(`/post/${postId}`);
+      return;
+    }
     setPostId(postId);
     setShowStoryModal(true);
   };

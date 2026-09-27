@@ -146,6 +146,21 @@ const getStoryById = async (req, res, next) => {
   }
 };
 
+const getArticleById = async (req, res, next) => {
+  try {
+    const { postId } = req.params;
+    const seen = req.userId ? await Story.exists({ _id: postId, views: req.userId }) : false;
+    const article = await Story.findOneAndUpdate(
+      { _id: postId, isDraft: false, postType: { $ne: 'status' } },
+      { ...(req.userId ? { $addToSet: { views: req.userId }, ...(seen ? {} : { $inc: { viewCount: 1 } }) } : { $inc: { viewCount: 1 } }) },
+      { new: true }
+    );
+    if (!article) return res.status(404).json({ success: false, error: 'Article not found' });
+    const author = await User.findById(article.postedBy).select('username avatar bio');
+    res.json({ success: true, data: { ...article.toObject(), author } });
+  } catch (error) { next(error); }
+};
+
 //get post by of share
 const getShareStoryById = async (req, res, next) => {
   try {
@@ -528,7 +543,7 @@ const unbookmarkPost = async (req, res, next) => {
 
 
 module.exports = {
-  createStory, getStoriesByCategory, getStoryById, getStatuses
+  createStory, getStoriesByCategory, getStoryById, getArticleById, getStatuses
   , getUserStories, updateStoryById, likePost, unlikePost
   , bookmarkPost, unbookmarkPost, TrackbookmarkPost,
   getBookmarkedPosts, getLikeCount, TrackIsLikePost , getShareStoryById, shareStory

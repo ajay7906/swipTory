@@ -16,6 +16,7 @@ import Notifications from "./pages/social/Notifications"
 import Drafts from "./pages/social/Drafts"
 import AccountAction from "./pages/auth/AccountAction"
 import { NotificationProvider } from "./context/notificationContext"
+import ArticleDetail from "./pages/article/ArticleDetail"
 
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
 
 
             <Route path="/share/:postId" element={<ShareStoryPage />} />
+            <Route path="/post/:postId" element={<Layout><ArticleDetail /></Layout>} />
             <Route path="/profile" element={<Layout><ProfilePage /></Layout>} />
             <Route path="/creator/:userId" element={<Layout><ProfilePage /></Layout>} />
             <Route path="/following" element={<Layout><FollowingFeed /></Layout>} />

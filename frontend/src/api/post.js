@@ -26,6 +26,12 @@ export const getStatuses = async () => {
     return response.data;
 };
 
+export const getArticleById = async (postId) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${backendUrl}/article/${postId}`, { headers: token ? { Authorization: token } : {} });
+    return response.data?.data;
+};
+
 export const getComments = async (storyId) => {
     const response = await axios.get(`${backendUrl}/${storyId}/comments`);
     return response.data;
