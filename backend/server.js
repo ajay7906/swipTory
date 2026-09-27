@@ -8,6 +8,8 @@ const postRoute = require("./routes/storyRoutes")
 const cors = require('cors')
 
 const app = express();
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
 const corsOptions = {
     origin:["http://localhost:5173", "http://swip-tory-six.vercel.app"],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
