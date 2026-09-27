@@ -302,13 +302,9 @@ function Navbar() {
                     Add Story
                   </Link>
                   
-                  <Link to="/profile">
-                    <img 
-                      src="https://swiptory001.netlify.app/static/media/user.5eb483b86d841223e1b4.png" 
-                      alt="Profile" 
-                      className="w-10 h-10" 
-                    
-                    />
+                  <Link to="/profile" className="group flex items-center gap-2 rounded-full px-2 py-1 hover:bg-violet-50">
+                    <img src={username?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(username?.username || 'Creator')}&background=6d28d9&color=fff`} alt="Profile" className="h-10 w-10 rounded-full object-cover" />
+                    <span className="font-semibold text-gray-700 group-hover:text-violet-700">Profile</span>
                   </Link>
                   
                   <button 
@@ -359,11 +355,10 @@ function Navbar() {
             
             {isLoggedIns ? (
               <div className="flex flex-col items-center mt-10 gap-8">
-                <img 
-                  src="https://swiptory001.netlify.app/static/media/user.5eb483b86d841223e1b4.png" 
-                  alt="Profile" 
-                  className="w-20 h-20 mb-4" 
-                />
+                <Link to="/profile" onClick={toggleResponsiveModal} className="flex flex-col items-center gap-2">
+                  <img src={username?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(username?.username || 'Creator')}&background=6d28d9&color=fff`} alt="Profile" className="w-20 h-20 rounded-full object-cover shadow-md" />
+                  <span className="text-lg font-bold">View your profile</span>
+                </Link>
                 
                 <h1 className="text-xl font-bold">{username?.username}</h1>
                 

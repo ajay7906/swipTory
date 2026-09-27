@@ -23,11 +23,13 @@ router.get('/profile/:userId', (req, res, next) => {
     try { req.userId = require('jsonwebtoken').verify(token, process.env.SECRET_CODE).userId; } catch (_) { /* Public profiles remain viewable without a valid optional token. */ }
     next();
 }, social.profile);
+router.get('/profile/:userId/network', social.network);
 router.patch('/profile', verifyToken, social.updateProfile);
 router.post('/:userId/follow', verifyToken, social.follow);
 router.delete('/:userId/follow', verifyToken, social.unfollow);
 router.post('/:userId/block', verifyToken, social.block);
 router.get('/feed/following', verifyToken, social.followingFeed);
+router.get('/liked-stories', verifyToken, social.likedStories);
 router.get('/notifications', verifyToken, social.notifications);
 router.put('/notifications/read', verifyToken, social.readNotifications);
 

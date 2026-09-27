@@ -19,6 +19,15 @@ exports.profile = async (req, res, next) => {
   } catch (e) { next(e); }
 };
 
+exports.network = async (req, res, next) => {
+  try {
+    const kind = req.query.kind === 'following' ? 'following' : 'followers';
+    const user = await User.findById(req.params.userId).populate(kind, 'username avatar bio followers following');
+    if (!user) return res.status(404).json({ message: 'Creator not found' });
+    res.json({ data: (user[kind] || []).map(publicUser) });
+  } catch (e) { next(e); }
+};
+
 exports.updateProfile = async (req, res, next) => {
   try {
     const { bio, avatar } = req.body;
@@ -65,6 +74,13 @@ exports.followingFeed = async (req, res, next) => {
     const stories = await Story.find({ postedBy: { $in: user.following.map(String), $nin: blocked }, isDraft: false })
       .sort({ createdAt: -1 }).skip((page - 1) * limit).limit(limit);
     res.json({ data: stories, page, hasMore: stories.length === limit });
+  } catch (e) { next(e); }
+};
+
+exports.likedStories = async (req, res, next) => {
+  try {
+    const stories = await Story.find({ likes: req.userId, isDraft: false }).sort({ createdAt: -1 });
+    res.json({ data: stories });
   } catch (e) { next(e); }
 };
 
