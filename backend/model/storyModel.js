@@ -6,6 +6,11 @@ const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema.Types;
 
 const storySchema = new mongoose.Schema({
+    postType: { type: String, enum: ['status', 'article'], default: 'article', index: true },
+    title: { type: String, trim: true, maxlength: 180 },
+    body: { type: String, maxlength: 30000 },
+    coverImage: { type: String },
+    expiresAt: { type: Date, default: null, index: true },
     createdAt: { type: Date, default: Date.now, index: true },
     postedBy: {
         type: String,

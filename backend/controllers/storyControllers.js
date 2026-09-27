@@ -2,6 +2,8 @@
 const Story = require('../model/storyModel');
 const User = require('../model/userModel');
 const notifyUser = require('../utils/notifyUser');
+const Notification = require('../model/notificationModel');
+const { getIO } = require('../utils/realtime');
 
 
 
@@ -10,6 +12,7 @@ const createStory = async (req, res, next) => {
   try {
     const { userId } = req;
     const { stories, tags = [], isDraft = false } = req.body;
+    const postType = req.body.postType === 'status' ? 'status' : 'article';
 
     // Validate userId
     if (!userId) {
@@ -18,10 +21,10 @@ const createStory = async (req, res, next) => {
       });
     }
     // Validate slide structure
-    if (!Array.isArray(stories) || (!isDraft && stories.length < 3) || stories.length > 20 || (!isDraft && stories.some((slide) => !slide.heading || !slide.description || !slide.image || !slide.chooseCategory))) {
+    if (!Array.isArray(stories) || stories.length > 20 || (!isDraft && (!stories.length || stories.some((slide) => !slide.heading || !slide.description || (postType === 'article' && !slide.image) || !slide.chooseCategory)))) {
       return res.status(400).json({
         success: false,
-        message: 'At least three stories are required'
+        message: 'Add at least one complete slide before publishing'
       });
     }
 
@@ -32,12 +35,34 @@ const createStory = async (req, res, next) => {
     const newStory = new Story({
       postedBy: userId,
       stories,
+      postType,
+      title: String(req.body.title || stories[0]?.heading || '').trim(),
+      body: String(req.body.body || stories[0]?.description || '').trim(),
+      coverImage: String(req.body.coverImage || stories[0]?.image || ''),
+      expiresAt: postType === 'status' && !isDraft ? new Date(Date.now() + 24 * 60 * 60 * 1000) : null,
       tags: [...new Set((Array.isArray(tags) ? tags : []).map((tag) => String(tag).trim().toLowerCase()).filter(Boolean))].slice(0, 15),
       isDraft: Boolean(isDraft),
     });
 
     // Save the new story to the database
     await newStory.save();
+
+    if (!isDraft) {
+      try {
+        const creator = await User.findById(userId).select('username followers blockedUsers blockedBy');
+        const excluded = new Set([String(userId), ...creator.blockedUsers.map(String), ...creator.blockedBy.map(String)]);
+        const recipients = [...new Set(creator.followers.map(String))].filter((id) => !excluded.has(id));
+        // Persist in batches and fan out through authenticated per-user rooms.
+        for (let i = 0; i < recipients.length; i += 500) {
+          const batch = recipients.slice(i, i + 500);
+          const created = await Notification.insertMany(batch.map((recipient) => ({ recipient, actor: userId, type: 'post', story: newStory._id, message: `published a new ${postType}` })), { ordered: false });
+          const io = getIO();
+          if (io) for (const notification of created) io.to(`user:${notification.recipient}`).emit('notification:new', { _id: notification._id, actor: { _id: userId, username: creator.username }, type: 'post', story: newStory._id, message: notification.message, read: false, createdAt: notification.createdAt });
+        }
+      } catch (notificationError) {
+        console.error('Post published, but follower notifications could not be delivered:', notificationError.message);
+      }
+    }
 
     // Send success response
     res.status(201).json({ message: "Story created successfully", data: newStory });
@@ -57,7 +82,7 @@ const getStoriesByCategory = async (req, res, next) => {
 
     let stories;
    
-    const query = { isDraft: false };
+    const query = { isDraft: false, postType: { $ne: 'status' } };
     if (req.userId) {
       const viewer = await User.findById(req.userId).select('blockedUsers blockedBy');
       if (viewer) query.postedBy = { $nin: [...viewer.blockedUsers, ...viewer.blockedBy].map(String) };
@@ -80,6 +105,21 @@ const getStoriesByCategory = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+// Status updates are short-lived and appear only for the current user and followed creators.
+const getStatuses = async (req, res, next) => {
+  try {
+    if (!req.userId) return res.json({ data: [] });
+    const user = await User.findById(req.userId).select('following blockedUsers blockedBy');
+    if (!user) return res.json({ data: [] });
+    const ids = [String(req.userId), ...user.following.map(String)];
+    const blocked = [...user.blockedUsers, ...user.blockedBy].map(String);
+    const data = await Story.find({ postedBy: { $in: ids, $nin: blocked }, isDraft: false, postType: 'status', expiresAt: { $gt: new Date() } }).sort({ createdAt: -1 }).limit(100);
+    const authors = await User.find({ _id: { $in: [...new Set(data.map((item) => item.postedBy))] } }).select('username avatar');
+    const byId = new Map(authors.map((author) => [String(author._id), author]));
+    res.json({ data: data.map((item) => ({ ...item.toObject(), author: byId.get(String(item.postedBy)) || null })) });
+  } catch (error) { next(error); }
 };
 
 
@@ -163,14 +203,15 @@ const updateStoryById = async (req, res, next) => {
     }
 
     const isDraft = Boolean(req.body.isDraft);
-    if (!Array.isArray(stories) || (!isDraft && (stories.length < 3 || stories.some((slide) => !slide.heading || !slide.description || !slide.image || !slide.chooseCategory)))) {
+    const postType = req.body.postType === 'status' ? 'status' : 'article';
+    if (!Array.isArray(stories) || stories.length > 20 || (!isDraft && (!stories.length || stories.some((slide) => !slide.heading || !slide.description || (postType === 'article' && !slide.image) || !slide.chooseCategory)))) {
       return res.status(400).json({
-        errorMessage: "Bad Request: Please provide an array of at least 3 stories",
+        errorMessage: "Bad Request: Please provide at least one complete slide",
       });
     }
 
     const tags = Array.isArray(req.body.tags) ? [...new Set(req.body.tags.map((tag) => String(tag).trim().toLowerCase()).filter(Boolean))].slice(0, 15) : [];
-    const updatedStory = await Story.findOneAndUpdate({ _id: postId, postedBy: req.userId }, { stories, isDraft, tags }, { new: true, runValidators: true });
+    const updatedStory = await Story.findOneAndUpdate({ _id: postId, postedBy: req.userId }, { stories, isDraft, tags, postType, title: String(req.body.title || stories[0]?.heading || '').trim(), body: String(req.body.body || stories[0]?.description || '').trim(), coverImage: String(req.body.coverImage || stories[0]?.image || ''), expiresAt: postType === 'status' && !isDraft ? new Date(Date.now() + 24 * 60 * 60 * 1000) : null }, { new: true, runValidators: true });
 
     if (!updatedStory) {
       return res.status(404).json({
@@ -487,7 +528,7 @@ const unbookmarkPost = async (req, res, next) => {
 
 
 module.exports = {
-  createStory, getStoriesByCategory, getStoryById
+  createStory, getStoriesByCategory, getStoryById, getStatuses
   , getUserStories, updateStoryById, likePost, unlikePost
   , bookmarkPost, unbookmarkPost, TrackbookmarkPost,
   getBookmarkedPosts, getLikeCount, TrackIsLikePost , getShareStoryById, shareStory

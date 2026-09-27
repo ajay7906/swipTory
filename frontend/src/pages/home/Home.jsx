@@ -400,7 +400,7 @@ function Home() {
       </div>
 
       {/* Your Story Component */}
-      {!isMobiles && showYourStory && (
+      {showYourStory && (
         <div className="max-w-7xl mx-auto px-4 md:px-8 mb-8">
           <YourStoryCompo key={key} />
         </div>

@@ -5,6 +5,11 @@ const verifyToken = require("../middleware/verifyToken");
 const social = require("../controllers/socialControllers");
 
 router.post("/createpost", verifyToken, postControllers.createStory );
+router.get("/statuses", (req, res, next) => {
+    const token = req.headers.authorization;
+    if (token) { try { req.userId = require('jsonwebtoken').verify(token, process.env.SECRET_CODE).userId; } catch (_) {} }
+    next();
+}, postControllers.getStatuses);
 router.get("/allpost", (req, res, next) => {
     const token = req.headers.authorization;
     if (token) { try { req.userId = require('jsonwebtoken').verify(token, process.env.SECRET_CODE).userId; } catch (_) { /* Public stories remain available. */ } }
