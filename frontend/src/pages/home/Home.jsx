@@ -201,6 +201,10 @@ function Home() {
   const [loading, setLoading] = useState(true);
   const [allData, setAllData] = useState("");
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState('newest');
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
 
   const categories = [
     { name: "All", image: AllImage, color: "from-blue-500 to-indigo-600" },
@@ -208,7 +212,12 @@ function Home() {
     { name: "Sports", image: SportsImage, color: "from-amber-500 to-orange-600" },
     { name: "Fruits", image: FruitsImage, color: "from-lime-500 to-green-600" },
     { name: "World", image: WorldImage, color: "from-violet-500 to-purple-600" },
-    { name: "India", image: IndiaImage, color: "from-rose-500 to-red-600" }
+    { name: "India", image: IndiaImage, color: "from-rose-500 to-red-600" },
+    { name: "Technology", image: EducationImage, color: "from-cyan-500 to-blue-600" },
+    { name: "Travel", image: WorldImage, color: "from-sky-500 to-teal-600" },
+    { name: "Food", image: FruitsImage, color: "from-orange-500 to-rose-600" },
+    { name: "Lifestyle", image: AllImage, color: "from-fuchsia-500 to-purple-600" },
+    { name: "Art", image: SportsImage, color: "from-pink-500 to-violet-600" }
   ];
 
   const fetchAllPost = async () => {
@@ -216,11 +225,13 @@ function Home() {
       setLoading(true);
       if (isMobiles && (!category || category === 'All')) {
         setCategory('Education');
-        const result = await getAllPost({ category: 'Education' });
-        setSendData(result?.data);
+        const result = await getAllPost({ category: 'Education', q: search, sort, page });
+        setSendData((current) => page > 1 ? [...(current || []), ...(result?.data || [])] : result?.data);
+        setHasMore(Boolean(result?.hasMore));
       } else {
-        const result = await getAllPost({ category });
-        setSendData(result?.data);
+        const result = await getAllPost({ category, q: search, sort, page });
+        setSendData((current) => page > 1 ? [...(current || []), ...(result?.data || [])] : result?.data);
+        setHasMore(Boolean(result?.hasMore));
       }
     } catch (error) {
       console.error(error);
@@ -251,13 +262,14 @@ function Home() {
 
   useEffect(() => {
     fetchAllPost();
-  }, [category, isMobiles]);
+  }, [category, isMobiles, search, sort, page]);
 
   useEffect(() => {
     setAllData('All');
   }, []);
 
   const handleCategorySelect = (categoryName) => {
+    setPage(1);
     setSelectedCategory(categoryName);
     setAllData(categoryName);
     setCategory(categoryName === "All" ? "" : categoryName);
@@ -284,6 +296,12 @@ function Home() {
           <p className="max-w-3xl mx-auto text-xl text-gray-200 mb-10">
             Dive into captivating tales across diverse categories. Find stories that inspire, entertain, and educate.
           </p>
+          <div className="mx-auto flex max-w-2xl flex-col gap-3 sm:flex-row">
+            <input aria-label="Search stories" value={search} onChange={(e) => { setPage(1); setSearch(e.target.value); }} placeholder="Search stories, creators, or tags…" className="min-w-0 flex-1 rounded-xl border border-white/30 bg-white/95 px-5 py-3 text-gray-900 shadow-lg outline-none focus:ring-4 focus:ring-pink-300" />
+            <select aria-label="Sort stories" value={sort} onChange={(e) => { setPage(1); setSort(e.target.value); }} className="rounded-xl border border-white/30 bg-white px-4 py-3 font-semibold text-gray-800 shadow-lg">
+              <option value="newest">Newest</option><option value="popular">Most liked</option><option value="viewed">Most viewed</option>
+            </select>
+          </div>
           
           <div className="flex justify-center space-x-3">
             <div className="w-16 h-2 bg-pink-500 rounded-full"></div>
@@ -397,6 +415,7 @@ function Home() {
         ) : (
           <MainCompo sendData={sendData} allData={allData} />
         )}
+        {!loading && hasMore && <div className="py-10 text-center"><button onClick={() => setPage((current) => current + 1)} className="rounded-full bg-gray-900 px-8 py-3 font-bold text-white shadow-lg transition hover:bg-violet-700">Load more stories</button></div>}
       </div>
     </div>
   );

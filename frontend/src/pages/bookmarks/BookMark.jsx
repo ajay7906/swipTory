@@ -17,6 +17,7 @@ function BookMark() {
   const [postId, setPostId] = useState();
   const [showAddStoryModal, setShowAddStoryModal] = useState(false);
   const [myStoryEdit, setMyStoryEdit] = useState();
+  const [myStoryTags, setMyStoryTags] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [itemsToShow, setItemsToShow] = useState(4); // Initial number of items to show
   const [showMoreVisible, setShowMoreVisible] = useState(true);
@@ -97,7 +98,9 @@ function BookMark() {
                         <div className={styles.editBtn} onClick={(e) => {
                           e.stopPropagation()
                           openshowAddStoryModalModal()
+                          setPostId(data._id)
                           setMyStoryEdit(data.stories)
+                          setMyStoryTags(data.tags || [])
 
                         }}>
                           <img src="https://swiptory001.netlify.app/static/media/editButton.8b3d5ff3671f9f234629624ceefe1735.svg" alt="" />
@@ -132,7 +135,7 @@ function BookMark() {
 
           }
 
-          {showAddStoryModal && getBookData && <AddStory postId={postId} closeModal={closeModal} myStoryEdit={myStoryEdit} />}
+          {showAddStoryModal && getBookData && <AddStory postId={postId} closeModal={closeModal} myStoryEdit={myStoryEdit} initialTags={myStoryTags} />}
           <div>{showStoryModal && <StoryStatus postId={postId} closeStoryModal={closeStoryModal} />}</div>
         </>
       )}

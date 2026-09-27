@@ -256,11 +256,16 @@ function Register({ closeModal, modalName, setIsLoggedIn }) {
       }
 
       if (response?.success) {
+        if (response.verificationRequired) {
+          showToast('Account created. Check your email to verify it before signing in.', { type: 'success' });
+          closeModal();
+          return;
+        }
         showToast(`${modalName} Successful`, { type: 'success' });
         handleLogin();
         closeModal();
       } else {
-        setShowError(response?.message || 'An error occurred');
+        setShowError(response?.errorMessage || response?.message || 'An error occurred');
       }
     } catch (error) {
       setShowError('An unexpected error occurred');
@@ -433,7 +438,7 @@ function Register({ closeModal, modalName, setIsLoggedIn }) {
                 </button>
               </p>
             ) : (
-              <p>
+              <><p>
                 Don't have an account?{' '}
                 <button 
                   type="button"
@@ -445,7 +450,7 @@ function Register({ closeModal, modalName, setIsLoggedIn }) {
                 >
                   Register now
                 </button>
-              </p>
+              </p><a href="/account/recover" className="mt-3 inline-block font-medium text-violet-700 hover:underline">Forgot your password?</a></>
             )}
           </div>
         </div>

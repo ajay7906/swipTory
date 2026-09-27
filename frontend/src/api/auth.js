@@ -31,20 +31,15 @@ export async function registerUser({ username, password, email }) {
     console.log('Response:', response);
 
     const token = response.data.token;
-    const expirationTime = Date.now() + 60 * 60 * 1000 * 60; // 60 hours from now
-
-    localStorage.setItem("token", token);
-    localStorage.setItem("tokenExpiration", expirationTime);
-
-    // Set a timeout to remove the token after 60 hours
-    setTimeout(() => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("tokenExpiration");
-    }, 60 * 60 * 1000 * 60);
+    if (token) {
+      const expirationTime = Date.now() + 60 * 60 * 1000 * 60;
+      localStorage.setItem("token", token);
+      localStorage.setItem("tokenExpiration", String(expirationTime));
+    }
 
     return response.data; // return any response data if needed
   } catch (error) {
-    return error?.response?.data?.errorMessage;
+    return error?.response?.data || { success: false, errorMessage: 'Unable to reach the server' };
   }
 }
 
@@ -75,19 +70,19 @@ export async function loginUser({ username, password }) {
     });
     
     const token = response.data.token;
-    const expirationTime = Date.now() + 60 * 60 * 1000 * 60; // 10 seconds from now for testing
+    const expirationTime = Date.now() + 60 * 60 * 1000 * 60;
 
     localStorage.setItem("token", token);
     localStorage.setItem("tokenExpiration", expirationTime);
 
-    // Set a timeout to remove the token after 10 seconds
+    // Clear credentials after the same 60 hour lifetime as the server token.
     setTimeout(() => {
       localStorage.removeItem("token");
       localStorage.removeItem("tokenExpiration");
-    }, 10000);
+    }, 60 * 60 * 1000 * 60);
 
     return response.data; // return any response data if needed
   } catch (error) {
-    return error.response.data.errorMessage;
+    return error?.response?.data || { success: false, errorMessage: 'Unable to reach the server' };
   }
 }

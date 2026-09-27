@@ -8,6 +8,7 @@ import useMediaQuery from "../../utils/screenSize";
 function MainCompo({ sendData, allData }) {
   const [showStoryModal, setShowStoryModal] = useState(false);
   const [myStoryHomeEdits, setMyStoryHomeEdits] = useState();
+  const [myStoryHomeTags, setMyStoryHomeTags] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [showAddStoryModals, setShowAddStoryModals] = useState(false);
   const [postId, setPostId] = useState();
@@ -17,7 +18,7 @@ function MainCompo({ sendData, allData }) {
   const [categoryItemsToShow, setCategoryItemsToShow] = useState({});
   const isMobile = useMediaQuery('(max-width: 780px)');
   
-  const categoryMap = ['Education', 'Sports', 'Fruits', 'World', 'India'];
+  const categoryMap = ['Education', 'Sports', 'Fruits', 'World', 'India', 'Technology', 'Travel', 'Food', 'Lifestyle', 'Art'];
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -101,7 +102,9 @@ function MainCompo({ sendData, allData }) {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   openshowAddStoryModalModal();
+                                  setPostId(filteredData._id);
                                   setMyStoryHomeEdits(filteredData.stories);
+                                  setMyStoryHomeTags(filteredData.tags || []);
                                 }}
                                 className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-white transition-all duration-300 transform group-hover:scale-110"
                               >
@@ -196,7 +199,9 @@ function MainCompo({ sendData, allData }) {
                         onClick={(e) => {
                           e.stopPropagation();
                           openshowAddStoryModalModal();
+                          setPostId(filteredData._id);
                           setMyStoryHomeEdits(filteredData.stories);
+                          setMyStoryHomeTags(filteredData.tags || []);
                         }}
                         className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-md hover:bg-white transition-all duration-300 transform group-hover:scale-110"
                       >
@@ -263,6 +268,7 @@ function MainCompo({ sendData, allData }) {
           closeModal={closeModal}
           myStoryHomeEdits={myStoryHomeEdits}
           postId={postId}
+          initialTags={myStoryHomeTags}
         />
       )}
       

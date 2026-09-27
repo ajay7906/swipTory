@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Schema.Types;
 
 const storySchema = new mongoose.Schema({
+    createdAt: { type: Date, default: Date.now, index: true },
     postedBy: {
         type: String,
         ref: "users"
@@ -15,19 +16,19 @@ const storySchema = new mongoose.Schema({
 
         heading: {
             type: String,
-            required: true
+            required: false
         },
         description: {
             type: String,
-            required: true
+            required: false
         },
         image: {
             type: String,
-            required: true
+            required: false
         },
         chooseCategory: {
             type: String,
-            required: true
+            required: false
         },
         createdAt: {
             type: Date,
@@ -51,6 +52,21 @@ const storySchema = new mongoose.Schema({
     shareLink: {
         type: String
     },
+    tags: [{ type: String, trim: true, lowercase: true }],
+    isDraft: { type: Boolean, default: false },
+    views: [{ type: ObjectId, ref: "User" }],
+    viewCount: { type: Number, default: 0 },
+    comments: [{
+        author: { type: ObjectId, ref: "User", required: true },
+        text: { type: String, required: true, maxlength: 1000 },
+        parent: { type: ObjectId },
+        createdAt: { type: Date, default: Date.now }
+    }],
+    reports: [{
+        reporter: { type: ObjectId, ref: "User" },
+        reason: { type: String, maxlength: 500 },
+        createdAt: { type: Date, default: Date.now }
+    }],
 });
 
 

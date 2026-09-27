@@ -1,457 +1,89 @@
-// src/pages/ProfilePage.jsx
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaEdit, FaBookmark, FaHeart, FaShareAlt, FaClock, FaEye } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
+import { getAllUserPost } from '../../api/post';
 
-const ProfilePage = () => {
-  const [activeTab, setActiveTab] = useState('stories');
-  const [userData, setUserData] = useState({
-    name: "Alex Morgan",
-    email: "alex.morgan@example.com",
-    bio: "Passionate storyteller and digital creator. I write about technology, travel, and personal growth. Join me on my journey!",
-    followers: 1280,
-    following: 342,
-    storiesCount: 27,
-    joinDate: "Jan 2023"
-  });
+const usersApi = 'https://swiptory-2.onrender.com/api/v1/user';
 
-  // Mock data for stories
-  const [stories, setStories] = useState([
-    {
-      id: 1,
-      title: "The Journey to the Mountains",
-      category: "Adventure",
-      date: "May 15, 2023",
-      readTime: "5 min",
-      likes: 42,
-      shares: 12,
-      saved: true,
-      image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      id: 2,
-      title: "Learning React in 2023",
-      category: "Technology",
-      date: "Apr 28, 2023",
-      readTime: "8 min",
-      likes: 128,
-      shares: 24,
-      saved: false,
-      image: "https://images.unsplash.com/photo-1535223289827-42f1e9919769?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      id: 3,
-      title: "A Culinary Adventure in Italy",
-      category: "Food & Travel",
-      date: "Mar 10, 2023",
-      readTime: "6 min",
-      likes: 89,
-      shares: 18,
-      saved: true,
-      image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    }
-  ]);
+export default function ProfilePage() {
+  const { userId: viewedId } = useParams();
+  const token = localStorage.getItem('token');
+  const ownId = token ? jwtDecode(token).userId : null;
+  const userId = viewedId || ownId;
+  const isOwn = !viewedId || viewedId === ownId;
+  const [profile, setProfile] = useState(null);
+  const [stories, setStories] = useState([]);
+  const [bio, setBio] = useState('');
+  const [avatar, setAvatar] = useState('');
+  const [following, setFollowing] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState('');
 
-  // Mock data for saved stories
-  const [savedStories, setSavedStories] = useState([
-    {
-      id: 4,
-      title: "The Art of Mindfulness",
-      category: "Wellness",
-      date: "Jun 2, 2023",
-      readTime: "4 min",
-      likes: 56,
-      shares: 7,
-      saved: true,
-      author: "Sarah Johnson",
-      image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      id: 5,
-      title: "Sustainable Living in Cities",
-      category: "Lifestyle",
-      date: "May 20, 2023",
-      readTime: "7 min",
-      likes: 73,
-      shares: 15,
-      saved: true,
-      author: "Michael Chen",
-      image: "https://images.unsplash.com/photo-1448630360428-65456885c650?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    }
-  ]);
+  const load = async () => {
+    try {
+      if (isOwn) {
+        const response = await axios.get(`${usersApi}/profile/${userId}`, { headers: { Authorization: token } });
+        setProfile(response.data.user); setStories(response.data.stories); setBio(response.data.user.bio || ''); setAvatar(response.data.user.avatar || '');
+      } else {
+        const response = await axios.get(`${usersApi}/profile/${userId}`, { headers: token ? { Authorization: token } : {} });
+        setProfile(response.data.user); setStories(response.data.stories); setFollowing(response.data.isFollowing);
+      }
+    } catch (error) { setNotice(error.response?.data?.message || 'Could not load this profile.'); }
+  };
+  useEffect(() => { if (userId) load(); else setNotice('Sign in to view your profile.'); }, [userId]);
 
-  // Mock data for liked stories
-  const [likedStories, setLikedStories] = useState([
-    {
-      id: 6,
-      title: "Building a Startup from Scratch",
-      category: "Business",
-      date: "Jun 10, 2023",
-      readTime: "10 min",
-      likes: 210,
-      shares: 42,
-      saved: false,
-      author: "David Wilson",
-      image: "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    }
-  ]);
+  const save = async (event) => {
+    event.preventDefault(); setBusy(true); setNotice('');
+    try { const response = await axios.patch(`${usersApi}/profile`, { bio, avatar }, { headers: { Authorization: token } }); setProfile((current) => ({ ...current, ...response.data.user })); setNotice('Profile saved.'); }
+    catch (error) { setNotice(error.response?.data?.message || 'Could not save your profile.'); }
+    finally { setBusy(false); }
+  };
+  const toggleFollow = async () => {
+    if (!token) return setNotice('Sign in to follow creators.');
+    try {
+      if (following) await axios.delete(`${usersApi}/${userId}/follow`, { headers: { Authorization: token } });
+      else await axios.post(`${usersApi}/${userId}/follow`, {}, { headers: { Authorization: token } });
+      setFollowing(!following); load();
+    } catch (error) { setNotice(error.response?.data?.message || 'Could not update follow status.'); }
+  };
+  const block = async () => {
+    if (!token || !window.confirm('Block this creator? Their profile will no longer appear to you.')) return;
+    try { await axios.post(`${usersApi}/${userId}/block`, {}, { headers: { Authorization: token } }); setNotice('Creator blocked.'); }
+    catch (error) { setNotice(error.response?.data?.message || 'Could not block this creator.'); }
+  };
+  const pickAvatar = (file) => {
+    if (!file) return;
+    if (file.size > 1_000_000) return setNotice('Choose a profile image under 1 MB.');
+    const reader = new FileReader(); reader.onload = () => setAvatar(String(reader.result)); reader.readAsDataURL(file);
+  };
 
-  // Mock data for shared stories
-  const [sharedStories, setSharedStories] = useState([
-    {
-      id: 7,
-      title: "The Future of AI in Healthcare",
-      category: "Technology",
-      date: "Apr 15, 2023",
-      readTime: "9 min",
-      likes: 156,
-      shares: 68,
-      saved: false,
-      author: "Emma Rodriguez",
-      image: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-    }
-  ]);
-
-  // Mock data for stats
-  const [stats, setStats] = useState({
-    stories: 27,
-    followers: 1280,
-    following: 342,
-    likes: 894,
-    shares: 156,
-    readingTime: "42 hours"
-  });
-
-  return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex justify-center">
-      <div className="max-w-6xl mx-auto px-4">
-        {/* Profile Header */}
-        <div className="bg-white rounded-xl shadow-lg p-6 md:p-8 mb-8">
-          <div className="flex flex-col md:flex-row items-center gap-6">
-            <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" 
-                alt="Profile" 
-                className="w-32 h-32 rounded-full object-cover border-4 border-indigo-100"
-              />
-              <button className="absolute bottom-2 right-2 bg-indigo-600 text-white p-2 rounded-full shadow-md hover:bg-indigo-700 transition-colors">
-                <FaEdit className="text-sm" />
-              </button>
+  if (!profile) return <main className="mx-auto max-w-4xl p-8 text-center text-gray-600">{notice || 'Loading profile…'}</main>;
+  return <main className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-rose-50 px-4 py-10">
+    <div className="mx-auto max-w-5xl">
+      <section className="overflow-hidden rounded-3xl bg-white shadow-xl ring-1 ring-black/5">
+        <div className="h-36 bg-gradient-to-r from-violet-700 via-fuchsia-600 to-rose-500" />
+        <div className="px-6 pb-7 md:px-10">
+          <div className="-mt-14 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex items-end gap-4">
+              <img src={avatar || profile.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.username)}&background=6d28d9&color=fff`} alt="" className="h-28 w-28 rounded-3xl border-4 border-white bg-white object-cover shadow-lg" />
+              <div className="pb-1"><h1 className="text-3xl font-black text-gray-900">@{profile.username}</h1><p className="mt-1 text-sm text-gray-500">Creator on SwipTory</p></div>
             </div>
-            
-            <div className="flex-1 text-center md:text-left">
-              <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-800">{userData.name}</h1>
-                  <p className="text-gray-600 mt-1">{userData.email}</p>
-                  <p className="text-gray-500 mt-3 max-w-2xl">{userData.bio}</p>
-                </div>
-                <button className="mt-4 md:mt-0 px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
-                  Edit Profile
-                </button>
-              </div>
-              
-              <div className="flex flex-wrap justify-center md:justify-start gap-6 mt-6">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-indigo-600">{stats.stories}</p>
-                  <p className="text-gray-600">Stories</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-indigo-600">{stats.followers}</p>
-                  <p className="text-gray-600">Followers</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-indigo-600">{stats.following}</p>
-                  <p className="text-gray-600">Following</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-indigo-600">{stats.likes}</p>
-                  <p className="text-gray-600">Likes</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-indigo-600">{stats.shares}</p>
-                  <p className="text-gray-600">Shares</p>
-                </div>
-              </div>
-            </div>
+            {!isOwn && <div className="flex gap-2"><button onClick={toggleFollow} className="rounded-xl bg-violet-700 px-5 py-3 font-bold text-white shadow hover:bg-violet-800">{following ? 'Following' : 'Follow creator'}</button><button onClick={block} className="rounded-xl border px-4 py-3 text-sm font-semibold text-gray-600 hover:bg-gray-50">Block</button></div>}
+            {isOwn && <div className="flex gap-2"><Link to="/drafts" className="rounded-xl border border-violet-200 px-4 py-3 text-center font-bold text-violet-700 hover:bg-violet-50">Drafts</Link><Link to="/addstory" className="rounded-xl bg-violet-700 px-5 py-3 text-center font-bold text-white shadow hover:bg-violet-800">Create a story</Link></div>}
           </div>
+          <div className="mt-6 flex gap-8 text-sm"><span><b className="text-gray-900">{stories.length}</b> stories</span><span><b className="text-gray-900">{profile.followers}</b> followers</span><span><b className="text-gray-900">{profile.following}</b> following</span></div>
+          {isOwn ? <form onSubmit={save} className="mt-7 grid gap-4 rounded-2xl bg-gray-50 p-5 md:grid-cols-[1fr_2fr_auto] md:items-end">
+            <label className="text-sm font-semibold text-gray-700">Profile image<input type="file" accept="image/*" onChange={(e) => pickAvatar(e.target.files?.[0])} className="mt-2 block w-full text-xs" /></label>
+            <label className="text-sm font-semibold text-gray-700">About you<textarea maxLength={300} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Tell readers what you love to write about…" className="mt-2 min-h-20 w-full rounded-xl border border-gray-200 bg-white p-3 font-normal outline-none focus:ring-2 focus:ring-violet-300"/><span className="text-xs font-normal text-gray-400">{bio.length}/300</span></label>
+            <button disabled={busy} className="rounded-xl bg-gray-900 px-5 py-3 font-bold text-white disabled:opacity-50">{busy ? 'Saving…' : 'Save profile'}</button>
+          </form> : <p className="mt-6 max-w-2xl text-gray-600">{profile.bio || 'This creator has not added a bio yet.'}</p>}
+          {notice && <p role="status" className="mt-3 text-sm text-violet-700">{notice}</p>}
         </div>
-
-        {/* Navigation Tabs */}
-        <div className="bg-white rounded-xl shadow-lg mb-8 overflow-hidden">
-          <div className="flex flex-wrap border-b border-gray-200">
-            {['stories', 'saved', 'liked', 'shared', 'stats', 'settings'].map((tab) => (
-              <button
-                key={tab}
-                className={`px-6 py-4 font-medium text-sm md:text-base capitalize transition-colors ${
-                  activeTab === tab 
-                    ? 'text-indigo-600 border-b-2 border-indigo-600' 
-                    : 'text-gray-600 hover:text-indigo-500'
-                }`}
-                onClick={() => setActiveTab(tab)}
-              >
-                {tab === 'saved' ? 'Saved Stories' : 
-                 tab === 'liked' ? 'Liked Stories' : 
-                 tab === 'shared' ? 'Shared Stories' : 
-                 tab}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Tab Content */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          {/* Stories Tab */}
-          {activeTab === 'stories' && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Stories</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {stories.map((story) => (
-                  <StoryCard key={story.id} story={story} isOwner={true} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Saved Stories Tab */}
-          {activeTab === 'saved' && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Saved Stories</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {savedStories.map((story) => (
-                  <StoryCard key={story.id} story={story} isOwner={false} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Liked Stories Tab */}
-          {activeTab === 'liked' && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Liked Stories</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {likedStories.map((story) => (
-                  <StoryCard key={story.id} story={story} isOwner={false} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Shared Stories Tab */}
-          {activeTab === 'shared' && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Shared Stories</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {sharedStories.map((story) => (
-                  <StoryCard key={story.id} story={story} isOwner={false} />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Statistics Tab */}
-          {activeTab === 'stats' && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Statistics</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <StatCard 
-                  title="Total Stories" 
-                  value={stats.stories} 
-                  icon={<FaEye className="text-indigo-500 text-xl" />} 
-                  description="Stories you've published"
-                />
-                <StatCard 
-                  title="Total Likes" 
-                  value={stats.likes} 
-                  icon={<FaHeart className="text-red-500 text-xl" />} 
-                  description="Likes on your stories"
-                />
-                <StatCard 
-                  title="Total Shares" 
-                  value={stats.shares} 
-                  icon={<FaShareAlt className="text-green-500 text-xl" />} 
-                  description="Shares of your stories"
-                />
-                <StatCard 
-                  title="Followers" 
-                  value={stats.followers} 
-                  icon={<FaHeart className="text-pink-500 text-xl" />} 
-                  description="People following you"
-                />
-                <StatCard 
-                  title="Following" 
-                  value={stats.following} 
-                  icon={<FaEye className="text-blue-500 text-xl" />} 
-                  description="People you follow"
-                />
-                <StatCard 
-                  title="Reading Time" 
-                  value={stats.readingTime} 
-                  icon={<FaClock className="text-yellow-500 text-xl" />} 
-                  description="Total time spent reading"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Settings Tab */}
-          {activeTab === 'settings' && (
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">Account Settings</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gray-50 rounded-xl p-6">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Profile Information</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-gray-700 mb-1">Name</label>
-                      <input
-                        type="text"
-                        defaultValue={userData.name}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 mb-1">Email</label>
-                      <input
-                        type="email"
-                        defaultValue={userData.email}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-700 mb-1">Bio</label>
-                      <textarea
-                        defaultValue={userData.bio}
-                        rows="3"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                      ></textarea>
-                    </div>
-                    <button className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
-                      Update Profile
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="bg-gray-50 rounded-xl p-6">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Security</h3>
-                  <div className="space-y-6">
-                    <div>
-                      <h4 className="font-medium text-gray-800 mb-2">Change Password</h4>
-                      <div className="space-y-3">
-                        <input
-                          type="password"
-                          placeholder="Current Password"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                        <input
-                          type="password"
-                          placeholder="New Password"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                        <input
-                          type="password"
-                          placeholder="Confirm New Password"
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                      </div>
-                      <button className="mt-3 px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
-                        Update Password
-                      </button>
-                    </div>
-                    
-                    <div className="pt-4 border-t border-gray-200">
-                      <h4 className="font-medium text-gray-800 mb-2">Account Actions</h4>
-                      <div className="space-y-3">
-                        <button className="w-full px-4 py-2 text-left text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors">
-                          Deactivate Account
-                        </button>
-                        <button className="w-full px-4 py-2 text-left text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors">
-                          Delete Account
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      </section>
+      <section className="mt-10"><div className="mb-5 flex items-end justify-between"><div><p className="text-sm font-bold uppercase tracking-widest text-violet-600">Creator library</p><h2 className="mt-1 text-2xl font-black text-gray-900">Published stories</h2></div></div>
+        {!stories.length ? <p className="rounded-2xl bg-white p-8 text-center text-gray-500 shadow-sm">No published stories yet.</p> : <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{stories.map((story) => <Link key={story._id} to={`/share/${story._id}`} className="group overflow-hidden rounded-2xl bg-white shadow-md transition hover:-translate-y-1 hover:shadow-xl"><div className="h-52 bg-cover bg-center" style={{ backgroundImage: `linear-gradient(0deg,#1119,transparent 75%),url(${story.stories?.[0]?.image})` }} /><div className="p-5"><span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-bold text-violet-700">{story.chooseCategory || story.stories?.[0]?.chooseCategory}</span><h3 className="mt-3 text-lg font-bold text-gray-900 group-hover:text-violet-700">{story.stories?.[0]?.heading}</h3><p className="mt-2 line-clamp-2 text-sm text-gray-500">{story.stories?.[0]?.description}</p><div className="mt-4 flex gap-4 text-xs text-gray-400"><span>♥ {story.likes?.length || 0}</span><span>◉ {story.views?.length || 0} views</span></div></div></Link>)}</div>}
+      </section>
     </div>
-  );
-};
-
-// Story Card Component
-const StoryCard = ({ story, isOwner }) => {
-  return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
-      <div className="relative">
-        <img 
-          src={story.image} 
-          alt={story.title} 
-          className="w-full h-48 object-cover"
-        />
-        <div className="absolute top-3 left-3 bg-indigo-600 text-white text-xs font-medium px-2 py-1 rounded">
-          {story.category}
-        </div>
-      </div>
-      
-      <div className="p-4">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="text-lg font-bold text-gray-800">{story.title}</h3>
-          {isOwner && (
-            <button className="text-gray-400 hover:text-indigo-600">
-              <FaEdit />
-            </button>
-          )}
-        </div>
-        
-        <div className="flex justify-between text-sm text-gray-500 mb-3">
-          <span>{story.date}</span>
-          <span className="flex items-center">
-            <FaClock className="mr-1" /> {story.readTime}
-          </span>
-        </div>
-        
-        <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-          <div className="flex space-x-4">
-            <button className="flex items-center text-gray-500 hover:text-red-500">
-              <FaHeart className="mr-1" /> {story.likes}
-            </button>
-            <button className="flex items-center text-gray-500 hover:text-green-500">
-              <FaShareAlt className="mr-1" /> {story.shares}
-            </button>
-          </div>
-          
-          <button className={`flex items-center ${story.saved ? 'text-indigo-600' : 'text-gray-400 hover:text-indigo-600'}`}>
-            <FaBookmark />
-          </button>
-        </div>
-        
-        {!isOwner && (
-          <div className="mt-3 text-sm text-gray-600">
-            By {story.author}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-// Stat Card Component
-const StatCard = ({ title, value, icon, description }) => {
-  return (
-    <div className="bg-gradient-to-br from-white to-indigo-50 border border-indigo-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-center mb-3">
-        <div className="bg-indigo-100 p-2 rounded-lg mr-3">
-          {icon}
-        </div>
-        <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
-      </div>
-      <p className="text-3xl font-bold text-indigo-600 mb-2">{value}</p>
-      <p className="text-sm text-gray-600">{description}</p>
-    </div>
-  );
-};
-
-export default ProfilePage;
+  </main>;
+}

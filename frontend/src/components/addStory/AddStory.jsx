@@ -381,13 +381,14 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-function AddStoryPage({ myStoryEdit, myStoryHomeEdits, postId }) {
+function AddStoryPage({ myStoryEdit, myStoryHomeEdits, postId, initialTags = [] }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState('');
-    const categories = ['Fruits', 'Sports', 'World', 'India', 'Education'];
+    const categories = ['Fruits', 'Sports', 'World', 'India', 'Education', 'Technology', 'Travel', 'Food', 'Lifestyle', 'Art'];
     const isMobile = useMediaQuery('(max-width: 780px)');
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [tags, setTags] = useState(initialTags.join(', '));
     const { upDateNewStory } = useContext(AuthContext);
 
     const [slideStoryInfo, setSlideStoryInfo] = useState(() => {
@@ -427,6 +428,14 @@ function AddStoryPage({ myStoryEdit, myStoryHomeEdits, postId }) {
         }
     }
 
+    const moveSlide = (index, direction) => {
+        const target = index + direction;
+        if (target < 0 || target >= slideStoryInfo.length) return;
+        const next = [...slideStoryInfo];
+        [next[index], next[target]] = [next[target], next[index]];
+        setSlideStoryInfo(next); setCurrentSlide(target);
+    };
+
     const handleAddSlide = () => {
         if (slideStoryInfo.length < 6) {
             setSlideStoryInfo(prevState => [
@@ -460,13 +469,17 @@ function AddStoryPage({ myStoryEdit, myStoryHomeEdits, postId }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        await saveStory(false);
+    };
+
+    const saveStory = async (isDraft) => {
         setLoading(true);
         
         const isSlideInfoComplete = slideStoryInfo.every((slide, index) =>
             slide.heading && slide.description && slide.image && slide.chooseCategory
         );
 
-        if (!isSlideInfoComplete) {
+        if (!isDraft && (!isSlideInfoComplete || slideStoryInfo.length < 3)) {
             showToast('Please fill all the fields', { type: 'error' });
             setLoading(false);
             return;
@@ -474,23 +487,23 @@ function AddStoryPage({ myStoryEdit, myStoryHomeEdits, postId }) {
 
         try {
             if (Array.isArray(myStoryEdit)) {
-                await updatePostById(postId, slideStoryInfo);
+                await updatePostById(postId, slideStoryInfo, { tags: tags.split(',').map((tag) => tag.trim()), isDraft });
                 upDateNewStory();
                 showToast('Post updated successfully', { type: 'success' });
             }
             else if (Array.isArray(myStoryHomeEdits)) {
-                await updatePostById(postId, slideStoryInfo);
+                await updatePostById(postId, slideStoryInfo, { tags: tags.split(',').map((tag) => tag.trim()), isDraft });
                 upDateNewStory();
                 showToast('Post updated successfully', { type: 'success' });
             }
             else {
-                await createPost(slideStoryInfo);
+                await createPost(slideStoryInfo, { tags: tags.split(',').map((tag) => tag.trim()), isDraft });
                 upDateNewStory();
                 showToast('Post created successfully', { type: 'success' });
             }
             
             // Navigate back after successful submission
-            navigate(-1);
+            if (!isDraft || isSlideInfoComplete) navigate(-1);
         } catch (error) {
             showToast('Error processing your request', { type: 'error' });
         } finally {
@@ -533,7 +546,7 @@ function AddStoryPage({ myStoryEdit, myStoryHomeEdits, postId }) {
                                 <span className="text-sm font-semibold">Slide</span>
                                 <span className="text-lg font-bold">{index + 1}</span>
                                 
-                                {index >= 3 && (
+                                {slideStoryInfo.length > 3 && (
                                     <div className="absolute -top-2 -right-2 bg-red-500 rounded-full w-6 h-6 flex items-center justify-center">
                                         <img 
                                             src={BigRemove} 
@@ -546,6 +559,7 @@ function AddStoryPage({ myStoryEdit, myStoryHomeEdits, postId }) {
                                         />
                                     </div>
                                 )}
+                                <span className="absolute -bottom-2 flex gap-1"><span role="button" tabIndex={0} onClick={(e) => { e.stopPropagation(); moveSlide(index, -1); }} className="rounded-full bg-gray-800 px-1 text-[10px] text-white">↑</span><span role="button" tabIndex={0} onClick={(e) => { e.stopPropagation(); moveSlide(index, 1); }} className="rounded-full bg-gray-800 px-1 text-[10px] text-white">↓</span></span>
                             </button>
                         ))}
                         
@@ -571,6 +585,7 @@ function AddStoryPage({ myStoryEdit, myStoryHomeEdits, postId }) {
                 <div className="p-6">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <label className="md:col-span-2 space-y-2"><span className="block font-medium text-gray-700">Tags <span className="font-normal text-gray-400">(comma separated)</span></span><input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="travel, learning, inspiration" className="w-full rounded-lg border border-gray-300 p-3 outline-none focus:ring-2 focus:ring-indigo-500" /></label>
                             {/* Heading */}
                             <div className="space-y-2">
                                 <label className="block text-gray-700 font-medium">Heading</label>
@@ -622,7 +637,7 @@ function AddStoryPage({ myStoryEdit, myStoryHomeEdits, postId }) {
                             
                             {/* Image URL */}
                             <div className="md:col-span-2 space-y-2">
-                                <label className="block text-gray-700 font-medium">Image URL</label>
+                                <label className="block text-gray-700 font-medium">Image URL or upload</label>
                                 <input
                                     type="text"
                                     placeholder="Enter image URL"
@@ -635,6 +650,11 @@ function AddStoryPage({ myStoryEdit, myStoryHomeEdits, postId }) {
                                     required
                                     className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 />
+                                <input type="file" accept="image/*" className="block w-full text-sm text-gray-500" onChange={(e) => {
+                                    const file = e.target.files?.[0]; if (!file) return;
+                                    if (file.size > 1_000_000) { showToast('Choose an image under 1 MB', { type: 'error' }); return; }
+                                    const reader = new FileReader(); reader.onload = () => { const next = [...slideStoryInfo]; next[currentSlide].image = String(reader.result); setSlideStoryInfo(next); }; reader.readAsDataURL(file);
+                                }} />
                             </div>
                             
                             {/* Image Preview */}
@@ -682,6 +702,7 @@ function AddStoryPage({ myStoryEdit, myStoryHomeEdits, postId }) {
                                 </button>
                             </div>
                             
+                            <button type="button" onClick={() => saveStory(true)} disabled={loading} className="rounded-lg border border-indigo-200 px-5 py-3 font-semibold text-indigo-700 hover:bg-indigo-50">Save draft</button>
                             <button
                                 type="submit"
                                 className={`px-8 py-3 rounded-lg font-medium text-white transition-colors ${

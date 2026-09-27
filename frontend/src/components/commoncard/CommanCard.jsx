@@ -29,6 +29,7 @@
 
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function CommanCard({ filteredData }) {
   return (
@@ -65,11 +66,11 @@ function CommanCard({ filteredData }) {
           
           {/* Author Info */}
           <div className="flex items-center mt-4">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold mr-3">
-              {filteredData?.postedBy?.name?.charAt(0)}
-            </div>
+            <Link to={filteredData?.author?._id ? `/creator/${filteredData.author._id}` : '#'} onClick={(e) => e.stopPropagation()} className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold mr-3 overflow-hidden">
+              {filteredData?.author?.avatar ? <img src={filteredData.author.avatar} alt="" className="h-full w-full object-cover" /> : filteredData?.author?.username?.charAt(0)?.toUpperCase() || 'S'}
+            </Link>
             <div>
-              <p className="text-white text-sm font-medium">{filteredData?.postedBy?.name}</p>
+              <Link to={filteredData?.author?._id ? `/creator/${filteredData.author._id}` : '#'} onClick={(e) => e.stopPropagation()} className="text-white text-sm font-medium hover:underline">@{filteredData?.author?.username || 'Storyteller'}</Link>
               <p className="text-gray-300 text-xs">
                 {new Date(filteredData?.createdAt).toLocaleDateString('en-US', { 
                   month: 'short', 

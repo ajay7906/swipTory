@@ -11,6 +11,10 @@ import ShareStoryPage from "./pages/sharestory/ShareStoryPage"
 import { AuthProvider } from "./context/authContext"
 import ProfilePage from "./pages/profile/ProfilePage"
 import AddStoryPage from "./components/addStory/AddStory"
+import FollowingFeed from "./pages/social/FollowingFeed"
+import Notifications from "./pages/social/Notifications"
+import Drafts from "./pages/social/Drafts"
+import AccountAction from "./pages/auth/AccountAction"
 
 
 function App() {
@@ -40,6 +44,13 @@ function App() {
 
             <Route path="/share/:postId" element={<ShareStoryPage />} />
             <Route path="/profile" element={<Layout><ProfilePage /></Layout>} />
+            <Route path="/creator/:userId" element={<Layout><ProfilePage /></Layout>} />
+            <Route path="/following" element={<Layout><FollowingFeed /></Layout>} />
+            <Route path="/notifications" element={<Layout><Notifications /></Layout>} />
+            <Route path="/drafts" element={<Layout><Drafts /></Layout>} />
+            <Route path="/account/recover" element={<AccountAction mode="recover" />} />
+            <Route path="/verify-email" element={<AccountAction mode="verify" />} />
+            <Route path="/reset-password" element={<AccountAction mode="reset" />} />
             <Route path="/addstory" element={<Layout><AddStoryPage /></Layout>} />
           </Routes>
 

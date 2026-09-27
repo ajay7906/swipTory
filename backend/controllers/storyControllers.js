@@ -1,5 +1,7 @@
 
 const Story = require('../model/storyModel');
+const User = require('../model/userModel');
+const Notification = require('../model/notificationModel');
 
 
 
@@ -7,7 +9,7 @@ const Story = require('../model/storyModel');
 const createStory = async (req, res, next) => {
   try {
     const { userId } = req;
-    const { stories } = req.body;
+    const { stories, tags = [], isDraft = false } = req.body;
 
     // Validate userId
     if (!userId) {
@@ -15,9 +17,8 @@ const createStory = async (req, res, next) => {
         errorMessage: "Bad request. userId is required."
       });
     }
-    console.log(stories);
     // Validate slide structure
-    if (!Array.isArray(stories) || stories.length < 3) {
+    if (!Array.isArray(stories) || (!isDraft && stories.length < 3) || stories.length > 20 || (!isDraft && stories.some((slide) => !slide.heading || !slide.description || !slide.image || !slide.chooseCategory))) {
       return res.status(400).json({
         success: false,
         message: 'At least three stories are required'
@@ -31,6 +32,8 @@ const createStory = async (req, res, next) => {
     const newStory = new Story({
       postedBy: userId,
       stories,
+      tags: [...new Set((Array.isArray(tags) ? tags : []).map((tag) => String(tag).trim().toLowerCase()).filter(Boolean))].slice(0, 15),
+      isDraft: Boolean(isDraft),
     });
 
     // Save the new story to the database
@@ -50,23 +53,30 @@ const createStory = async (req, res, next) => {
 // get  stories all and by category filter
 const getStoriesByCategory = async (req, res, next) => {
   try {
-    const { category } = req.query;
+    const { category, q = '', sort = 'newest', page = 1, limit = 12, tag } = req.query;
 
     let stories;
    
-    if (category) {
-      console.log(category);
-      stories = await Story.find({ 'stories.chooseCategory': category });
-    } else {
-      stories = await Story.find();
-    
-      extractedStories = stories.map(entry => entry.stories);
-
-    
-
+    const query = { isDraft: false };
+    if (req.userId) {
+      const viewer = await User.findById(req.userId).select('blockedUsers blockedBy');
+      if (viewer) query.postedBy = { $nin: [...viewer.blockedUsers, ...viewer.blockedBy].map(String) };
     }
-
-    res.status(200).json({ success: true, data: stories });
+    if (category) query['stories.chooseCategory'] = category;
+    if (tag) query.tags = String(tag).toLowerCase();
+    if (q) {
+      const safeSearch = String(q).slice(0, 80).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const creatorIds = (await User.find({ username: { $regex: safeSearch, $options: 'i' } }).select('_id')).map((user) => user._id.toString());
+      query.$or = [{ 'stories.heading': { $regex: safeSearch, $options: 'i' } }, { 'stories.description': { $regex: safeSearch, $options: 'i' } }, { tags: { $regex: safeSearch, $options: 'i' } }, { postedBy: { $in: creatorIds } }];
+    }
+    const pageNumber = Math.max(1, Number(page) || 1);
+    const pageSize = Math.min(30, Math.max(1, Number(limit) || 12));
+    const sortOrder = sort === 'popular' ? { likes: -1, createdAt: -1 } : sort === 'viewed' ? { viewCount: -1, createdAt: -1 } : { createdAt: -1 };
+    stories = await Story.find(query).sort(sortOrder).skip((pageNumber - 1) * pageSize).limit(pageSize);
+    const authors = await User.find({ _id: { $in: [...new Set(stories.map((item) => item.postedBy))] } }).select('username avatar');
+    const authorMap = new Map(authors.map((author) => [String(author._id), author]));
+    const data = stories.map((story) => ({ ...story.toObject(), author: authorMap.get(String(story.postedBy)) || null }));
+    res.status(200).json({ success: true, data, page: pageNumber, hasMore: stories.length === pageSize });
   } catch (error) {
     next(error);
   }
@@ -79,9 +89,12 @@ const getStoriesByCategory = async (req, res, next) => {
 const getStoryById = async (req, res, next) => {
   try {
     const { postId } = req.params;
-    console.log(postId);
 
-    const story = await Story.findById(postId);
+    let story;
+    if (req.userId) {
+      const seen = await Story.exists({ _id: postId, views: req.userId });
+      story = await Story.findOneAndUpdate({ _id: postId, isDraft: false }, { $addToSet: { views: req.userId }, ...(seen ? {} : { $inc: { viewCount: 1 } }) }, { new: true });
+    } else story = await Story.findOneAndUpdate({ _id: postId, isDraft: false }, { $inc: { viewCount: 1 } }, { new: true });
 
     if (!story) {
       return res.status(404).json({ success: false, error: 'Story not found' });
@@ -97,9 +110,12 @@ const getStoryById = async (req, res, next) => {
 const getShareStoryById = async (req, res, next) => {
   try {
     const { postId } = req.params;
-    console.log(postId);
 
-    const story = await Story.findById(postId);
+    let story;
+    if (req.userId) {
+      const seen = await Story.exists({ _id: postId, views: req.userId });
+      story = await Story.findOneAndUpdate({ _id: postId, isDraft: false }, { $addToSet: { views: req.userId }, ...(seen ? {} : { $inc: { viewCount: 1 } }) }, { new: true });
+    } else story = await Story.findOneAndUpdate({ _id: postId, isDraft: false }, { $inc: { viewCount: 1 } }, { new: true });
 
     if (!story) {
       return res.status(404).json({ success: false, error: 'Story not found' });
@@ -139,7 +155,6 @@ const updateStoryById = async (req, res, next) => {
   try {
     const { postId } = req.params;
     const { stories } = req.body;
-    console.log(req.body);
 
     if (!postId) {
       return res.status(400).json({
@@ -147,13 +162,15 @@ const updateStoryById = async (req, res, next) => {
       });
     }
 
-    if (!stories || stories.length < 3) {
+    const isDraft = Boolean(req.body.isDraft);
+    if (!Array.isArray(stories) || (!isDraft && (stories.length < 3 || stories.some((slide) => !slide.heading || !slide.description || !slide.image || !slide.chooseCategory)))) {
       return res.status(400).json({
         errorMessage: "Bad Request: Please provide an array of at least 3 stories",
       });
     }
 
-    const updatedStory = await Story.findByIdAndUpdate(postId, { stories }, { new: true });
+    const tags = Array.isArray(req.body.tags) ? [...new Set(req.body.tags.map((tag) => String(tag).trim().toLowerCase()).filter(Boolean))].slice(0, 15) : [];
+    const updatedStory = await Story.findOneAndUpdate({ _id: postId, postedBy: req.userId }, { stories, isDraft, tags }, { new: true, runValidators: true });
 
     if (!updatedStory) {
       return res.status(404).json({
@@ -182,6 +199,7 @@ const likePost = async (req, res, next) => {
         errorMessage: "Bad Request: user ID is missing",
       });
     }
+    const alreadyLiked = await Story.exists({ _id: postId, likes: userId });
     const updatedStory = await Story.findByIdAndUpdate(postId, { $addToSet: { likes: userId } }, { new: true });
 
     if (!updatedStory) {
@@ -189,6 +207,7 @@ const likePost = async (req, res, next) => {
         errorMessage: "Story not found",
       });
     }
+    if (!alreadyLiked && updatedStory.postedBy !== userId) await Notification.create({ recipient: updatedStory.postedBy, actor: userId, type: 'like', story: updatedStory._id, message: 'liked your story' });
     res.status(200).json({ success: true, data: updatedStory });
 
   } catch (error) {

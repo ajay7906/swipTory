@@ -433,6 +433,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { 
   bookMarkPost, getPostById, likePost, trackIsLikePost, trackbookMarkPost,
   tracklikeCountkPost, unbookMarkPost, unlikePost
+  , getComments, addComment, reportStory
 } from "../../api/post";
 import { ToastContainer, toast } from 'react-toastify';
 import { AuthContext } from "../../context/authContext";
@@ -440,7 +441,7 @@ import useMediaQuery from "../../utils/screenSize";
 import Loader from "../loader/Loader";
 
 // Icons
-import { FiX, FiShare2, FiBookmark, FiHeart, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiX, FiShare2, FiBookmark, FiHeart, FiChevronLeft, FiChevronRight, FiMessageCircle, FiFlag } from 'react-icons/fi';
 import { BsBookmarkFill, BsHeartFill } from 'react-icons/bs';
 
 function StoryStatus({ closeStoryModal, postId }) {
@@ -452,6 +453,10 @@ function StoryStatus({ closeStoryModal, postId }) {
   const [likeCountNumber, setLikeCountNumber] = useState(0);
   const [bookBtn, setBookBtn] = useState(false);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [showComments, setShowComments] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const [replyTo, setReplyTo] = useState('');
   const progressRef = useRef(null);
   
   const { handleLogin, openLoginModal } = useContext(AuthContext);
@@ -474,7 +479,9 @@ function StoryStatus({ closeStoryModal, postId }) {
     const baseUrl = 'https://swip-tory-six.vercel.app';
     const shareLink = `${baseUrl}/share/${postId}`;
 
-    if (navigator.clipboard) {
+    if (navigator.share) {
+      navigator.share({ title: imageData[0]?.heading || 'SwipTory story', text: imageData[0]?.description || 'Read this story on SwipTory', url: shareLink }).catch(() => {});
+    } else if (navigator.clipboard) {
       navigator.clipboard.writeText(shareLink);
       toast('Link copied to clipboard!', {
         position: 'top-center',
@@ -596,6 +603,14 @@ function StoryStatus({ closeStoryModal, postId }) {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const loadComments = async () => { try { const result = await getComments(postId); setComments(result.data || []); } catch (error) { console.error(error); } };
+  const submitComment = async (event) => {
+    event.preventDefault();
+    if (!localStorage.getItem('token')) { handleLogin(); openLoginModal(); return; }
+    try { await addComment(postId, commentText, replyTo || undefined); setCommentText(''); setReplyTo(''); loadComments(); }
+    catch (error) { toast(error.response?.data?.message || 'Could not post comment'); }
   };
 
   useEffect(() => {
@@ -757,6 +772,7 @@ function StoryStatus({ closeStoryModal, postId }) {
         
         {/* Top Controls */}
         <div className="absolute top-4 right-4 z-30 flex gap-3">
+          <button aria-label="Comments" onClick={(e) => { e.stopPropagation(); setShowComments((value) => !value); loadComments(); setTimerActive(false); }} className="relative rounded-full bg-black/50 p-2 text-white"><FiMessageCircle size={20} /><span className="absolute -right-1 -top-1 rounded-full bg-fuchsia-500 px-1 text-[10px]">{comments.length}</span></button>
           <button 
             onClick={(e) => {
               e.stopPropagation();
@@ -886,6 +902,12 @@ function StoryStatus({ closeStoryModal, postId }) {
           </div>
         )}
       </div>
+
+        {showComments && <aside onClick={(e) => e.stopPropagation()} className="absolute bottom-0 right-0 top-0 z-40 flex w-full max-w-sm flex-col bg-white text-gray-900 shadow-2xl">
+          <div className="flex items-center justify-between border-b p-5"><div><p className="text-xs font-bold uppercase tracking-widest text-violet-600">Community</p><h3 className="text-xl font-black">Comments <span className="text-gray-400">{comments.length}</span></h3></div><button aria-label="Close comments" onClick={() => { setShowComments(false); setTimerActive(true); }} className="rounded-full bg-gray-100 p-2"><FiX /></button></div>
+          <div className="flex-1 space-y-4 overflow-y-auto p-4">{comments.map((comment) => <div key={comment._id} className={`rounded-2xl bg-gray-50 p-4 ${comment.parent ? 'ml-8 border-l-2 border-violet-200' : ''}`}><p className="mb-1 text-xs font-bold text-violet-700">@{comment.author?.username || 'Reader'}</p><p className="text-sm leading-relaxed">{comment.text}</p><div className="mt-3 flex items-center justify-between"><span className="text-xs text-gray-400">{new Date(comment.createdAt).toLocaleDateString()}</span><button onClick={() => setReplyTo(comment._id)} className="text-xs font-bold text-violet-700">Reply</button></div></div>)}{comments.length === 0 && <p className="py-10 text-center text-sm text-gray-400">Be the first to share a thought.</p>}</div>
+          <form onSubmit={submitComment} className="border-t p-4"><div className="mb-2 flex justify-between text-xs text-violet-700">{replyTo ? 'Replying to a comment' : 'Join the conversation'}{replyTo && <button type="button" onClick={() => setReplyTo('')}>Cancel</button>}</div><textarea value={commentText} onChange={(e) => setCommentText(e.target.value)} maxLength={1000} required placeholder="Write a thoughtful comment…" className="w-full resize-none rounded-xl border border-gray-200 p-3 text-sm outline-none focus:ring-2 focus:ring-violet-300" rows={3}/><div className="mt-2 flex items-center justify-between"><button type="button" onClick={async () => { if (!localStorage.getItem('token')) { handleLogin(); openLoginModal(); return; } const reason = window.prompt('Why are you reporting this story?'); if (reason) { try { await reportStory(postId, reason); toast('Report received'); } catch (error) { toast(error.response?.data?.message || 'Could not send report'); } } }} className="flex items-center gap-1 text-xs text-gray-500"><FiFlag /> Report</button><button className="rounded-lg bg-violet-700 px-4 py-2 text-sm font-bold text-white">Post</button></div></form>
+        </aside>}
     </div>
   );
 }

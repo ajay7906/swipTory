@@ -291,6 +291,8 @@ function Navbar() {
                     <img src={Save} alt="Bookmark" className="w-5 h-5" />
                     Bookmarks
                   </Link>
+                  <Link to="/following" className="rounded-full px-3 py-2 font-semibold text-gray-700 hover:bg-violet-50 hover:text-violet-700">Following</Link>
+                  <Link to="/notifications" className="rounded-full px-3 py-2 font-semibold text-gray-700 hover:bg-violet-50 hover:text-violet-700">Notifications</Link>
                   
                   <Link 
                     to="/addstory" 
@@ -391,6 +393,8 @@ function Navbar() {
                   <img src={Save} alt="Bookmark" className="w-5 h-5" />
                   Bookmarks
                 </Link>
+                <Link to="/following" onClick={toggleResponsiveModal} className="text-lg font-medium hover:text-violet-700">Following</Link>
+                <Link to="/notifications" onClick={toggleResponsiveModal} className="text-lg font-medium hover:text-violet-700">Notifications</Link>
                 
                 <button 
                   onClick={handleLogout}
